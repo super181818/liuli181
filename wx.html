@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <base href="http://xcwgf2.oss-cn-hangzhou.aliyuncs.com"/>
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>大厅</title>
+    <script type="text/javascript" src="/files/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/js/config.js?v=120220101"></script>
+    <script type="text/javascript" src="/js/load.js?v=11101"></script>
+    <script>
+        var t = DynLoading.getUrlParam('t');
+        var obj = null;
+        if (DynLoading.isWeiXin()) {
+            var code = DynLoading.getUrlParam("code");
+            if (code) {
+                obj = DynLoading.hall(BaseUrl + '/wx/login?code=' + code);
+                if (obj.result != 0) {
+                    window.localStorage.setItem('token', obj.data.tk);
+                    window.location.href = window.localStorage.getItem('return_url');
+                }
+            } else {
+                obj = DynLoading.hall(BaseUrl + '/wx/info');
+                console.log(obj);
+                if (obj.result != 0) {
+                    var rurl = DynLoading.getPath('wx');
+                    var appid = obj.data.appid;
+                    var sq = obj.data.sq;
+                    var redirect_uri = 'http://' + sq + '/w.html?rurl=' + rurl;
+                    window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + encodeURI(redirect_uri) + '&response_type=code&scope=snsapi_userinfo#wechat_redirect';
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div id='app'>
+    <h1>Loading...</h1>
+</div>
+
+<script>
+    $(document).on('click', 'img', function (e) {
+        e.preventDefault();
+    })
+</script>
+
+</body>
+</html>

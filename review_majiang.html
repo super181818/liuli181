@@ -1,0 +1,157 @@
+<html>
+<head>
+    <meta charset="utf-8" >
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <title>战绩查询</title>
+
+    <link rel="stylesheet" type="text/css" href="<?php echo $file_url;?>files/css/review.css">
+
+    <script type="text/javascript">
+
+        var globalData = {
+            "baseUrl": "<?php echo $base_url;?>",
+            "fileUrl": "<?php echo $file_url;?>",
+            "scoreInfo": "",
+            "roomNumber": "<?php echo $room_number;?>",
+            "tk": "<?php echo $tk;?>",
+            "socket": "<?php echo $ws_host;?>/api",
+            "gameType": obj.data.game_type,
+            'maxCount': obj.data.max_count
+        };
+        var userData = {
+            "account_id": "",
+        };
+
+        document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+            // 通过下面这个API隐藏右上角按钮
+            WeixinJSBridge.call('hideOptionMenu');
+        });
+    </script>
+
+
+</head>
+
+<body style="background-color: #0e0226">
+
+<div id="loading" style="position: fixed;width:100%;height:100%;top:0;left:0;background: #000" >
+    <img src="<?php echo $file_url;?>files/images/common/loading.gif" style="top: 40%;position: absolute;left: 50%;margin-left: -45px;margin-top: -45px;" />
+</div>
+
+<div class="main" id="app-main" style="position: relative; width: 100%;margin: 0 auto; background: #0e0226; display: none;">
+
+    <div style="margin-top: 4vw;width: 100%;background-color: #291c4d;font-size: 2.5vh;text-align: center;color:#00ff33;padding: 10px 0 10px 0;">
+        {{ruleStartTime}} 至 {{ruleEndTime}}
+    </div>
+
+    <div style="width: 100%;margin-top: 10px;padding: 10px 0 10px 0;background-color: #291c4d;font-size: 2.2vh;text-align: center;color: orange;">
+        {{ruleText}}
+    </div>
+
+    <div  style="width: 100%;overflow: auto;text-align: center;color: white;overflow:hidden;" >
+        <div v-for="item in gameScoreList" style="position: relative;width: 100%;height: 14vw;background-color: #291c4d;text-align: center;margin-top: 0.3vh;color: white;overflow:hidden;">
+            <div>
+                <img v-bind:src="item.avatar" style="position: absolute;top:1vw;left:1vw;width:12vw;height:12vw;border-radius:3px">
+            </div>
+
+            <div  style="position: absolute;left: 15vw;width: 55vw;height: 14vw;text-align: left;">
+                <div style="height: 9vw;line-height: 12vw;font-size: 2.2vh;">{{item.name.length>6?item.name.slice(0,6)+"...":item.name}}</div>
+                <div style="height: 5vw; line-height: 6vw; font-size: 1.8vh;color: rgb(150,180,80);" >ID:{{item.code}}</div>
+            </div>
+
+            <div style="position: absolute;right: 5vw;height: 14vw;line-height: 14vw;font-size: 2.5vh;text-align: left;color: orange;">
+                <span style="font-size: 3vh">{{item.score}}</span>
+            </div>
+
+        </div>
+    </div>
+    <a v-on:click="gotoGame(globalData.gameType)"
+       v-bind:style="'margin-top:5px;text-decoration:none;color: #fff;display:block;height: 50px;line-height: 50px;text-align: center;background: orange;width: 100%'">
+        查看战绩图
+    </a>
+    <div  v-bind:style="'top: '+(61+14*gameScoreList.length)+'vw;left: 0;width: 100%;overflow: auto;'" >
+        <div v-for="item in gameDetailList" v-bind:style="'position: relative;width: 100%;height: '+(18+12*item.detail.length)+'vw;background-color: #291c4d;text-align: center;margin-top: 0.3vh;color: white;overflow:hidden;'">
+
+            <div style="position: absolute;top: 0vw;left: 0;width: 100%;height: 8vw;line-height: 12vw; font-size: 2vh;text-align: center;color: white;">
+                {{item.gnum}}/{{item.tnum}}局
+            </div>
+            <div style="position: absolute;top: 8vw;left: 0;width: 100%;height: 10vw;background-color: #291c4d;font-size: 2vh;line-height: 10vw;text-align: center;color: orange;">
+                <div style="position: absolute;left: 0vw;width: 28vw">
+                    昵称
+                </div>
+                <div style="position: absolute;left: 28vw;width: 36vw;">
+                    牌型
+                </div>
+                <div style="position: absolute;left: 62vw;width: 13vw;">
+                    倍数
+                </div>
+                <div style="position: absolute;left: 75vw;width: 21vw;">
+                    分数
+                </div>
+            </div>
+
+            <div  v-bind:style="'position: absolute;top: 18vw;left: 0;width: 100%;overflow: auto;'" >
+                <div v-for="row in item.detail" style="position: relative;width: 100%;height: 12vw;line-height: 12vw;background-color: #291c4d;text-align: center;color: white;overflow:hidden;">
+                    <div style="position: absolute;left: 0vw;width: 28vw;height: 12vw;line-height: 12vw;font-size: 2vh;text-align: center;">
+                        <img v-if="row.is_banker==1" src="<?php echo $file_url?>files/images/common/banker_icon.png" style="position: absolute;top:4vw;left:1vw;width:4vw;height:4vw;">
+                        {{row.name.length>6?row.name.slice(0,6)+"...":row.name}}
+                    </div>
+
+                    <div v-if="row.is_join==1">
+                        <div style="position: absolute;left: 28vw;width: 36vw;height: 12vw;line-height: 12vw;text-align: left;font-size: 1.8vh;">
+                            <span style="color: rgb(150,180,80);">{{row.card_type}}</span>
+
+                            <div class="cardOver" style="position: absolute; width: 100%; height: 100%; overflow:hidden;">
+                                <div class="cards card11" style="z-index: 14;">
+                                    <div class="face back" v-bind:class="'card' + row.cards[4]"></div>
+                                </div>
+                                <div class="cards card21" style="z-index: 13">
+                                    <div class="face back" v-bind:class="'card' + row.cards[3]"></div>
+                                </div>
+                                <div class="cards card31" style="z-index: 12">
+                                    <div class="face back" v-bind:class="'card' + row.cards[2]"></div>
+                                </div>
+                                <div class="cards card41" style="z-index: 11">
+                                    <div class="face back" v-bind:class="'card' + row.cards[1]"></div>
+                                </div>
+                                <div class="cards card51" style="z-index: 10">
+                                    <div class="face back" v-bind:class="'card' + row.cards[0]"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="position: absolute;left: 62vw;width: 13vw;height: 12vw;line-height: 12vw;font-size: 2.5vh;text-align: center;">
+                            <span style="color: rgb(240,120,50);">{{row.chip}}倍</span>
+                        </div>
+                        <div style="position: absolute;left: 75vw;width: 21vw;height: 12vw;line-height: 12vw;font-size: 2.5vh;text-align: center;">
+                            <span style="color: rgb(240,120,50);">{{row.score}}</span>
+                        </div>
+                    </div>
+                    <div v-if="row.is_join==0" style="font-size: 2vh; color: rgb(150,180,80);">本局未参战</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+<script type="text/javascript" src="<?php echo $file_url;?>files/js/jquery-1.9.1.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js" ></script>
+<script type="text/javascript" src="<?php echo $file_url;?>files/js/vue.min.js" ></script>
+<script type="text/javascript" src="<?php echo $file_url;?>files/js/vue-resource.min.js" ></script>
+<script type="text/javascript" src="<?php echo $file_url; ?>fiesc/js/aes.js"></script>
+<script type="text/javascript" src="<?php echo $file_url; ?>files/js/md5.js"></script>
+<script type="text/javascript" src="<?php echo $file_url; ?>files/js/ves.js?v=112"></script>
+<script type="text/javascript" src="<?php echo $file_url; ?>files/js/review.js"></script>
+<script>
+    $(document).on('click', 'img', function(e){
+        e.preventDefault();
+    })
+</script>
+
+</html>

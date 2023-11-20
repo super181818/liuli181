@@ -1,0 +1,923 @@
+<html ng-app="app">
+<head>
+
+    <meta charset="utf-8">
+    <base href="http://xcwgf2.oss-cn-hangzhou.aliyuncs.com"/>
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <title>门票</title>
+   <script type="text/javascript">
+                var _thost = 'http://' + window.location.host;
+        var pathArr = window.location.pathname.split("/");
+        if(pathArr.length==3 && pathArr[1] != ""){
+            if(pathArr[1].search(".html")!=-1){
+
+            }else{
+                _thost = 'http://' + window.location.host + "/" + pathArr[1];
+            }
+        }
+        var _tt = new Date().getTime();
+        document.write('<script type="text/javascript" src="' + _thost + '/js/config.js?v=1' + _tt + '"> <\/script>');
+        document.write('<script type="text/javascript" src="/js/load.js?v=1' + new Date().getTime() + '"> <\/script>');
+    </script>    
+    <style>
+        .alert-mask {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 99;
+            background-color: rgba(0, 0, 0, .5);
+        }
+
+        #alertBox {
+            width: 2.2rem;
+            min-height: 1rem;
+            opacity: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-left: -1.1rem;
+            transition: all 0.5s;
+            border-radius: 0.04rem;
+            padding-top: 0.96rem;
+            line-height: 0.16rem;
+            text-align: center;
+            font-size: 0.15rem;
+            color: rgba(0, 0, 0, 0.54);
+            box-shadow: 0 0 0.2rem rgba(0, 0, 0, 0.3);
+            z-index: 100000;
+        }
+
+        #alertBox.success {
+            background: #fff url(/files/images/newgame/alertBox_success.png) no-repeat center 0.384rem / 0.384rem 0.384rem;
+        }
+
+        #alertBox.error {
+            background: #fff url(/files/images/newgame/alertBox_error.png) no-repeat center 0.384rem / 0.384rem 0.384rem;
+        }
+
+        #alertBox.puncherror {
+            background: #fff url(/files/images/newgame/punch_caution.png) no-repeat center 0.384rem / 0.384rem 0.384rem;
+        }
+
+        #alertBox .context {
+            margin-bottom: 0.384rem;
+            padding: 0 0.1rem;
+        }
+
+        #alertBox .closed {
+            width: 2.2rem;
+            height: 0.4rem;
+            line-height: 0.4rem;
+            display: inline-block;
+            font-size: 0.145rem;
+            color: #b39851;
+            text-align: center;
+            border-top: 0.01rem solid #f5f5f5;
+        }
+
+        .copy-tip {
+            background: rgba(0, 0, 0, .6);
+            color: #fff;
+            position: fixed;
+            bottom: .6rem;
+            font-size: .15rem;
+            border-radius: 5px;
+            padding: 10px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            z-index: 99;
+        }
+
+        #room_str {
+            position: fixed;
+            top: -300px;
+        }
+
+        .zhuonuo {
+            position: fixed;
+            right: 0;
+            width: .8rem;
+            z-index: 99;
+            top: .05rem;
+        }
+
+        #dialog {
+            position: fixed;
+            width: 300px;
+            height: 150px;
+            padding: 10px;
+            box-sizing: border-box;
+            background: #fff;
+            font-size: 16px;
+            left: 50%;
+            top: 50%;
+            margin-left: -150px;
+            margin-top: -75px;
+            border-radius: 10px;
+            z-index: 99;
+        }
+
+        #dialog .main {
+            word-wrap: break-word;
+            word-break: normal;
+        }
+
+        #dialog .other {
+            text-align: center;
+            margin-top: 38px
+        }
+
+        #dialog img {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 35px;
+        }
+
+        .return-index {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 10%;
+            margin: 0 auto;
+            width: .7104rem;
+            height: .2208rem;
+            background: url(/files/images/common/return-index2.png) no-repeat;
+            background-size: 100% 100%;
+            font-size: 0;
+            text-decoration: none;
+            outline: none;
+            z-index: 999;
+        }
+    </style>
+    <script type="text/javascript" src="/files/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/files/js/angular.min.js"></script>
+    <script src="/files/js/fuzhi.js?v=11111"></script>
+    <script src="/files/js/clipboard.min.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script type="text/javascript" src="/files/js/fastclick.js"></script>
+ 
+    <script type="text/javascript">
+        document.documentElement.style.fontSize = document.documentElement.clientWidth / 360 * 100 + 'px';
+    </script>
+    <link rel="stylesheet" type="text/css" href="/files/css/activity.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/alert.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/redEnvelope.css">
+</head>
+<body ng-controller="myCtrl" style="background: #000;" class="ng-scope">
+<div id="dialog" style="display:none">
+    <img src="/files/images/common/cancel.png" onclick="fuzhiMain.closeDialog()">
+    <p id="main" class="main"></p>
+    <p class="other">
+        请手动复制
+    </p></div>
+<span class="copy-tip" id="tips" style="display:none">已复制到剪贴板</span> <img
+        src="/files/images/common/33fz.png"
+        class="needsclick zhuonuo copyUrl" data-clipboard-action="copy" id="copy_btn" onclick="fuzhiMain.link()">
+<textarea id="room_str" readonly="readonly"></textarea>
+<div style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; background: rgb(0, 0, 0); display: none;"
+     id="loading"><img src="/files/images/common/loading.gif"
+                       style="top: 40%;position: absolute;left: 50%;margin-left: -45px;margin-top: -45px;"></div>
+<a class="return-index" ng-click="gotoHall()"></a>
+<div id="ropen" style="display: none;">
+    <div class="container-hb" style="display: block;">
+        <div class="user-img">
+            <img ng-src="{{redPackage.sendAvatar}}">
+        </div>
+        <div class="user-name-card">来自<em>{{redPackage.sendName}}</em>的礼盒</div>
+        <div class="big-card-number">
+            <div class="card-number-text"><span class="ng-binding">{{redPackage.count}}</span>张</div>
+            <div class="tips-text">可用于创建房间</div>
+        </div>
+        <div class="receive-list">
+            <div class="flex-cont">
+                <div className="user-small-img">
+                    <img style="width: 70px" ng-src="{{redPackage.receiveAvatar}}">
+                </div>
+                <div class="flex-item">
+                    <div className="name">{{redPackage.receiveName}}</div>
+                    <div className="name-text">领取了<span>{{redPackage.count}}张</span>房卡</div>
+                </div>
+                <div class="card-time">
+                    <div class="card-number"><span></span>张房卡</div>
+                    <div className="time">{{redPackage.showTime}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="main" style="">
+    <div class="alert ng-hide" ng-show="isShowAlert">
+        <div class="alertBack"></div>
+        <div class="mainPart">
+            <div class="backImg">
+                <div class="blackImg"></div>
+            </div>
+            <div class="alertText ng-binding"></div>
+            <div ng-show="alertType==1" class="ng-hide">
+                <div class="buttonMiddle" ng-click="closeAlert()">确定</div>
+            </div>
+            <div ng-show="alertType==2" class="ng-hide">
+                <div class="buttonLeft" ng-click="home()">返回首页</div>
+                <div class="buttonRight" ng-click="createRoom()">创建房间</div>
+            </div>
+            <div ng-show="alertType==3" class="ng-hide">
+                <div class="buttonLeft" ng-click="home()">返回首页</div>
+                <div class="buttonRight" ng-click="closeAlert()">取消</div>
+            </div>
+            <div ng-show="alertType==4" class="ng-hide">
+                <div class="buttonLeft" ng-click="createRoom()">创建房间</div>
+                <div class="buttonRight" ng-click="sitDown()">加入游戏</div>
+            </div>
+            <div ng-show="alertType==5" class="ng-hide">
+                <div class="buttonMiddle" ng-click="getCards()">领取</div>
+            </div>
+            <div ng-show="alertType==6" class="ng-hide">
+                <div class="buttonMiddle" ng-click="closeAlert()">确定</div>
+            </div>
+            <div ng-show="alertType==23" class="ng-hide">
+                <div class="buttonMiddle" ng-click="finishBindPhone()">确定</div>
+            </div>
+            <div ng-show="alertType==31" class="ng-hide">
+                <div class="buttonMiddle" ng-click="reloadView()">确定</div>
+            </div>
+        </div>
+    </div>
+    <img src="/files/images/redpackage/redpackage_bg.jpg"
+         style="width: 100%;position: relative;height:100%" usemap="#planetmap">
+    <div id="notopen" style="position: absolute; width: 285px; top: 0px; left: 45px;">
+        <div class="user" style="position: absolute; height: 67.875; top: 20px; width: 100%; left: 0px;">
+            <img ng-src="{{redPackage.sendAvatar}}" className="avatar"
+                 style="position: absolute; width:{{width*0.182}}px; height:{{width*0.182}}px; margin-left:{{(rpWidth - width * 0.182) / 2}}px; margin-top:{{width*0.02}}px; "/>
+        </div>
+        <p style="position: absolute; color: rgb(255,227,104); width: 90%; left: 5%; top: 114.75; height: auto; text-align: center; font-size: 11pt; word-wrap: break-word; word-break: break-all;">
+            {{redPackage.sendName}}<br>给你发了一个礼盒
+        </p>
+        <div class="btnOpen"
+             style="position: absolute; height: 250px; width: 300px; left: 10px; top: 300px;"
+             ng-click="clickOpenRedPackage()"></div>
+        <div style="position: absolute; left: 22px; right: 22px; top: 507px;">
+            <p style="text-align: center; color: #fff; font-size: 11pt"></p>
+        </div>
+    </div> <!-- 绑定手机号码 -->
+    <div id="validePhone" ng-show="isAuthPhone==1" class="ng-hide">
+        <div class="phoneMask"
+             style="position: fixed;z-index: 98;top: 0;left: 0;width: 100%;height: 100%;background-color: rgba(0,0,0,0.5);"
+             ng-click="hideBindPhone()"></div>
+        <div class="phoneFrame"
+             style="position: fixed;z-index: 99;width: 80vw;max-width: 80vw; top: 50%; left: 50%;-webkit-transform:translate(-50%,-60%); background-color: #fff; text-align: center; border-radius: 8px; overflow: hidden;opacity: 1; color: white;">
+            <img src="/files/images/index/common_close.png"
+                 style="position: absolute;top: 0vw;right: 0vw;width: 10vw;height: 10vw;" ng-click="hideBindPhone()">
+            <div style="height: 2.2vw;"></div>
+            <div style="padding: 0vh;font-size: 3.5vw; line-height: 8vw; word-wrap: break-word;word-break: break-all;color: #000;background-color: white;">
+                领取门票包需要验证手机号
+            </div>
+            <div style="height: 2.2vw;"></div>
+            <div style="position: relative;height: 15vw;word-wrap: break-word;word-break: break-all;color: #000;background-color: white;border-top: solid;border-color: #e6e6e6;border-width: 0px;">
+                <input ng-input="phoneChange()" ng-model="sPhone" type="number" name="phone" placeholder="输入手机号"
+                       style="padding:0 12px 0 12px;position: absolute;top:  2.5vw;left: 4vw;width: 48vw;height: 11vw;line-height: 6.5vw;border-style: solid;border-width: 1px;border-radius: 0.5vh;border-color: #e6e6e6;font-size: 4vw;-webkit-appearance: none;"
+                       class="ng-pristine ng-untouched ng-valid">
+                <div id="authcode" ng-click="getAuthcode()"
+                     style="position: absolute;top:  2.5vw;right: 4vw; width: 22vw;height: 10vw;line-height: 10vw;background-color: rgb(211,211,211);font-size: 3.5vw;border-radius: 0.5vh;color: white;"
+                     class="ng-binding">
+                    发送验证码
+                </div>
+            </div>
+            <div style="position: relative;height: 15vw;word-wrap: break-word;word-break: break-all;color: #000;background-color: white;border-top: solid;border-color: #e6e6e6;border-width: 0px;">
+                <input ng-model="sAuthcode" type="number" name="phone1" placeholder="输入验证码"
+                       style="padding:0 12px 0 12px;position: absolute;top: 1vw;left: 4vw;width: 72vw;height: 11vw;line-height: 6.5vw;border-style: solid;border-width: 1px;border-radius: 0.5vh;border-color: #e6e6e6;font-size: 4vw;-webkit-appearance: none;"
+                       class="ng-pristine ng-untouched ng-valid"></div>
+            <div style="height: 2.2vw;"></div>
+            <div style="position: relative; left: 4vw;width: 72vw;line-height: 10vw; font-size: 4vw;display: flex;border-radius: 2vw;"
+                 ng-click="bindPhone()">
+                <div style="display: block;-webkit-box-flex:1;flex: 1;text-decoration: none;-webkit-tap-highlight-color:transparent;position: relative;margin-bottom: 0;color: rgb(255,255,255);border-top: solid;border-color: #e6e6e6;border-width: 0px;background-color: rgb(64,112,251);border-radius: 1vw;">
+                    立即绑定
+                </div>
+            </div>
+            <div style="height: 4vw;"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function onBridgeReady() {
+        WeixinJSBridge.call('hideOptionMenu');
+    }
+
+    if (typeof WeixinJSBridge == "undefined") {
+        if (document.addEventListener) {
+            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+        } else if (document.attachEvent) {
+            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+        }
+    } else {
+        onBridgeReady();
+    }
+    document.body.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+    })
+
+    var code = DynLoading.getUrlParam("code");
+    let token = window.localStorage.getItem('token');
+    if (!token) {
+        var return_url = window.location.href;
+        window.localStorage.removeItem('return_url');
+        window.localStorage.setItem('return_url', window.location.href);
+        if (DynLoading.isWeiXin()) {
+            if (code) {
+                token = "{$token}";
+                if (token != "{$token}") {
+                    window.localStorage.setItem('token', token);
+                }
+            } else {
+                DynLoading.gotoWx();
+            }
+        } else {
+            DynLoading.goto('login');
+        }
+    }
+    if (token) {
+        var red_code = DynLoading.getUrlParam("red_code");
+        var req_url = BaseUrl + '/ay1/rpD?red_code=' + red_code + "&tk=" + token;
+        if (token == '{$token}' && code) {
+            req_url = BaseUrl + '/ay1/rpD?red_code=' + red_code + "&code=" + code;
+        }
+        var obj = DynLoading.hall(req_url);
+
+        if (obj.result != 0) {
+            alert(obj.result_message);
+            var return_url = window.location.href;
+            console.log(return_url);
+            DynLoading.goto('/');
+        }
+        console.log(obj);
+        if (code && obj.data.tk != "") {
+            token = obj.data.tk;
+
+            window.localStorage.setItem('token', obj.data.tk);
+        }
+    }
+
+    var globalData = {
+        "baseUrl": BaseUrl + "/",
+        "hallPath": DynLoading.getPath('/'),
+        "isWechat": 1,
+        "isXianliao": 0,
+        "hallName": obj.data.platform_name,
+        "agentName": obj.data.platform_name + ":房卡包",
+        "shareTitle": obj.data.platform_name + ":门票包",
+        "xlTitle": "门票包",
+    };
+
+    var userData = {
+        "accountId": obj.data.account_id,
+        "nickname": obj.data.user.nickname,
+        "avatar": obj.data.user.headimgurl,
+        "card": obj.data.card
+    };
+    globalData.wid = obj.data.wid;
+    globalData.tt = obj.data.tt;
+    globalData.tk = token;
+
+    var app = angular.module('app', [])
+
+    app.directive('ngInput', [function () {
+        return {
+            restrict: 'A',
+            require: '?ngModel',
+            link: function (scope, element, attrs) {
+                element.on('input', oninput);
+                scope.$on('$destroy', function () {
+                    element.off('input', oninput);
+                });
+
+                function oninput(event) {
+                    var dict = {};
+                    dict['$event'] = event;
+                    dict['$value'] = this.value;
+                    scope.$evalAsync(attrs['ngInput'], dict);
+                }
+            }
+        }
+    }]);
+
+    app.controller("myCtrl", function ($scope, $http) {
+        $scope.width = window.innerWidth;
+        $scope.height = window.innerHeight;
+        $scope.rpHeight = $scope.width * 1.02;
+        $scope.rpWidth = $scope.width * 0.76
+        $scope.rpLeft = $scope.width * 0.12;
+        $scope.rpX = $scope.rpWidth * 0.08;
+        $scope.rpTop = ($scope.height - $scope.rpHeight) / 2 - 30;
+        $scope.lineTop = $scope.rpTop + $scope.rpHeight / 2;
+        $scope.receiveNameX = $scope.rpX * 1.5 + $scope.width * 0.1;
+        $scope.receiveNameWidth = ($scope.rpWidth - $scope.rpX * 3 - $scope.width * 0.1) / 1.5;
+        $scope.receiveNameOffset = 2;
+        $scope.receiveCountWidth = $scope.rpWidth - $scope.receiveNameX - $scope.receiveNameWidth - $scope.receiveNameOffset - $scope.rpX * 0.7;
+
+        $scope.userInfo = {
+            "accountId": userData.accountId,
+            "id": userData.accountId,
+            "name": userData.nickname,
+            "avatar": userData.avatar,
+            "card": userData.card,
+        }
+
+        $scope.redPackage = {
+            "isReceive": obj.data.red_package.is_receive,
+            "content": obj.data.red_package.content,
+            "count": obj.data.red_package.ticket_count,
+            "sendName": obj.data.red_package.nickname,
+            "sendAvatar": obj.data.red_package.headimgurl,
+            "receiveName": obj.data.red_package.receive_nickname,
+            "receiveAvatar": obj.data.red_package.receive_headimgurl,
+            "receiveTime": obj.data.red_package.receive_time,
+            "showTime": "",
+            "code": red_code,
+        }
+
+        if ($scope.redPackage.isReceive == 0) {
+            $scope.redPackage.receiveAvatar = $scope.userInfo.avatar;
+            $scope.redPackage.receiveName = $scope.userInfo.name;
+        }
+
+        $scope.userInfo.card = "0";
+
+        var socketStatus = 0;
+        $(".main").show();
+        $("#loading").hide();
+
+        $scope.activity = new Array();
+        $scope.isShowAlert = false;
+        $scope.alertType = 0;
+        $scope.alertText = "";
+        $scope.gotoHall = function () {
+            //alert('你点击了我的');
+            DynLoading.goto('/');
+        }
+        var win = {
+            width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+            height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight,
+        }
+        $.alert = function (msg, fn, style, sec) {
+            style = style || 'success';
+            if (typeof (fn) == 'string') {
+                style = fn;
+            }
+            if (!sec) {
+                if (style == 'error' || style == 'puncherror') {
+                    sec = 9;
+                } else {
+                    sec = 0;
+                }
+            }
+            var mask = $('<div>').addClass('alert-mask');
+            var box = $('<div>').addClass('resourceBox ' + style).attr('id', 'alertBox');
+            box.html('<div class="context">' + msg + '</div>');
+            box.appendTo(mask);
+            mask.appendTo('body');
+            var h = win.width / 360 * 100;
+            box.css({'opacity': 1, 'margin-top': -1 * (box.height() + h) / 2});
+            if (sec >= 9) {
+                var alertBoxLay = $('<div>').addClass('alertBoxLay').appendTo('body');
+                $('<a>').attr('href', 'javascript:void(0);').addClass('closed').appendTo(box).text('确认');
+                $('#alertBox a.closed, .alertBoxLay').click(function () {
+                    box.css({'opacity': 0, 'margin-top': -1 * (box.height() + h)});
+                    alertBoxLay.css('opacity', 0);
+                    mask.remove();
+                    setTimeout(function () {
+                        box.remove();
+                        alertBoxLay.remove();
+                        if (typeof (fn) == 'function') fn();
+                    }, 500);
+                });
+            } else {
+                setTimeout(function () {
+                    box.css({'opacity': 0, 'margin-top': -1 * (box.height() + h)});
+                    setTimeout(function () {
+                        box.remove();
+                        if (typeof (fn) == 'function') fn();
+                    }, 500);
+                }, 1000 + sec * 1000);
+            }
+        };
+        $scope.showAlert = function (type, text) {
+            $(".alertText").css("top", "90px")
+            $scope.alertType = type;
+            $scope.alertText = text;
+            $scope.isShowAlert = true;
+
+            setTimeout(function () {
+                $scope.$apply();
+            }, 0);
+
+            setTimeout(function () {
+                var wHeight = window.innerHeight;
+                var alertHeight = $(".alertText").height();
+                var textHeight = $(".alertText").height();
+
+                if (alertHeight < wHeight * 0.15) {
+                    alertHeight = wHeight * 0.15;
+                }
+
+                if (alertHeight > wHeight * 0.8) {
+                    alertHeight = wHeight * 0.8;
+                }
+
+                var mainHeight = alertHeight + wHeight * (0.022 + 0.034) * 2 + wHeight * 0.022 + wHeight * 0.056;
+                if (type == 8) {
+                    mainHeight = mainHeight - wHeight * 0.022 - wHeight * 0.056
+                }
+
+                var blackHeight = alertHeight + wHeight * 0.034 * 2;
+                var alertTop = wHeight * 0.022 + (blackHeight - textHeight) / 2;
+
+                $(".alert .mainPart").css('height', mainHeight + 'px');
+                $(".alert .mainPart").css('margin-top', '-' + mainHeight / 2 + 'px');
+                $(".alert .mainPart .backImg .blackImg").css('height', blackHeight + 'px');
+                $(".alert .mainPart .alertText").css('top', alertTop + 'px');
+
+                $scope.$apply();
+            }, 0)
+        }
+        $scope.closeAlert = function () {
+            if ($scope.alertType == 1) {
+                $scope.isShowAlert = false;
+                if (!$scope.is_connect) {
+                    $scope.is_connect = true;
+                }
+            } else {
+                $scope.isShowAlert = false;
+            }
+        }
+
+
+        $scope.cardNum = Number($scope.userInfo.card);
+        $scope.number = 0; //输入数量
+        $scope.inputNumber = null;  //输入框数字
+
+        if ($scope.cardNum === null
+            || $scope.cardNum === undefined
+            || isNaN($scope.cardNum)) {
+            $scope.cardNum = 0;
+        }
+
+        setTimeout(function () {
+            if ($scope.redPackage.isReceive == 1) {
+                $(".main").hide();
+                $("#ropen").show();
+                $("#notopen").hide();
+            } else {
+                $(".main").show();
+                $("#ropen").hide();
+                $("#notopen").show();
+            }
+
+        }, 1);
+
+        $scope.formatShowTime = function () {
+            var newDate = new Date($scope.redPackage.receiveTime);
+            newDate.setTime($scope.redPackage.receiveTime * 1000);
+            var Month = (newDate.getMonth() + 1 < 10 ? '0' + (newDate.getMonth() + 1) : newDate.getMonth() + 1);
+            var Day = newDate.getDate() + ' ';
+            var Day = newDate.getDate() < 10 ? '0' + newDate.getDate() : newDate.getDate();
+            var hour = newDate.getHours() < 10 ? '0' + newDate.getHours() : newDate.getHours();
+            var min = newDate.getMinutes() < 10 ? '0' + newDate.getMinutes() : newDate.getMinutes();
+            $scope.redPackage.showTime = Month + '-' + Day + '    ' + hour + ':' + min;
+        }
+
+        $scope.formatShowTime();
+        $scope.receiveRedPackage = function () {
+            $http({
+                url: globalData.baseUrl + 'ay1/receiveRP',
+                method: 'POST',
+                header: {'Content-Type': 'application/x-www-form-urlencoded'},
+                data: {
+                    'account_id': userData.id,
+                    'code': $scope.redPackage.code,
+                    'tk': globalData.tk
+                }
+            }).success(function (data, header, config, status) {
+
+                var timestamp = Date.parse(new Date());
+                timestamp = timestamp / 1000;
+                $scope.redPackage.receiveTime = timestamp;
+                $scope.formatShowTime();
+
+                setTimeout(function () {
+                    $(".btnOpen").removeClass('transf');
+
+                    if (data.result == 0) {
+                        $("#notopen").hide();
+                        $("#ropen").show();
+                        $(".main").hide();
+                    } else {
+                        //window.location.reload();
+                        alert(data.result_message);
+                    }
+                }, 500);
+                setTimeout(function () {
+                    $scope.blockBtn = false
+                }, 2000)
+            })
+                .error(function (data, header, config, status) {
+                    $(".btnOpen").removeClass('transf');
+                    //window.location.reload();
+                    //alert(data.result_message);
+                    setTimeout(function () {
+                        $scope.blockBtn = false
+                    }, 2000)
+                    alert(data.result_message);
+                });
+        }
+
+        setTimeout(function () {
+            var tempDiv = document.getElementById('openImg');
+            if (tempDiv) {
+                tempDiv.addEventListener('touchstart', function (event) {
+                    $('#openImg').animate({top: "-10%", left: "-10%", width: "120%", height: "120%"}, 30);
+                }, false);
+
+                tempDiv.addEventListener('touchend', function (event) {
+                    $('#openImg').animate({top: "0%", left: "0%", width: "100%", height: "100%"}, 30);
+                }, false);
+            }
+        }, 100);
+
+        $scope.clickOpenRedPackage = function () {
+            $(".btnOpen").addClass('transf');
+            //$('#openImg').animate({top:"-10%",left:"-10%",width:"120%",height:"120%"},30);
+            $scope.receiveRedPackage();
+            setTimeout(function () {
+                //$('#openImg').animate({top:"0%",left:"0%",width:"100%",height:"100%"},30);
+            }, 0);
+        }
+
+        /* 绑定手机 */
+        $scope.isAuthPhone = "0";
+        $scope.phone = "";
+        $scope.sPhone = '';
+        $scope.sAuthcode = '';
+        $scope.authcodeType = 1;
+        $scope.authcodeText = '发送验证码';
+        $scope.authcodeTime = 60;
+        $scope.phoneType = 1;
+        $scope.phoneText = '绑定手机';
+
+        setTimeout(function () {
+            $scope.$apply();
+        }, 100);
+
+        $scope.hideBindPhone = function () {
+            $scope.isAuthPhone = 0;
+        }
+
+        $scope.getAuthcodeHttp = function (phone) {
+            $http({
+                url: '/account/getMobileSms',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                data: {
+                    "phone": phone,
+                    "token": token,
+                },
+            }).success(function (data) {
+
+                if (data.result == 0) {
+                    setTimeout(function () {
+                        $scope.authcodeTime = 60;
+                        authcodeTimer();
+                        $scope.authcodeType = 2;
+                    }, 0);
+
+                } else {
+                    alert(data.result_message)
+                }
+            }).error(function (data) {
+                console.log(data);
+            });
+        };
+
+        $scope.bindPhoneHttp = function (phone, authcode) {
+            $http({
+                url: '/account/checkSmsCode',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                data: {
+                    "phone": phone,
+                    "code": authcode,
+                    "session": "395597eea35b8ea070e2290c927d80cc",
+                },
+            }).success(function (data) {
+
+                if (data.result == 0) {
+                    setTimeout(function () {
+                        $scope.isAuthPhone = 0;
+                        $scope.phone = $scope.sPhone;
+
+                        if (data.data.account_id != $scope.userInfo.id) {
+                            $.alert(data.result_message, 'error');
+                        } else {
+                            $.alert(data.result_message, 'error');
+                        }
+
+                        $scope.userInfo.card = parseInt($scope.userInfo.card) + parseInt(data.data.card_count);
+
+                        $scope.sPhone = '';
+                        $scope.sAuthcode = '';
+                        $scope.$apply();
+                    }, 0);
+                } else {
+                    setTimeout(function () {
+                        $.alert(data.result_message, 'error');
+                        $scope.$apply();
+                    }, 0);
+                }
+            }).error(function (data) {
+                setTimeout(function () {
+                    $scope.authcodeTime = 0;
+                    $.alert("绑定失败", 'error');
+                    $scope.$apply();
+                }, 0);
+            });
+        };
+
+
+        $scope.finishBindPhone = function () {
+            window.location.href = window.location.href + "&id=" + 10000 * Math.random();
+        };
+
+        $scope.reloadView = function () {
+            window.location.href = window.location.href + "&id=" + 10000 * Math.random();
+        };
+
+        $scope.bindPhone = function () {
+            var validPhone = checkPhone($scope.sPhone);
+            var validAuthcode = checkAuthcode($scope.sAuthcode);
+
+            if (validPhone == false) {
+                setTimeout(function () {
+                    $.alert('手机号码有误，请重填', 'error');
+                }, 0);
+
+                return;
+            }
+
+            if (validAuthcode == false) {
+                setTimeout(function () {
+                    $.alert('验证码有误，请重填', 'error');
+                }, 0);
+
+                return;
+            }
+
+            $scope.bindPhoneHttp($scope.sPhone, $scope.sAuthcode);
+        };
+
+        $scope.getAuthcode = function () {
+            if ($scope.authcodeType != 1) {
+                return;
+            }
+
+            var color = $('#authcode').css('background-color');
+
+            if (color != 'rgb(64, 112, 251)') {
+                return;
+            }
+
+            var validPhone = checkPhone($scope.sPhone);
+
+            if (validPhone == false) {
+                setTimeout(function () {
+                    $.alert('手机号码有误，请重填', 'error');
+                }, 10);
+
+                return;
+            }
+
+            $scope.getAuthcodeHttp($scope.sPhone);
+        };
+
+        $scope.phoneChange = function () {
+            var result = checkPhone($scope.sPhone);
+            if (result) {
+                $('#authcode').css('background-color', 'rgb(64,112,251)');
+            } else {
+                $('#authcode').css('background-color', 'lightgray');
+            }
+        };
+
+        function checkPhone(phone) {
+
+            if (!(/^1(3|4|5|7|8)\d{9}$/.test(phone))) {
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        function checkAuthcode(code) {
+            if (code == '' || code == undefined) {
+                return false;
+            }
+
+            var reg = new RegExp("^[0-9]*$");
+            if (!reg.test(code)) {
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        var authcodeTimer = function authcodeTimer() {
+            if ($scope.authcodeTime <= 0) {
+                $scope.authcodeText = '发送验证码';
+                $scope.authcodeTime = 60;
+                $scope.authcodeType = 1;
+                return;
+            }
+
+            $scope.authcodeTime = $scope.authcodeTime - 1;
+            $scope.authcodeText = $scope.authcodeTime + 's';
+
+            setTimeout(function () {
+                $scope.$apply();
+            }, 0);
+
+            setTimeout(function () {
+                authcodeTimer();
+            }, 1000);
+        };
+
+    })
+
+    $(function () {
+        wx.config({
+            debug: false,
+            appId: "wxf7ab7edd0a7654a1",
+            timestamp: "1569590414",
+            nonceStr: "b959f0bcbe08edd93164d33b0c74d85d",
+            signature: "33bb58dee8acf32ab80504ab71033cde4773b0cb",
+            jsApiList: [
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'hideMenuItems',
+            ]
+        });
+
+        wx.ready(function () {
+            wx.hideMenuItems({
+                menuList: [
+                    "menuItem:copyUrl",
+                    "menuItem:share:qq",
+                    "menuItem:share:weiboApp",
+                    "menuItem:share:facebook",
+                    "menuItem:share:QZone",
+                    "menuItem:editTag",
+                    "menuItem:copyUrl",
+                    "menuItem:share:email",
+                ] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
+            });
+
+            wx.onMenuShareTimeline({
+                title: "门票包",
+                desc: "🐳鲸落发了一个门票包",
+                link: "http://w2.liandong.store:1888/ay/rpD?code=9581ff58a25c8b797f98970e54012774",
+                imgUrl: "/files/images/redpackage/share_icon.jpg",
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+
+            wx.onMenuShareAppMessage({
+                title: "门票包",
+                desc: "🐳鲸落发了一个门票包",
+                link: "http://w2.liandong.store:1888/ay/rpD?code=9581ff58a25c8b797f98970e54012774",
+                imgUrl: "/files/images/redpackage/share_icon.jpg",
+                success: function () {
+                    // 用户确认分享后执行的回调函数
+                },
+                cancel: function () {
+                    // 用户取消分享后执行的回调函数
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

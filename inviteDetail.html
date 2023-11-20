@@ -1,0 +1,283 @@
+<html>
+<head>
+    <meta charSet="utf-8">
+    <base href="http://xcwgf2.oss-cn-hangzhou.aliyuncs.com"/>
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <title>邀请函</title>
+    <script type="text/javascript">
+                var _thost = 'http://' + window.location.host;
+        var pathArr = window.location.pathname.split("/");
+        if(pathArr.length==3 && pathArr[1] != ""){
+            if(pathArr[1].search(".html")!=-1){
+
+            }else{
+                _thost = 'http://' + window.location.host + "/" + pathArr[1];
+            }
+        }
+        var _tt = new Date().getTime();
+        document.write('<script type="text/javascript" src="' + _thost + '/js/config.js?v=1' + _tt + '"> <\/script>');
+        document.write('<script type="text/javascript" src="/js/load.js?v=1' + new Date().getTime() + '"> <\/script>');
+    </script>    
+    <script type="text/javascript" src="/files/js/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="/files/css/activity.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/alert.css">
+    <link rel="stylesheet" href="/files/css/vant-index.css">
+    <script type="text/javascript" src="/fiesc/js/aes.js"></script>
+    <script type="text/javascript" src="/files/js/md5.js"></script>
+
+
+    <script type="text/javascript">
+        document.documentElement.style.fontSize = document.documentElement.clientWidth / 360 * 100 + 'px';
+        window.addEventListener('load', function () {
+            FastClick.attach(document.body);
+        }, false);
+
+        var code = DynLoading.getUrlParam("code");
+        let token = window.localStorage.getItem('token');
+        if (!token) {
+            var return_url = window.location.href;
+            window.localStorage.removeItem('return_url');
+            window.localStorage.setItem('return_url', window.location.href);
+            if (DynLoading.isWeiXin()) {
+                if (code) {
+                    token = "{$token}";
+                    if (token != "{$token}") {
+                        window.localStorage.setItem('token', token);
+                    }
+                } else {
+                    DynLoading.gotoWx();
+                }
+            } else {
+                DynLoading.goto('login');
+            }
+        }
+        if (token) {
+            var req_url = BaseUrl + '/home1/index?tk=' + token;
+            if (token == '{$token}' && code) {
+                req_url = BaseUrl + '/home1/index?code=' + code;
+            }
+            var obj = DynLoading.hall(req_url);
+            if (obj.result != 0) {
+                alert(obj.result_message);
+                var return_url = window.location.href;
+                console.log(return_url);
+                DynLoading.goto('/');
+            }
+            console.log(obj);
+            if (code && obj.data.tk != "") {
+                token = obj.data.tk;
+
+                window.localStorage.setItem('token', obj.data.tk);
+            }
+        }
+        let _ws_host = _isTx ? 'ws://' + _wip + ':' +_wport + '/' + obj.data.gt + '/' + obj.data.dkey : 'ws://' + obj.data.wip + ':' +  obj.data.port + '/' + obj.data.gt + '/' + obj.data.dkey;
+        var newNum = "";
+        var per = window.innerWidth / 530;
+        var globalData = {
+            "baseUrl": BaseUrl,
+            "fileUrl": "/",
+            //"userCode": '<?php //echo $invite_code;?>//',
+            "isWechat": "1",
+            "isXianliao": "0",
+            "tk": token,
+            "socket": _ws_host,
+            "shareTitle": '',
+        };
+        globalData.wid = "1";
+        globalData.tt = "1";
+        //var userData = {
+        //    "accountId": "<?php //echo $user['account_id'];?>//",
+        //    "nickname": "<?php //echo $user['nickname'];?>//",
+        //    "avatar": "<?php //echo $user['headimgurl'];?>//",
+        //};
+        function onBridgeReady() {
+            WeixinJSBridge.call('hideOptionMenu');
+        }
+
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+            }
+        } else {
+            onBridgeReady();
+        }
+
+        document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+            // 通过下面这个API隐藏右上角按钮
+            WeixinJSBridge.call('hideOptionMenu');
+        });
+    </script>
+    <style>
+        .copy-tip {
+            background: rgba(0, 0, 0, .6);
+            color: #fff;
+            position: fixed;
+            bottom: .6rem;
+            font-size: .15rem;
+            border-radius: 5px;
+            padding: 10px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            z-index: 89;
+        }
+
+        #room_str {
+            position: fixed;
+            top: -300px;
+        }
+
+        .zhuonuo {
+            position: fixed;
+            right: 0;
+            width: .8rem;
+            z-index: 89;
+            top: .1rem;
+        }
+
+        #dialog {
+            position: fixed;
+            width: 300px;
+            height: 150px;
+            padding: 10px;
+            box-sizing: border-box;
+            background: #fff;
+            font-size: 16px;
+            left: 50%;
+            top: 50%;
+            margin-left: -150px;
+            margin-top: -75px;
+            border-radius: 10px;
+            z-index: 99;
+        }
+
+        #dialog .main {
+            word-wrap: break-word;
+            word-break: normal;
+        }
+
+        #dialog .other {
+            text-align: center;
+            margin-top: 38px
+        }
+
+        #dialog img {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 35px;
+        }
+    </style>
+</head>
+
+<body style="background: #000;">
+<div id="dialog" style="display:none">
+    <img src="/files/images/common/cancel.png" onclick="fuzhiMain.closeDialog()">
+    <p id="main" class="main">
+    </p>
+    <p class="other">
+        请手动复制
+    </p>
+</div>
+
+<span class="copy-tip" id="tips" style="display:none">已复制到剪贴板</span>
+<!--<img src="--><?php //echo $file_url; ?>
+<!--files/images/common/33fz.png" class="needsclick zhuonuo copyUrl" data-clipboard-action="copy" id="copy_btn" onclick="fuzhiMain.link()"/>-->
+<textarea id="room_str" readonly="readonly"></textarea>
+<div style="position: fixed;width:100%;height:100%;top:0;left:0;background: #000" id="loading">
+    <img src="/files/images/common/loading.gif"
+         style="top: 40%;position: absolute;left: 50%;margin-left: -45px;margin-top: -45px;"/>
+</div>
+<div class="main" style="display: none;" id="app-main">
+    <img src="/files/images/common/33fz.png" class="needsclick zhuonuo" @click="copyClubUrl"/>
+
+    <img src="/files/images/index/common_back.png"
+         style="position: fixed;bottom: 0;width: 100vw;height: 22vw;z-index: 1;" @click="goBack">
+
+    <img src="/files/images/redpackage/union_bg.jpg"
+         style="top: 0;left: 0;width: 100%;height: 100%;position: relative;">
+
+    <!-- 提示框 -->
+    <div class="alert" id="valert" v-show="isShowAlert">
+        <div class="alertBack"></div>
+        <div class="mainPart">
+            <div class="backImg">
+                <div class="blackImg"></div>
+            </div>
+            <div class="alertText">{{alertText}}</div>
+            <div v-show="alertType==3">
+                <div class="buttonLeft" @click="closeAlert()">确定</div>
+                <div class="buttonRight" @click="closeAlert()">取消</div>
+            </div>
+            <div v-show="alertType==7">
+                <div class="buttonMiddle" @click="closeAlert()">确定</div>
+            </div>
+            <div v-show="alertType==8">
+            </div>
+        </div>
+    </div>
+
+    <div style="position: absolute;top: 10vh;left: 50%;margin-left: -25vh;height: 80vh;width: 50vh;"
+         v-if="inviteStatus==0">
+        <img src="/files/images/activity/union_card.jpg"
+             style="position: absolute;top: 0;left: 1vh;width: 48vh;height: 100%;">
+        <img src="/files/images/activity/union_card_bottom.png"
+             style="position: absolute;bottom: 0;width: 50vh;height: 35.25vh;">
+        <div class="imgOpen" @click="clickJoin()"
+             style="position: absolute;bottom: 10vh;left: 50%;margin-left: -10vh;width: 20vh;height: 20vh;backface-visibility:hidden;">
+            <img src="/files/images/activity/union_join.png"
+                 style="position: absolute;width: 20vh;height: 20vh;">
+        </div>
+
+        <img :src="inviteAvatar"
+             style="position: absolute;top: 6vh;left: 50%;margin-left: -6vh;width: 12vh;height: 12vh;border-radius: 6vh;">
+        <div style="position: absolute;top: 19vh;width: 100%;height: 5vh;line-height: 5vh;text-align: center;">
+            <p style="position: absolute;width: 100%;font-size: 2.5vh">
+                <span style="color: orange;">{{inviteName}}</span>
+                <span style="color: black">邀请你加入</span>
+            </p>
+        </div>
+
+        <div style="position: absolute;top: 25vh;width: 100%;height: 8vh;line-height: 8vh;font-size: 3vh;color: orange;text-align: center;">
+            公会
+        </div>
+
+        <div style="position: absolute;top: 35vh;left: 4vh;width: 42vh;height: 14vh;line-height: 3.5vh;font-size: 2.5vh;text-align: center;">
+        </div>
+
+    </div>
+
+    <div style="position: absolute;top: 10vh;left: 50%;margin-left: -25vh;height: 80vh;width: 50vh;"
+         v-if="inviteStatus==2">
+        <img src="/files/images/activity/union_cardb.jpg"
+             style="position: absolute;top: 0;left: 0;width: 50vh;height: 100%;">
+    </div>
+
+    <div style="position: absolute;top: 10vh;left: 50%;margin-left: -25vh;height: 80vh;width: 50vh;"
+         v-if="inviteStatus==1">
+        <img src="/files/images/activity/union_card.jpg"
+             style="position: absolute;top: 0;left: 0;width: 50vh;height: 100%;">
+        <img src="/files/images/activity/union_finish.png"
+             style="position: absolute;top: 12vh;left: 50%;margin-left: -6vh;width: 12vh;height: 12vh;">
+        <div style="position: absolute;top: 25vh;width: 100%;height: 5vh;text-align: center;font-size: 3vh;color: orange;font-weight: bold;">
+            加入成功
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript" src="/files/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/fiesc/js/vue.min.js"></script>
+<script type="text/javascript" src="/fiesc/js/vue-resource.min.js"></script>
+<script type="text/javascript" src="/files/js/vant.min.js"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="/files/js/inviteDetail_api.js?v=112"></script>
+<script type="text/javascript" src="/files/js/clipboard.min.js"></script>
+<script type="text/javascript" src="/files/js/fuzhi_xl.js?v=1201809172"></script>
+</html>

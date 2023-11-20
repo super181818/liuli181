@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <base href="http://xcwgf2.oss-cn-hangzhou.aliyuncs.com"/>
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <script type="text/javascript">
+                var _thost = 'http://' + window.location.host;
+        var pathArr = window.location.pathname.split("/");
+        if(pathArr.length==3 && pathArr[1] != ""){
+            if(pathArr[1].search(".html")!=-1){
+
+            }else{
+                _thost = 'http://' + window.location.host + "/" + pathArr[1];
+            }
+        }
+        var _tt = new Date().getTime();
+        document.write('<script type="text/javascript" src="' + _thost + '/js/config.js?v=1' + _tt + '"> <\/script>');
+    </script>
+    <script type="text/javascript" src="/js/load.js?v=11101"></script>
+    <script>
+        window.localStorage.removeItem('token');
+        DynLoading.goto('/');
+    </script>
+</head>
+<body></body>
+</html>

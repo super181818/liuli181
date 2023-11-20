@@ -1,0 +1,1235 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <base href="http://xcwgf2.oss-cn-hangzhou.aliyuncs.com"/>
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <meta http-equiv="Pragma" content="public"/>
+    <meta http-equiv="Cache-Control" content="public"/>
+    <title>6人三公</title>
+    <script type="text/javascript">
+                var _thost = 'http://' + window.location.host;
+        var pathArr = window.location.pathname.split("/");
+        if(pathArr.length==3 && pathArr[1] != ""){
+            if(pathArr[1].search(".html")!=-1){
+
+            }else{
+                _thost = 'http://' + window.location.host + "/" + pathArr[1];
+            }
+        }
+        var _tt = new Date().getTime();
+        document.write('<script type="text/javascript" src="' + _thost + '/js/config.js?v=1' + _tt + '"> <\/script>');
+    </script>    
+    <link rel="stylesheet" type="text/css" href="/files/css/sangong6.css?v=x12">
+    <link rel="stylesheet" type="text/css" href="/files/css/sangong_common.css?v=12">
+    <link rel="stylesheet" type="text/css" href="/files/css/alert.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/ncomm.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/alertbox.css">
+
+    <script type="text/javascript" src="/files/js/fastclick.js"></script>
+
+
+    <script type="text/javascript" src="/js/load.js?v=11101"></script>
+    <script type="text/javascript">
+        document.documentElement.style.fontSize = document.documentElement.clientWidth / 360 * 100 + 'px';
+        window.addEventListener('load', function () {
+            $("#loadings").hide();
+            FastClick.attach(document.body);
+        }, false);
+
+        var code = DynLoading.getUrlParam("code");
+        let token = window.localStorage.getItem('token');
+        if (!token) {
+            var return_url = window.location.href;
+            window.localStorage.removeItem('return_url');
+            window.localStorage.setItem('return_url', window.location.href);
+            if (DynLoading.isWeiXin()) {
+                if (code) {
+                    token = "{$token}";
+                    if (token != "{$token}") {
+                        window.localStorage.setItem('token', token);
+                    }
+                } else {
+                    DynLoading.gotoWx();
+                }
+            } else {
+                DynLoading.goto('login');
+            }
+        }
+
+        if (token) {
+            var room_number = DynLoading.getUrlParam("i");
+            room_number = parseInt(room_number);
+            var req_url = BaseUrl + '/home1/room' + "?i=" + room_number + "&tk=" + token;
+            if (token == '{$token}' && code) {
+                req_url = BaseUrl + '/home1/room' + "?i=" + room_number + "&code=" + code;
+            }
+            var obj = DynLoading.hall(req_url);
+            if (obj.result != 0) {
+                alert(obj.result_message);
+                var return_url = window.location.href;
+                console.log(return_url);
+                DynLoading.goto('/');
+            }
+            console.log(obj);
+            if (code && obj.data.tk != "") {
+                token = obj.data.tk;
+
+                window.localStorage.setItem('token', obj.data.tk);
+            }
+        }
+
+        let _socket = _isTx ? 'ws://' + _wip + ':' +_wport + '/' + obj.data.gt + '/' + obj.data.dkey : obj.data.socket;
+        var newNum = "";
+        var per = window.innerWidth / 530;
+        var globalData = {
+            "card": obj.data.card,
+            "roomNumber": room_number,
+            "socket": _socket,
+            "hallPath": DynLoading.getPath('/'),
+            "roomUrl": window.location.href,
+            "baseUrl": BaseUrl + "/",
+            "fileUrl": "/",
+            "cfileUrl": "/",
+            "isWechat": 1,
+            "isXianliao": 0,
+            "xlTitle": "(房间号:" + room_number + ")",
+            "roomStatus": obj.data.room_status,
+            "scoreboard": obj.data.balance_scoreboard,
+            "session": obj.data.session,
+            "shareTitle": obj.data.platfrom_name + "：(房间:" + room_number + ")",
+            "gameType": obj.data.game_type,
+            "maxCount": obj.data.max_count,
+            "tk": token,
+            "hallName": obj.data.platfrom_name,
+            "hallEname": obj.data.platform_ename,
+            "gameName": "牌九"
+        };
+
+        globalData.wid = obj.data.wid;
+        globalData.tt = obj.data.tt;
+        var userData = {
+            "account_id": obj.data.user.account_id,
+            "accountId": obj.data.user.account_id,
+            "userCode": obj.data.user.user_code,
+            "nickname": obj.data.user.nickname,
+            "avatar": obj.data.user.headimgurl,
+            "card": obj.data.card,
+            "individuality": obj.data.user.individuality,
+        };
+        var configData = {
+            "appId": obj.data.config_ary.appId,
+            "timestamp": obj.data.config_ary.timestamp,
+            "nonceStr": obj.data.config_ary.nonceStr,
+            "signature": obj.data.config_ary.signature,
+        };
+
+        // 修改浏览器title
+        var new_userName = "";
+        var old_userNname = obj.data.user.nickname;
+        if (old_userNname.length > 8) {
+            new_userName = old_userNname.substring(0, 7);
+            new_userName += "..."
+        } else {
+            new_userName = old_userNname;
+        }
+        document.getElementsByTagName("title")[0].innerText = new_userName + "|" + globalData.hallName;
+
+    </script>
+</head>
+<body>
+<div id="dialog" style="display:none">
+    <img src="/files/images/common/cancel.png" onclick="fuzhiMain.closeDialog()">
+    <p id="main" class="main">
+    </p>
+    <p class="other">
+        请手动复制
+    </p>
+</div>
+
+
+<div style="position: fixed;width:100%;height:100%;top:0;left:0;background: #000;z-index:115;" id="loading">
+    <div class="load4">
+        <div class="loader">Loading...</div>
+    </div>
+</div>
+
+<div class="main" id="app-main"
+     style="position: relative; width: 100%;margin: 0 auto; background: #fff; display: none;">
+    <span class="copy-tip" v-if="isShowTipsText" style="z-index: 200;">{{tipsText}}</span>
+    <span class="copy-tip" id="tips" style="display:none">已复制到剪贴板</span>
+    <img src="/files/images/common/33fz.png" class="needsclick copyUrl"
+         :class="'zhuonuo'+globalData.maxCount" data-clipboard-action="copy" id="copy_btn"
+         onclick="copyLink(globalData.maxCount)"/>
+    <textarea id="room_str" readonly="readonly"></textarea>
+    <!-- 观战功能 -->
+    <img src="/files/images/guest/is_watching.png"
+         style="position: fixed;z-index: 90;width: 40%;left: 30%;top: 55.5%;" v-show="isWatching==1">
+    <div class="watch" id="vwatch" v-show="showGuest==1">
+        <div class="watchBack" v-on:click="hideGuests"></div>
+        <div class="mainPart">
+            <img v-on:click="hideGuests" src="/files/images/guest/cancel.png"
+                 class="watchCancel"/>
+            <img src="/files/images/guest/title.png" class="watchTitle"/>
+            <div class="playerList">
+                <div class="playerItem" v-for="guest in guests">
+                    <img v-bind:src="guest.avatar" class="playerAvatar">
+                    <div class="playerName">
+                        {{guest.nickname.length > 6 ? guest.nickname.slice(0, 5) + '...' : guest.nickname}}
+                    </div>
+                    <img src="/files/images/guest/icon.png" class="playerIcon">
+                </div>
+            </div>
+            <div class="buttonMiddle">
+                <img v-show="showWatchButton" v-on:click="guestRoom"
+                     src="/files/images/guest/watch_true.png"/>
+                <img v-show="showSitdownButton" v-on:click="sitDown"
+                     src="/files/images/guest/sitdown_true.png"/>
+            </div>
+        </div>
+    </div>
+    <div class="window-masks return-index" id="returnIndex" v-show="isShowHomeAlert">
+        <div class="border-opacity">
+            <div class="container f-cb"><i class="mask-icon mask-top"></i><i class="mask-icon mask-right"></i><i
+                    class="mask-icon mask-bottom"></i><i class="mask-icon mask-left"></i>
+                <div class="main">确认返回主页？</div>
+                <div class="button">
+                    <div class="sure" id="returnIndexBtn" v-on:click="hall">返回首页</div>
+                    <div class="cancel" id="cancelBtn" v-on:click="closeHomeAlert">取消</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="window-masks return-index" id="returnIndex" v-show="isShowAlert && !add_user">
+        <div class="border-opacity">
+            <div class="container f-cb"><i class="mask-icon mask-top"></i><i class="mask-icon mask-right"></i><i
+                    class="mask-icon mask-bottom"></i><i class="mask-icon mask-left"></i>
+                <div class="main">{{alertText}}</div>
+                <div class="button">
+                    <div class="sure" id="returnIndexBtn" v-on:click="hall" style="margin: 0 auto;float: none;">返回首页
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 特殊提示  -->
+    <div class="alert" v-show="isShowNoteImg" v-on:click="hideNoteImg()">
+        <div class="alertBack"></div>
+        <img src="/files/images/guest/back.png"
+             style="position: absolute; top: 1rem; width: 3rem; height: 3rem; left: .3rem;">
+        <img src="/files/images/guest/xieyi.png"
+             style="position: absolute; top: .8rem; width: 2rem; height: .7rem; left: .7rem;">
+        <img src="/files/images/guest/cancel2.png"
+             style="position: absolute; top: .8rem; width: .8rem; height: .8rem; right: .15rem;">
+        <div style="position: absolute; top: .8rem; left: .03rem; color:#fff; font-size: 14px!important; padding: .65rem; opacity: .7;">
+            <p>
+                &emsp;&emsp;本游戏仅供娱乐，禁止赌博。如发现有赌博
+                行为，将封停帐号并向公安机关举报。
+            </p><br>
+            <p>
+                &emsp;&emsp;游戏中使用的房卡为游戏道具，不具有任何
+                财产性功能。本公司对于用户的房卡不提供任何
+                形式官方回购，直接成交兑换现金或实物等服务
+                相关功能，游戏仅供休闲娱乐使用，游戏中出现
+                问题请联系客服。
+            </p>
+        </div>
+    </div>
+    <div v-show="isShowNoty"
+         style="position: absolute;background-color: rgba(0,0,0,0.8);width: 100%;height: 7vh;line-height: 7vh;color: white;font-size: 2.5vh;overflow: hidden;z-index: 9998;">
+        <img style="position: absolute;top: 1.5vh;left: 3vw;width: 4vh;height: 4vh;"
+             src="/files/images/common/laba.png"/>
+    </div>
+    <div v-show="isShowNoty" id="marquee"
+         style="position: absolute;top: 0;left: 12vw;background-color: rgba(0,0,0,0);width: 88vw;height: 7vh;line-height: 7vh;color: white;font-size: 2.5vh;overflow: hidden;z-index: 9999;">
+        {{notyMsg}}
+    </div>
+
+    <div class="roomCard" v-on:click="showIndividuality">
+        <img src="/files/images/common/myText.png"/>
+        <div class="num">
+            <div style="position: absolute;top:0;left: 0;width: 100%;height: 100%;background: #fff;opacity: .2;border-radius:10px;"></div>
+            <div style="position: relative;padding: 0 10px 0 35px;">{{userData.individuality}}<span
+                    v-if='userData.individuality==""'>点击设置</span></div>
+        </div>
+    </div>
+
+
+    <!--九人按钮-->
+    <div class="topList" v-if="globalData.maxCount<=9">
+        <img class="topTab" src="/files/images/sangong/top-bg.png"/>
+        <img class="topWatch" src="/files/images/sangong/game-watch.png"
+             v-on:click="showGuests">
+        <img class="topRule" src="/files/images/sangong/game-rules.png"
+             v-on:click="showGameRule">
+        <img class="topIntro" src="/files/images/sangong/return-index.png"
+             v-on:click="showHomeAlert()"/>
+    </div>
+    <!--其他人数按钮-->
+    <div v-if="globalData.maxCount>9">
+        <img class="bottomTab" src="/fiesc/images/nbull/bottom.png" alt="">
+        <img class="bottomRule" src="/files/images/sangong/game-rules.png"
+             v-on:click="showGameRule">
+        <img class="bottomHome" src="/files/images/sangong/game-music01.png"
+             v-if="editAudioInfo.backMusic==1" v-on:click="confirmAudioSetting">
+        <img class="bottomHome" src="/files/images/sangong/game-music02.png"
+             v-if="editAudioInfo.backMusic==0" v-on:click="confirmAudioSetting">
+        <img class="bottomMessage" src="/files/images/sangong/game-chat01.png"
+             v-on:click="showMessage">
+        <img class="bottomSound" src="/files/images/sangong/return-index.png"
+             v-on:click="showHomeAlert()"/>
+        <img class="bottomNote" src="/files/images/sangong/game-watch.png"
+             v-on:click="showGuests"/>
+    </div>
+
+    <div class="bottomRightList" v-if="globalData.maxCount<=9">
+        <img class="message" src="/files/images/sangong/game-chat01.png"
+             v-on:click="showMessage">
+        <img class="sound" src="/files/images/sangong/game-music01.png"
+             v-if="editAudioInfo.backMusic==1" v-on:click="confirmAudioSetting">
+        <img class="sound" src="/files/images/sangong/game-music02.png"
+             v-if="editAudioInfo.backMusic==0" v-on:click="confirmAudioSetting">
+    </div>
+
+    <img v-if="globalData.maxCount<13" :src="globalData.fileUrl+'files/images/common/btn_qrcode.png'"
+         onclick="makeQrCode()"
+         style="position: absolute;    top: 0.75vh;left: 3.5vh;width: .34rem;height: .34rem;text-align: center;line-height: .3744rem;z-index: 100;"/>
+    <img v-if="globalData.maxCount>=13" :src="globalData.fileUrl+'files/images/common/btn_qrcode.png'"
+         onclick="makeQrCode()"
+         style="    position: absolute;bottom: 0.75vh;width: 4.5vh;height: 4.5vh;z-index: 100;right: 34.5vh;"/>
+
+
+    <div class="disconnect" v-show="!connectOrNot"
+         style="position: fixed;top:45%;left: 0;width: 100%;text-align: center;z-index: 101">
+        <div style="width: 250px;height:27px;position: absolute;top:-2;left: 50%;margin-left: -125px;background: #000;opacity: .5;border-radius:15px;"></div>
+        <a style="font-size: 16px;color: #fff;padding: 5px 14px;position:relative;">已断开连接，正在重新连接...</a></div>
+
+    <!--自动准备-->
+    <div :class="'auto-ready'+globalData.maxCount" v-on:click="autoReady()" v-if="isWatching!=1">
+        <img v-show="appData.isAutoReady==1" src="/files/images/common/ready_true2.png">
+        <img v-show="appData.isAutoReady==0" src="/files/images/common/ready_false2.png">
+    </div>
+
+    <!-- 底分 -->
+    <div class="baseScore">
+        底分：{{base_score}}分
+    </div>
+    <!-- 第几局 -->
+    <div class="roundNum" style="position: fixed;color: #fff;opacity:.7;">
+        {{game.round}}&nbsp/&nbsp{{game.total_num}}&nbsp局
+    </div>
+    <!-- 进游戏提示框 -->
+    <div class="window-masks user-join" id="joinUser" v-show="isShowGameAlert">
+        <div class="border-opacity">
+            <div class="container">
+                <i class="mask-icon mask-top"></i>
+                <i class="mask-icon mask-right"></i>
+                <i class="mask-icon mask-bottom"></i>
+                <i class="mask-icon mask-left"></i>
+                <div class="user-id">ID：<?php echo $room_number; ?></div>
+                <div class="main">
+                    <div class="rules" v-show="alertType==4">
+
+                        <p>模式：<span v-if="ruleInfo.banker_mode==1">自由抢庄</span>
+                            <span v-if="ruleInfo.banker_mode==2">明牌抢庄</span>
+                            <span v-if="ruleInfo.banker_mode==4">经典三公</span>
+                            <span v-if="ruleInfo.banker_mode==5">固定庄家</span>
+
+                        </p>
+                        <p>底分：
+                            <span>{{ruleInfo.baseScore}}分</span>
+                            <!--                                <span v-if="ruleInfo.baseScore==1">1分</span>-->
+                            <!--                                <span v-if="ruleInfo.baseScore==2">2分</span>-->
+                            <!--                                <span v-if="ruleInfo.baseScore==3">3分</span>-->
+                            <!--                                <span v-if="ruleInfo.baseScore==4">4分</span>-->
+                            <!--                                <span v-if="ruleInfo.baseScore==5">5分</span>-->
+                        </p>
+                        <p>规则：
+                            <span v-if="ruleInfo.timesType==1">七点1倍</span>
+                            <span v-if="ruleInfo.timesType==2">七点2倍</span>
+                        </p>
+                        <p>规则：
+                            <span v-if="ruleInfo.is_cardjoker==1">天公x10,雷公x7,地公x5 </span>
+                            <span v-if="ruleInfo.is_cardbao9==1">暴玖x9</span>
+                        </p>
+                        <p>局数：
+                            <span>{{game.total_num}}局</span>
+                            <!--                               <span v-if="ruleInfo.ticket==1">12局X2房卡</span>-->
+                            <!--                                <span v-if="ruleInfo.ticket==2">24局X4房卡</span>-->
+                        </p>
+                        <p>上庄：
+                            <span v-if="ruleInfo.banker_score==1">无</span>
+                            <span v-if="ruleInfo.banker_score==2">100</span>
+                            <span v-if="ruleInfo.banker_score==3">300</span>
+                            <span v-if="ruleInfo.banker_score==4">500</span>
+                        </p>
+
+                    </div>
+
+                    <div class="user-list f-cb">
+                        <div class="join-user-info" v-for="item in alertText">
+                            <img v-bind:src="item.avatar">
+                            <span>{{item.name}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="button">
+                    <!--                    <div class="return" v-on:click="hall">返回大厅</div>-->
+                    <div class="return" v-on:click="guestRoom">观战</div>
+                    <div class="join-game" id="joinGame" v-on:click="sitDown">加入游戏</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alertTip" v-show="isShowAlertTip">
+        <div class="alertTipBG"></div>
+        <img src="/files/images/common/alertTipOk.png" v-show="alertTipType==1">
+        <img src="/files/images/common/alertTipWarn.png" v-show="alertTipType==2">
+        <div class="alertTipText">{{alertTipText}}</div>
+    </div>
+
+    <div v-show="isShowApply" style="color: #000;">
+        <div class="applyMask" style="width: 100%;height: 100%;position: fixed;background: #000;z-index: 111;"></div>
+        <div style="position: fixed;background: #fff;border-radius: 6px; top: 50%;left: 50%;z-index: 111;transform: translate(-50%,-50%); width: 76vw;font-size: 16px;height: 20vh">
+            <img src="/files/images/common/close.png" style="position: absolute;right: -3vw;top: -2vh;width: 10vw;"
+                 @click="hall">
+            <div style="margin-top: 5vh;text-align: center;">你不是该俱乐部成员</div>
+            <!--            <div style="margin-top: 5vh;text-align: center;">{{applyInfo.text}}</div>-->
+            <div style="text-align: center">是否申请加入俱乐部？</div>
+            <div style="background: url(/files/images/common/button_yellow.png);background-size: 100% 100%;width: 24vw;height: 4vh;position: relative;top: 2.5vh;left: 50%;transform: translateX(-50%);color: #fff;text-align: center;line-height: 4vh;font-size: 16px;"
+                 @click="applyClub()">
+                {{applyInfo.status}}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 游戏桌子 -->
+    <div class="table" id="table" style="position: relative; width: 100%; height: 100%; z-index: 80; overflow: hidden;"
+         v-on:click="confirmAudioSetting('1')">
+        <img class="tableBack" src="/files/images/sangong/table.jpg"
+             style="position: absolute;top:0;left: 0;width: 100vw;height: 100vh"/>
+        <img :src="'/platform/'+globalData.hallEname+'/hall-name.png'"
+             style="position: absolute;top: 40%;left: 50%;transform: translate(-50%,-50%);width: 2rem;"/>
+
+        <!-- 发牌 ||p.account_status==6||p.account_status==7 -->
+        <div class="cardDeal">
+            <!-- p.account_id>0&&p.account_status>2&&p.account_status<8&&(p.num!=1||(p.account_status!=7&&p.account_status!=8&&!player[0].is_showCard))&&(game.cardDeal>0) -->
+            <div v-for="p in player" v-if="ruleInfo.banker_mode!=5"
+                 v-show="p.account_id>0&&p.account_status>2&&p.account_status<8&&(p.num!=1||(p.account_status!=7&&p.account_status!=8&&!player[0].is_showCard))&&(game.cardDeal>0)">
+                <div class="card" v-bind:class="'card' + p.num + '1'" style="z-index: 14;"
+                     v-show="game.cardDeal>0"></div>
+                <div class="card" v-bind:class="'card' + p.num + '2'" style="z-index: 13;"
+                     v-show="game.cardDeal>1"></div>
+                <div class="card" v-bind:class="'card' + p.num + '3'" style="z-index: 12;"
+                     v-show="game.cardDeal>2"></div>
+            </div>
+
+            <div v-for="p in player" v-if="ruleInfo.banker_mode==5"
+                 v-show="p.account_id>0&&p.account_status>2&&p.account_status<8&&(p.num!=1||(p.account_status!=7&&p.account_status!=8&&!player[0].is_showCard))&&(game.cardDeal>0)">
+                <div class="card" v-bind:class="'card' + p.num + '1'" style="z-index: 14;"
+                     v-show="game.cardDeal>0"></div>
+                <div class="card" v-bind:class="'card' + p.num + '2'" style="z-index: 13;"
+                     v-show="game.cardDeal>1"></div>
+                <div class="card" v-bind:class="'card' + p.num + '3'" style="z-index: 12;"
+                     v-show="game.cardDeal>2"></div>
+            </div>
+
+            <!-- 玩家1发完牌之后  -->
+            <div class="myCards"
+                 v-show="player[0].is_showCard&&player[0].account_status>2&&player[0].account_status<=7&&game.show_card">
+                <div class="cards3D">
+                    <div class="cards card0" v-show="player[0].account_status >2 && player[0].account_status <= 7">
+                        <div class="face front"></div>
+                        <div class="face back" v-bind:class="'card' + player[0].card[0]"></div>
+                    </div>
+
+                    <div class="cards card1" v-show="player[0].account_status >2 && player[0].account_status <= 7">
+                        <div class="face front"></div>
+                        <div class="face back" v-bind:class="'card' + player[0].card[1]"></div>
+                    </div>
+
+                    <div class="cards card2" v-show="player[0].account_status >2 && player[0].account_status <= 7">
+                        <div class="face front" v-on:click="seeMyCard3"></div>
+                        <div class="face back" v-bind:class="'card' + player[0].card[2]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 玩家1摊牌看牌  -->
+            <div class="myCards"
+                 v-show="player[0].is_showCard&&player[0].account_status==8&&game.show_card&&player[0].card_open.length>0">
+                <div class="cards card00">
+                    <div class="face back" v-bind:class="'card' + player[0].card_open[0]"
+                         style="-webkit-transform: rotateY(0deg);"></div>
+                </div>
+
+                <div class="cards card01">
+                    <div class="face back" v-bind:class="'card' + player[0].card_open[1]"
+                         style="-webkit-transform: rotateY(0deg);"></div>
+                </div>
+
+                <div class="cards card02">
+                    <div class="face back" v-bind:class="'card' + player[0].card_open[2]"
+                         style="-webkit-transform: rotateY(0deg);"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="cardOver" style="position: absolute; width: 100%; height: 100%; overflow:hidden;">
+            <div v-for="p in player" v-if="p.num!=1" v-show="p.account_status>=8&&p.card_open.length>0&&game.show_card">
+                <div class="cards" v-bind:class="'cardtf' + p.num + ' card' + p.num + '11'" style="z-index: 14;">
+                    <div class="face front"></div>
+                    <div class="face back" v-bind:class="'card' + p.card_open[2]"></div>
+                </div>
+                <div class="cards" v-bind:class="'cardtf' + p.num + ' card' + p.num + '21'" style="z-index: 13">
+                    <div class="face front"></div>
+                    <div class="face back" v-bind:class="'card' + p.card_open[1]"></div>
+                </div>
+                <div class="cards" v-bind:class="'cardtf' + p.num + ' card' + p.num + '31'" style="z-index: 12">
+                    <div class="face front"></div>
+                    <div class="face back" v-bind:class="'card' + p.card_open[0]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 抢庄文字图片 -->
+        <div v-for="p in player" v-if="p.num!=1&&ruleInfo.banker_mode!=2"
+             v-bind:class="{true:'memberGoText' + p.num,false:'memberFreeRobText' + p.num}[ruleInfo.banker_mode==5]"
+             v-show="p.account_status==4||p.account_status==5">
+            <img v-bind:src="p.robImg" style="position: absolute; width: 100%;">
+        </div>
+
+        <!-- 明牌抢庄文字图片 -->
+        <div v-for="p in player" v-if="p.num!=1&&ruleInfo.banker_mode==2" v-bind:class="'memberRobText' + p.num"
+             v-show="p.account_status==4||p.account_status==5">
+            <img v-bind:src="p.robImg" style="position: absolute;  width: 100%;">
+        </div>
+        <div v-for="p in player" v-if="p.num!=1&&ruleInfo.banker_mode==2" v-bind:class="'memberRobTimes' + p.num"
+             v-show="p.account_status==5&&p.bankerMultiples>=1">
+            <img v-bind:src="p.bankerTimesImg" style="position: absolute; width: 100%;">
+        </div>
+
+        <!-- 倍数文字图片 -->
+        <div v-for="p in player" v-bind:class="'memberTimesText' + p.num"
+             v-show="p.account_status>=6&&game.show_card&&!p.is_banker&&p.multiples>0">
+            <img v-bind:src="p.timesImg" style="position: absolute; width: 100%;">
+        </div>
+
+        <!-- 庄家倍数文字图片 -->
+        <div v-for="p in player" v-if="ruleInfo.banker_mode==2" v-bind:class="'memberTimesText' + p.num"
+             v-show="p.account_status>=5&&game.show_card&&p.is_banker&&p.bankerMultiples>0">
+            <img v-bind:src="p.bankerTimesImg" style="position: absolute; width: 100%;">
+        </div>
+
+        <!-- 牛几图片 -->
+        <div v-for="p in player" v-bind:class="'memberBull' + p.num"
+             v-show="p.account_status==8&&game.show_card&&p.bullImg.length>=1">
+            <img v-bind:src="p.bullImg" style="position: absolute; top: 0px; left: 0px; width: 100%; height:100%">
+        </div>
+
+        <!-- 每局得分 -->
+        <div v-for="p in player" v-bind:class="'memberScoreText' + p.num" v-show="game.show_score"
+             style="display: none;">
+            <p v-show="p.single_score<0&&p.account_status>=8"
+               style="position: absolute; line-height: 4vh; width:100%;height: 4vh; font-size: 3vh;font-family:'Helvetica 微软雅黑'; -webkit-text-stroke: 1.3px;text-shadow: 1px 2px 2px #022055; color: white;">
+                {{p.single_score}}</p>
+            <p v-show="p.single_score>0&&p.account_status>=8"
+               style="position: absolute; line-height: 4vh; width:100%;height: 4vh; font-size: 3vh;font-family:'Helvetica 微软雅黑'; -webkit-text-stroke: 1.3px;text-shadow: 1px 2px 2px #782a00; color: rgb(234,171,55);">
+                +{{p.single_score}}</p>
+            <p v-show="p.single_score==0&&p.account_status>=8"
+               style="position: absolute; line-height: 4vh; width:100%;height: 4vh; font-size: 3vh;font-family:'Helvetica 微软雅黑'; -webkit-text-stroke: 1.3px;text-shadow: 1px 2px 2px #782a00; color: rgb(234,171,55);">
+                0</p>
+        </div>
+        <div v-for="p in player" key="p.num" class="member" v-bind:class="'member' + p.num" v-show="p.account_id<=0">
+            <div class="quitBack" style="" v-on:click="sitDown(p.serial_num)">
+                <img :src="'/files/images/seat2/seat' + p.serial_num + '.png'">
+            </div>
+        </div>
+        <!-- 玩家  -->
+        <div v-for="p in player" key="p.num" class="member" v-bind:class="'member' + p.num + ' pos'+ p.account_id"
+             v-show="p.account_id>0"  >
+            <img :src="'/files/images/seat2/seatName' + p.serial_num + '.png'"
+                 v-if="globalData.maxCount<17" class="seatName" style="">
+            <!-- 玩家头像 -->
+            <img v-bind:src="p.headimgurl" class="avatar">
+            <img src="/files/images/nbull/player_selected.png" class="banker"
+                 v-show="p.is_banker">
+
+            <div class="bottom" style="background-color: rgba(0, 0, 0, 0.6); border-radius: 2px;overflow: hidden;">
+                <div class="bname" style="text-align: center;overflow: hidden;">{{p.nickname}}</div>
+                <div class="bscore" style="text-align: center;overflow: hidden;">{{p.account_score}}</div>
+            </div>
+
+            <!--            <img v-bind:id="'banker' + p.account_id" src="-->
+            <?php //echo $file_url;?>
+            <!--files/images/nbull/banker_bg.png" class="background" style="position: absolute; top: -0.4vh;left: -0.4vh;width: 7.6vh; height: 7.6vh; display: none;" />-->
+            <img v-bind:id="'banker' + p.account_id" class="bankerBg"
+                 src="/files/images/nbull/banker_bg.png" class="background"/>
+
+            <img src="/files/images/sangong/banker_icon.png" class="background"
+                 style="position: absolute; top: -6%;left: -6%;width: 2.6vh; height: 2.6vh;"
+                 v-show="p.is_banker&&ruleInfo.banker_mode!=4">
+
+            <img v-bind:id="'bankerAnimate2' + p.num"
+                 src="/files/images/nbull/banker_animate.png"
+                 style="position: absolute; top: -0.4vh; left: -0.8vh; width: 7.86vh; height: 7.86vh; display: none;">
+            <img v-bind:id="'bankerAnimate1' + p.num"
+                 src="/files/images/nbull/banker_animate.png"
+                 style="position: absolute; top: -0.4vh; left: -0.8vh; width: 7.86vh; height: 7.86vh; display: none;">
+
+            <!-- 玩家离开或不在线 -->
+            <div class="quitBack" v-show="p.num>1&&p.online_status==0"></div>
+
+            <!-- 准备状态 game.round!=game.total_num-->
+            <div class="isReady" v-show="game.round!=game.total_num">
+                <img src="/files/images/common/ready_text.png" class="ready"
+                     v-show="p.account_status==2&&p.num!=1"/>
+            </div>
+        </div>
+
+        <!-- 玩家金币 -->
+        <div id="playerCoins" style="display: none;">
+            <div v-for='p in player'>
+                <div v-for='coin in p.coins' class="memberCoin" v-bind:class="coin">
+                    <img src="/files/images/common/coin.png"
+                         style="position: absolute; width: 100%; height: 100%">
+                </div>
+            </div>
+        </div>
+
+        <!-- 显示玩家消息文本 -->
+        <div v-for="p in player">
+            <div class="messageSay" v-bind:class="'messageSay' + p.num" v-show="p.messageOn">
+                <div>{{p.messageText}}</div>
+                <div class="triangle"></div>
+            </div>
+        </div>
+
+        <!-- 游戏状态:选择抢庄 player[0].account_status==3 -->
+        <div id="divRobBankerText" v-show="showClockRobText&&ruleInfo.banker_mode!=4"
+             v-bind:style="'position: absolute;top: 33%; left: 0px; width:' + width + 'px; height: 30px;'">
+            <p style="color: white; font-size: 2vh;width: 100%;height: 30px; line-height: 30px; text-align: center;font-family:'Helvetica 微软雅黑';">
+                {{ruleInfo.bankerText}}</p>
+        </div>
+        <!-- 游戏状态:闲家下注  -->
+        <div id="divBetText" v-show="showClockBetText"
+             v-bind:style="'position: absolute;top: 33%; left: 0px; width:' + width + 'px; height: 30px;'">
+            <p style="color: white; font-size: 2vh; width: 100%;height: 30px; line-height: 30px; text-align: center;font-family:'Helvetica 微软雅黑';">
+                闲家下注</p>
+        </div>
+        <!-- 游戏状态:等待摊牌 -->
+        <div id="divBetText" v-show="showClockShowCard"
+             v-bind:style="'position: absolute;top: 33.5%; left: 0px; width:' + width + 'px; height: 30px;'">
+            <p style="color: white; font-size: 2vh; width: 100%;height: 30px; line-height: 30px; text-align: center;font-family:'Helvetica 微软雅黑';">
+                等待摊牌</p>
+        </div>
+
+        <!-- 倒计时时钟 position: absolute; top: 38%; left: 44%; width: 40px; height: 42px; -->
+        <div id="" class="clock" v-show="game.time>-1"
+             v-bind:style="'position: absolute; top: 38%; left:' + (width - 40) / 2 + 'px; width: 40px; height: 42px;'">
+            <img src="/files/images/common/clock5.png"
+                 style="position: absolute; width: 100%; height: 100%;"/>
+            <p style="position: absolute; top: 3px; left: 0px; width: 40px; height: 42px; color: white; text-align: center; line-height: 42px;font-size: 14px!important;">
+                {{game.time}}
+            </p>
+        </div>
+
+        <!-- 按钮操作区域 -->
+        <div id="operationButton" v-bind:style="viewStyle.button">
+
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1"
+                 v-show="game.round!=game.total_num" v-bind:style="viewStyle.readyText">
+                <img src="/files/images/common/ready_text.png" style="width: 100%;"
+                     v-show="player[0].account_status==2"/>
+            </div>
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1"
+                 v-show="game.round!=game.total_num" v-bind:style="viewStyle.readyButton" class="readybtn">
+                <img src="/files/images/common/ready_button_yh_sg.png" style="width: 100%;"
+                     v-show="(player[0].account_status==1||player[0].account_status==0)&&player[0].num==1&&player[0].account_id>0&&canBreak!=1"
+                     v-on:click="imReady"/>
+            </div>
+
+            <!-- 抢庄 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1"
+                 v-show="showRob&&ruleInfo.banker_mode==1" v-on:click="robBanker(1)" v-bind:style="viewStyle.rob">
+                <img src="/files/images/sangong/button_orange.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.rob1" class="btncolor">抢庄</div>
+            </div>
+
+            <!-- 不抢 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1"
+                 v-show="showRob&&ruleInfo.banker_mode==1" v-on:click="notRobBanker" v-bind:style="viewStyle.notRob">
+                <img src="/files/images/sangong/button_green.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.notRob1" class="btncolor">不抢</div>
+            </div>
+
+            <!-- 上庄 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1"
+                 v-show="showRob&&ruleInfo.banker_mode==5&&game.round==1" v-on:click="robBanker(1)"
+                 v-bind:style="viewStyle.rob">
+                <img src="/files/images/sangong/button_orange.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.rob1" class="btncolor">上庄</div>
+            </div>
+
+            <!-- 不上庄 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1"
+                 v-show="showRob&&ruleInfo.banker_mode==5&&game.round==1" v-on:click="notRobBanker"
+                 v-bind:style="viewStyle.notRob">
+                <img src="/files/images/sangong/button_green.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.notRob1" class="btncolor">不上庄</div>
+            </div>
+
+            <!-- 下庄 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1"
+                 v-show="(player[0].account_status==1||player[0].account_status==0)&&player[0].num==1&&ruleInfo.banker_mode==5&&canBreak==1&&game.round!=game.total_num&&player[0].is_banker"
+                 v-on:click="clickGameOver" v-bind:style="viewStyle.rob">
+                <img src="/files/images/sangong/button_green.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.notRob1" class="btncolor">下庄</div>
+            </div>
+
+            <!-- 准备 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1"
+                 v-show="(player[0].account_status==1||player[0].account_status==0)&&player[0].num==1&&ruleInfo.banker_mode==5&&canBreak==1&&game.round!=game.total_num&&player[0].is_banker"
+                 v-on:click="imReady" v-bind:style="viewStyle.notRob">
+                <img src="/files/images/sangong/button_orange.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.rob1">准备</div>
+            </div>
+
+            <!-- 1倍 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1" class="divCoin"
+                 v-show="showRob&&ruleInfo.banker_mode==2" v-on:click="robBanker(1)" v-bind:style="viewStyle.times1">
+                <img src="/files/images/sangong/button_times.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.timesText">1倍</div>
+            </div>
+
+            <!-- 2倍 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1" class="divCoin"
+                 v-show="showRob&&ruleInfo.banker_mode==2" v-on:click="robBanker(2)" v-bind:style="viewStyle.times2">
+                <img src="/files/images/sangong/button_times.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.timesText">2倍</div>
+            </div>
+
+            <!-- 4倍 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1" class="divCoin"
+                 v-show="showRob&&ruleInfo.banker_mode==2" v-on:click="robBanker(4)" v-bind:style="viewStyle.times3">
+                <img src="/files/images/sangong/button_times.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.timesText">4倍</div>
+            </div>
+
+            <!-- 不抢 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1" class="divCoin"
+                 v-show="showRob&&ruleInfo.banker_mode==2" v-on:click="notRobBanker" v-bind:style="viewStyle.times4">
+                <img src="/files/images/sangong/button_times_green.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.timesText">不抢</div>
+            </div>
+
+            <!-- 摊牌 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1" id="showShowCardButton"
+                 v-show="showShowCardButton" v-on:click="showCard" v-bind:style="viewStyle.showCard">
+                <img src="/files/images/sangong/button_blue.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.showCard1" class="btncolor">摊牌</div>
+            </div>
+
+            <!-- 1倍 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1" class="divCoin"
+                 v-show="showTimesCoin&&!player[0].multiples>0 && !player[0].is_banker&&player[0].account_status>=6"
+                 v-on:click="selectTimesCoin(coinList[0])" v-bind:style="viewStyle.times1">
+                <img src="/files/images/sangong/button_times.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.timesText">{{coinList[0]}}倍</div>
+            </div>
+
+            <!-- 2倍 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1" class="divCoin"
+                 v-show="showTimesCoin&&!player[0].multiples>0&& !player[0].is_banker&&player[0].account_status>=6"
+                 v-on:click="selectTimesCoin(coinList[1])" v-bind:style="viewStyle.times2">
+                <img src="/files/images/sangong/button_times.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.timesText">{{coinList[1]}}倍</div>
+            </div>
+
+            <!-- 4倍 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1" class="divCoin"
+                 v-show="showTimesCoin&&!player[0].multiples>0&& !player[0].is_banker&&player[0].account_status>=6"
+                 v-on:click="selectTimesCoin(coinList[2])" v-bind:style="viewStyle.times3">
+                <img src="/files/images/sangong/button_times.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.timesText">{{coinList[2]}}倍</div>
+            </div>
+
+            <!-- 5/8倍 -->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1" class="divCoin"
+                 v-show="showTimesCoin&&!player[0].multiples>0&& !player[0].is_banker&&player[0].account_status>=6"
+                 v-on:click="selectTimesCoin(coinList[3])" v-bind:style="viewStyle.times4">
+                <img src="/files/images/sangong/button_times.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+                <div v-bind:style="viewStyle.timesText">{{coinList[3]}}倍</div>
+            </div>
+
+            <!-- 抢庄文字 -->
+            <div v-if="showRobText&&ruleInfo.banker_mode!=5&&ruleInfo.banker_mode!=2" v-bind:style="viewStyle.robText">
+                <img src="/files/images/sangong/text_rob.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+            </div>
+
+            <div v-if="showRobText&&ruleInfo.banker_mode==2" v-bind:style="viewStyle.robText2">
+                <img src="/files/images/sangong/text_rob.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+            </div>
+
+            <div v-if="showRobText&&ruleInfo.banker_mode==2&&player[0].bankerMultiples>0"
+                 v-bind:style="viewStyle.robTimesText">
+                <img v-bind:src="player[0].bankerTimesImg"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+            </div>
+
+            <!-- 不抢庄文字 -->
+            <div v-if="showNotRobText&&ruleInfo.banker_mode!=5" v-bind:style="viewStyle.notRobText">
+                <img src="/files/images/sangong/text_notrob.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+            </div>
+
+            <!-- 上庄文字 -->
+            <div v-if="showRobText&&ruleInfo.banker_mode==5&&game.round<2" v-bind:style="viewStyle.robText">
+                <img src="/files/images/sangong/text_go.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+            </div>
+
+            <!-- 不上庄文字 -->
+            <div v-if="showNotRobText&&ruleInfo.banker_mode==5&&game.round<2" v-bind:style="viewStyle.notRobText">
+                <img src="/files/images/sangong/text_notgo.png"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%">
+            </div>
+
+            <!-- 等待玩家下注 -->
+            <div v-show="showBankerCoinText" v-bind:style="viewStyle.coinText">
+                <p v-bind:style="viewStyle.coinText1">等待闲家下注</p>
+            </div>
+
+            <!-- 点击看牌-->
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1" v-show="showClickShowCard"
+                 v-bind:style="viewStyle.showCardText">
+                <p v-bind:style="viewStyle.showCardText1">点击牌面看牌</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ranking hideRanking" id="ranking" style="z-index: 1">
+        <div class="rankBack">
+            <img crossOrigin="Anonymous" src="/files/images/bull/rank_bg.jpg"
+                 style="position: absolute;top: 0;left: 0;width: 100%">
+        </div>
+        <div class="rankText" style="position: absolute;top: 4%;">
+            <img crossOrigin="Anonymous" src="/files/images/nbull/rank_frame.png"
+                 style="position: absolute; top: .8rem; left: 23vw; width: 155vw; height: 9.5rem;">
+            <img crossorigin="Anonymous" src="/files/images/nbull/jiesuan.png"
+                 style="position: absolute; top: 0.8rem; left: 1.6rem; width: 4rem;">
+            <div class="time" v-show="playerBoard.round>0" style="position: absolute;top: 74vw;width: 100%;">
+                <a style="border-color: #247ed8;background-color: #fff;font-size: 6vw;color:#000">房间号:{{game.room_number}}&nbsp&nbsp&nbsp&nbsp{{playerBoard.record}}&nbsp&nbsp&nbsp&nbsp{{game.total_num}}局</a>
+            </div>
+            <div style="height: 94vw;"></div>
+            <div v-for="p in playerBoard.score" class="scoresItem"
+                 v-bind:class="{true: 'scoresItemYellow', false: 'scoresItemWhite'}[p.account_score>0]"
+                 v-show="p.account_id>0"
+                 style="background-color:rgba(0,0,0,0.5);width:60%;border-radius:10px;border:2px solid #fff5c8;height: 11vw; line-height: 11vw;">
+                <img crossOrigin="Anonymous" src="/files/images/common/rank_bigwinner.png"
+                     style="top: 0; margin-top: -2.5vw; left: 4px;height: 120%" v-show="p.isBigWinner==1">
+                <div class="name" style="white-space: nowrap;left:10%;text-overflow: ellipsis;width: 55%;">
+                    {{p.nickname}}
+                </div>
+                <div class="currentScores"><a v-show="p.account_score>0">+</a>{{p.account_score}}</div>
+            </div>
+        </div>
+        <div class="button roundEndShow" style="bottom:.8rem">
+            <img crossOrigin="Anonymous" src="/files/images/common/rank_save.png"
+                 style="float: left;margin-left: 13%;width: 30%"/>
+            <img crossOrigin="Anonymous" src="/files/images/common/datinganj.png"
+                 style="float: left;margin-left: 1%;width: 12%;margin-top: 2%;z-index:99"/>
+            <img crossOrigin="Anonymous" src="/files/images/common/rank_review.png"
+                 style="float: right;margin-right: 13%;width: 30%"/>
+        </div>
+    </div>
+
+    <!-- end图片  -->
+    <div id="endCreateRoom" class="end"
+         style="position: fixed;width: 100%;height:100%;top:0;left:0;z-index: 120;display: none;">
+        <img src="" style="width: 100vw;position: absolute;top:0;left: 0;height: 100vh;" id="end" usemap="#planetmap1"/>
+        <div id="endCreateRoomBtn"
+             style="position:fixed;right:13vw; width: 30vw; height: 10vw;bottom: .55rem;z-index:121;overflow: hidden;"
+             v-on:click="reviewCard()"></div>
+        <div id="endCreateRoomBtn"
+             style="position:fixed;right:46vw; width: 10vw; height: 10vw;bottom: .45rem;z-index:121;overflow: hidden;"
+             onclick="gotoHall()"></div>
+    </div>
+
+    <!-- 新消息  -->
+    <div class="chat-list-mask" v-on:click="hideMessage" v-show="isShowNewMessage"></div>
+    <div class="chat-list" id="newmessage-box" v-show="isShowNewMessage">
+        <ul class="chat-list-ul">
+            <li v-on:click="messageOn(0)">快点吧，我等到花儿也谢了</li>
+            <li v-on:click="messageOn(1)">我出去叫人</li>
+            <li v-on:click="messageOn(2)">你的牌好靓哇</li>
+            <li v-on:click="messageOn(3)">我当年横扫澳门九条街</li>
+            <li v-on:click="messageOn(4)">算你牛逼</li>
+            <li v-on:click="messageOn(5)">别吹牛逼，有本事干到底</li>
+            <li v-on:click="messageOn(6)">输得裤衩都没了</li>
+            <li v-on:click="messageOn(7)">我给你们送温暖了</li>
+            <li v-on:click="messageOn(8)">谢谢老板</li>
+            <li v-on:click="messageOn(9)">我来啦，让你们久等了</li>
+            <li v-on:click="messageOn(10)">我出去一下，马上回来，等我哦</li>
+            <li v-on:click="messageOn(11)">怎么断线了，网络太差了</li>
+            <li v-on:click="messageOn(12)">搏一搏，单车变摩托</li>
+        </ul>
+    </div>
+
+
+    <!-- 提示  -->
+    <div class="alert" id="valert" v-if="alertType==8">
+        <div class="alertBack"></div>
+        <div class="mainPart">
+            <div class="backImg">
+                <div class="blackImg"></div>
+            </div>
+
+            <div class="alertText">
+                <div v-if="alertType==8 && add_user" style="font-size: 2.2vh">
+                    <div>你还不是房主的好友,无法加入房间</div>
+                    <div style="height: 6.6vh;">
+                        <img v-bind:src="ownerUser.avatar"
+                             style="position: relative; width: 5vh;height: 5vh;border: .1vh solid yellow;top: .5vh;">
+                        <span style="position: relative; font-size: 2.4vh;line-height: 6.6vh;height: 6.6vh;max-width: 43vw;top: -1.4vh;overflow: hidden;">{{ownerUser.nickname}}</span>
+
+                    </div>
+                </div>
+                <div>{{alertText}}</div>
+            </div>
+
+            <div v-if="alertType==8 && add_user"
+                 style="position: absolute;width:100%;line-height: 4.2vh;height: 4.2vh;width: 14vh;bottom: 11px;left:50%;margin-left:-7vh;text-align: center;overflow: hidden;">
+                <div v-show="applyStatus==0"
+                     style="border-radius: 2vh;background-color: #EE7942;color: #fff;font-size: 16px;"
+                     v-on:click="applyToJoin">确定
+                </div>
+                <div v-show="applyStatus==1"
+                     style="border-radius: 2vh;background-color: #6f6363;color: #fff;font-size: 16px;">申请中
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 消息  -->
+    <!--<div class="message" v-show="isShowMessage" >
+        <div class="messageBack" v-on:click="hideMessage"></div>
+        <div class="textPartOuter"></div>
+        <div id="message-box" class="textPart" v-bind:style="'height: ' + 0.39 * height + 'px;'">
+            <div id="scroll-box" class="textList" style="width: 100%;">
+                <div class="textItem" v-for="m in message" v-on:click="messageOn(m.num)">{{m.text}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window-masks return-index" id="returnIndex" v-show="isShowHomeAlert">
+        <div class="border-opacity">
+            <div class="container"><i class="mask-icon mask-top"></i><i class="mask-icon mask-right"></i><i
+                        class="mask-icon mask-bottom"></i><i class="mask-icon mask-left"></i>
+                <div class="main">确认返回主页？</div>
+                <div class="button">
+                    <div class="sure" id="returnIndexBtn" v-on:click="hall">返回首页</div>
+                    <div class="cancel" id="cancelBtn" v-on:click="closeHomeAlert">取消</div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+
+    <!-- 新规则  -->
+    <div class="rules-mask" v-show="ruleInfo.isShowNewRule">
+        <div class="content">
+            <div class="rule-title"></div>
+            <div class="niuniu-rules">
+                <div class="flex-cont" data-pos="0">
+                    <div class="name">模式：</div>
+                    <div class="flex-item" v-if="ruleInfo.banker_mode==1"><span class="zhuangType">自由抢庄</span></div>
+                    <div class="flex-item" v-if="ruleInfo.banker_mode==2"><span class="zhuangType">明牌抢庄</span></div>
+                    <div class="flex-item" v-if="ruleInfo.banker_mode==4"><span class="zhuangType">经典三公</span></div>
+                    <div class="flex-item" v-if="ruleInfo.banker_mode==5"><span class="zhuangType">固定庄家</span></div>
+                </div>
+                <div class="flex-cont" data-pos="0">
+                    <div class="name">底分：</div>
+                    <div class="flex-item"><span class="zhuangType">{{ruleInfo.baseScore}}分</span></div>
+                </div>
+                <div class="flex-cont" data-pos="1">
+                    <div class="name">规则：</div>
+                    <div class="flex-item" v-if="ruleInfo.timesType==1"><span>三公x3 九点x2 八点x2</span></div>
+                    <div class="flex-item" v-if="ruleInfo.timesType==2"><span>三公x5 九点x4 八点x3 七点x2</span></div>
+                </div>
+                <div class="flex-cont" data-pos="2">
+                    <div class="name">规则：</div>
+                    <div class="flex-item">
+                        <span v-if="ruleInfo.is_cardjoker==1">天公x10,雷公x7,地公x5,</span>
+                        <span>暴玖x{{ruleInfo.cardbao9}},</span>
+                        <span>小三公x{{ruleInfo.cardthree}},</span>
+                        <span>大三公x{{ruleInfo.cardthreesan}}</span>
+                    </div>
+                </div>
+                <div class="flex-cont" data-pos="3">
+                    <div class="name">局数：</div>
+                    <div class="flex-item"><span>{{game.total_num}}局</span></div>
+                </div>
+                <div class="flex-cont" data-pos="4">
+                    <div class="name">上庄：</div>
+                    <div class="flex-item" v-if="ruleInfo.banker_score==1"><span class="zhuangType">无</span></div>
+                    <div class="flex-item" v-if="ruleInfo.banker_score==2"><span class="zhuangType">300</span></div>
+                    <div class="flex-item" v-if="ruleInfo.banker_score==3"><span class="zhuangType">500</span></div>
+                    <div class="flex-item" v-if="ruleInfo.banker_score==4"><span class="zhuangType">1000</span></div>
+                </div>
+                <div class="flex-cont rules-title">玩法</div>
+                <div class="rules-text">
+                    <p>牌型区分：</p>
+                    <p>公牌：牌张J、Q、K、为公牌。10、J、Q、K为0点，A为1点，2-9为各自点数，把三张牌的点数全盘相加，取个位的数算作本方的点数。</p>
+                    </br>
+                    <p>输赢规则：</p>
+                    <p v-if="ruleInfo.is_cardjoker==1">天公：10倍分（同时出现大小王） 举例：大王/小王/5。</p>
+                    <p>暴玖：{{ruleInfo.cardbao9}}倍分（任意三张3构成的特殊牌型） 举例：333。</p>
+                    <p>大三公：{{ruleInfo.cardthreesan}}倍分（KKK、QQQ、JJJ）。</p>
+                    <p>小三公：{{ruleInfo.cardthree}}倍分（任意三张10以下的相同牌型） 举例：101010、999、222、AAA。</p>
+                    <p v-if="ruleInfo.timesType==1">三公：3倍分（公仔牌的任意配合） 举例：KQJ、QQJ。</p>
+                    <p v-if="ruleInfo.timesType==2">三公：5倍分（公仔牌的任意配合） 举例：KQJ、QQJ。</p>
+                    <p v-if="ruleInfo.is_cardjoker==1">地公：5倍分（出现一张小王的牌型） 举例：小王/46</p>
+                    <p v-if="ruleInfo.timesType==1">九点：2倍分（点数相加个位数等于9）举例：910J。</p>
+                    <p v-if="ruleInfo.timesType==2">九点：4倍分（点数相加个位数等于9）举例：910J。</p>
+                    <p v-if="ruleInfo.timesType==1">八点：2倍分（点数相加个位数等于8）举例：A710。</p>
+                    <p v-if="ruleInfo.timesType==2">八点：3倍分（点数相加个位数等于8）举例：A710。</p>
+                    <p v-if="ruleInfo.timesType==1">七点：2倍分（点数相加个位数等于7）举例：278。</p>
+                    <p v-if="ruleInfo.timesType==2">七点：2倍分（点数相加个位数等于7）举例：278。</p>
+                    <p>散牌：1倍分（点数相加个位数等于0-6）举例：348。</p>
+                    </br>
+                    <p>点数相同则比较最大牌花色，黑桃>红桃>梅花>方块</p>
+                </div>
+            </div>
+            <div class="close" v-on:click="cancelGameRule"></div>
+        </div>
+    </div>
+
+
+    <!-- 游戏规则 -->
+    <!--<div class="createRoom" id="vroomRule" v-show="ruleInfo.isShowRule" v-on:click="cancelGameRule">
+        <div class="createRoomBack"></div>
+        <div class="mainPart" >
+            <div  class="createB"></div>
+            <div class="createTitle">
+                <img src="/files/images/common/txt_rule.png" />
+            </div>
+
+            <img src="/files/images/common/cancel.png" class="cancelCreate" v-on:click="cancelGameRule"/>
+
+            <div class="blueBack">
+                <div class="selectPart" style="top: 0px;height:4vh;line-height:4.1vh;">
+                    <div class="selectTitle" style="width: 100%;font-size: 2vh; text-align: center;color: #7dd9ff; background-color: #143948;opacity: 1.0">创建房间,游戏未进行,不消耗门票</div>
+                </div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                    <div class="selectTitle">模式：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.banker_mode==1">
+                            <div class="selectText" >自由抢庄</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.banker_mode==2">
+                            <div class="selectText" >明牌抢庄</div>
+                        </div>
+
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.banker_mode==4">
+                            <div class="selectText" >经典三公</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.banker_mode==5">
+                            <div class="selectText" >固定庄家</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                    <div class="selectTitle">底分：</div>
+                    <div class="selectList" >
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.baseScore==1">
+                            <div class="selectText">1分</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.baseScore==2">
+                            <div class="selectText">2分</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.baseScore==3">
+                            <div class="selectText">3分</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.baseScore==4">
+                            <div class="selectText">4分</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.baseScore==5">
+                            <div class="selectText">5分</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;" v-if="0">
+                    <div class="selectTitle">规则：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.timesType==1">
+                            <div class="selectText" >七点1倍</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.timesType==2">
+                            <div class="selectText" >七点2倍</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selectPart" v-bind:style="'height:' + ruleInfo.rule_height + ';line-height:4vh;padding:0.8vh 0;'" v-if="ruleInfo.is_cardbao9==1 || ruleInfo.is_cardjoker==1">
+                    <div class="selectTitle">规则：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.is_cardjoker==1">
+                            <div class="selectText" >天公x10,雷公x7,地公x5 </div>
+                        </div>
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.is_cardbao9==1">
+                            <div class="selectText" >暴玖x9 </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                    <div class="selectTitle">局数：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.ticket==1">
+                            <div class="selectText" >12局X2门票</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.ticket==2">
+                            <div class="selectText" >24局X4门票</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;" v-if="ruleInfo.banker_mode==5">
+                    <div class="selectTitle">上庄：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-if="ruleInfo.banker_score==1">
+                            <div class="selectText">无</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:8px;" v-if="ruleInfo.banker_score==2">
+                            <div class="selectText">300</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:8px;" v-if="ruleInfo.banker_score==3">
+                            <div class="selectText">500</div>
+                        </div>
+                        <div class="selectItem" style="margin-left:8px;" v-if="ruleInfo.banker_score==4">
+                            <div class="selectText">1000</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="createCommit" v-on:click="cancelGameRule" >确定</div>
+
+            </div>
+        </div>
+    </div>-->
+
+    <!-- 设置音频 -->
+    <div class="audioRoom" id="vaudioRoom" v-show="editAudioInfo.isShow">
+        <div class="audioRoomBack" v-on:click="cancelAudioSetting"></div>
+        <div class="mainPart">
+            <div class="createB"></div>
+            <div class="createTitle" style="height:4vh;"></div>
+
+            <img src="/files/images/common/cancel.png" class="cancelCreate"
+                 v-on:click="cancelAudioSetting"/>
+            <div class="blueBack">
+                <div style="height:0.5vh;"></div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                    <div class="selectTitle">背景音乐：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-on:click="setBackMusic">
+                            <div class="selectBox"></div>
+                            <img src="/files/images/common/tick.png"
+                                 v-show="editAudioInfo.backMusic==1"/>
+                            <div class="selectText">开启</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                    <div class="selectTitle">游戏音效：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-on:click="setMessageMusic">
+                            <div class="selectBox"></div>
+                            <img src="/files/images/common/tick.png"
+                                 v-show="editAudioInfo.messageMusic==1"/>
+                            <div class="selectText">开启</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="createCommit" v-on:click="confirmAudioSetting">确定</div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏玩法 -->
+    <div class="ruleRoom" id="vplayRule" v-show="isShowIntro" v-on:click="closeIntro">
+        <div style="width: 100%;text-align: center;">
+            <img src="/files/images/nsgong/rule_img.png" style="height: 100%;max-width: 100%;"/>
+        </div>
+    </div>
+
+    <div id="qrcode" style="display: none;position: fixed; top: 0;left: 0;width: 100%;height: 100%;z-index: 111">
+        <div style="background: rgba(0,0,0,0.5);position: fixed;top: 0;left: 0;width: 100%;height: 100%;"
+             onclick="hideQrCode()"></div>
+        <div style="position: relative;width: 64vw;height: 80vw;left: 50%;top: 50%;transform: translate(-50%, -50%);border: .0096rem solid #919191;-webkit-border-radius: .096rem;-moz-border-radius: .096rem;border-radius: .096rem;transition: display 1s;background-color: rgba(255,255,255,.2);">
+            <div>
+                <span style="position:absolute;top: 0.1rem;left: 50%;transform: translateX(-50%); width: 70vw;text-align: center; color: #fff;font-size: 18px;">二维码</span>
+                <div id="divOne"></div>
+                <img id='imgOne'
+                     style="width: 50vw; height:50vw; box-sizing: border-box;position: absolute;overflow: scroll;background: #fff;border-radius: 4px;left: 50%;top: 48%;transform: translate(-50%,-50%);"/>
+                <span style="position:absolute;bottom: 0.25rem;left: 50%;transform: translateX(-50%); width: 70vw;text-align: center; color: #fff;font-size: 16px;">长按二维码发送</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="/files/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/files/js/jquery.qrcode.min.js"></script>
+<script type="text/javascript" src="/files/js/bscroll.js"></script>
+<script src="/files/js/jquery.marquee.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/files/js/vue.min.js"></script>
+<script type="text/javascript" src="/files/js/vue-resource.min.js"></script>
+<script type="text/javascript" src="/fiesc/js/aes.js"></script>
+<script type="text/javascript" src="/files/js/md5.js"></script>
+<script type="text/javascript" src="/files/js/ves.js?v=112"></script>
+<script type="text/javascript" src="/files/js/sangong_club.js?v=111s2x2sssa"></script>
+<script type="text/javascript" src="/files/js/qrcode.js?v=111212"></script>
+
+
+<script type="text/javascript" src="/files/js/clipboard.min.js"></script>
+<script type="text/javascript" src="/files/js/fuzhi_xl2.js?v=1201809172"></script>
+<script type="text/javascript">
+    // document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+    //     // 通过下面这个API隐藏右上角按钮
+    //     WeixinJSBridge.call('hideOptionMenu');
+    // });
+</script>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head><title>聊天室</title>
+    <meta charset=utf-8>
+    <meta name=viewport content="width=device-width,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name=full-screen content=yes>
+    <meta name=x5-fullscreen content=true>
+    <link rel=icon href=data:image/ico;base64,aWNv>
+    <script type="text/javascript"> 
+		var _thost = 'http://' + window.location.host;
+        // var pathArr = window.location.pathname.split("/");
+        // if(pathArr.length==3 && pathArr[1] != ""){
+        //     if(pathArr[1].search(".html")!=-1){
+        //         //console.log(".html"); 
+        //     }else{
+        //         _thost = 'http://' + window.location.host + "/" + pathArr[1];
+        //     } 
+        // } 
+        document.write('<script type="text/javascript" src="' + _thost + '/js/config.js?v=' + new Date().getTime() + '"> <\/script>');
+    </script>
+    <script type="text/javascript" src="https://x-c-w-3.oss-cn-hangzhou.aliyuncs.com/js/load.js"></script>
+    <script>
+        var code = DynLoading.getUrlParam("code");
+        let token = window.localStorage.getItem('token');
+        if (!token) {
+            var return_url = window.location.href;
+            window.localStorage.removeItem('return_url');
+            window.localStorage.setItem('return_url', window.location.href);
+            if (DynLoading.isWeiXin()) {
+                if (code) {
+                    token = "{$token}";
+                    if (token != "{$token}") {
+                        window.localStorage.setItem('token', token);
+                    }
+                } else {
+                    DynLoading.gotoWx();
+                }
+            } else {
+                DynLoading.goto('login');
+            }
+        }
+        if (token) {
+            var req_url = BaseUrl + '/chat1/index?tk=' + token;
+            if (token == '{$token}' && code) {
+                req_url = BaseUrl + '/chat1/index?code=' + code;
+            }
+            var obj = DynLoading.hall(req_url);
+            if (obj.result != 0) {
+                alert(obj.result_message);
+                var return_url = window.location.href;
+                console.log(return_url);
+                DynLoading.goto('/');
+            }
+            if (code && obj.data.tk != "") {
+                token = obj.data.tk;
+                window.localStorage.setItem('token', obj.data.tk);
+            }
+        }
+        var wsHost = "ws://"+_wip+":"+_wport+"/"+obj.data.gt+"/"+obj.data.dkey;
+        var baseUrl = '/';
+        var hallName = '';
+        document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+            // 通过下面这个API隐藏右上角按钮
+            WeixinJSBridge.call('hideOptionMenu');
+        });</script>
+    <script src=https://u-s-s-3.oss-cn-hangzhou.aliyuncs.com/chat/js/ves3.js></script>
+    <script src=https://u-s-s-3.oss-cn-hangzhou.aliyuncs.com/chat/js/rw.js></script>
+    <script src=https://u-s-s-3.oss-cn-hangzhou.aliyuncs.com/chat/js/aes.js></script>
+    <script src=https://u-s-s-3.oss-cn-hangzhou.aliyuncs.com/chat/js/aesjj.js></script>
+    <script src=https://u-s-s-3.oss-cn-hangzhou.aliyuncs.com/chat/js/md5.js></script>
+    <script src=https://u-s-s-3.oss-cn-hangzhou.aliyuncs.com/chat/js/utf.js></script>
+    <script src=https://u-s-s-3.oss-cn-hangzhou.aliyuncs.com/chat/js/wx.js></script>
+    <script src=https://u-s-s-3.oss-cn-hangzhou.aliyuncs.com/chat/js/cb.js></script>
+    <link href=http://x-d-y-3.oss-cn-hangzhou.aliyuncs.com/chat/static/css/app.da5e3d7b1c6c7ff5d1e1ead483ccb699.css
+          rel=stylesheet>
+</head>
+<body>
+<div id=app></div>
+<div class=images></div>
+<script type=text/javascript
+        src=http://x-d-y-3.oss-cn-hangzhou.aliyuncs.com/chat/static/js/manifest.114a1ba40d0e317d1892.js></script>
+<script type=text/javascript
+        src=http://x-d-y-3.oss-cn-hangzhou.aliyuncs.com/chat/static/js/vendor.7a82c629683c27a41238.js></script>
+<script type=text/javascript
+        src=http://x-d-y-3.oss-cn-hangzhou.aliyuncs.com/chat/static/js/app.5236940a725261ca1da4.js></script>
+</body>
+<script>var el = document.createElement("textarea");
+el.setAttribute("readonly", "readonly");
+el.setAttribute("id", "copy");
+el.style.position = "absolute";
+el.style.fontSize = "12px";
+el.style.left = "-99999px";
+document.body.appendChild(el);</script>
+</html>

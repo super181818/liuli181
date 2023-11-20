@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <base href="http://xcwgf2.oss-cn-hangzhou.aliyuncs.com"/>
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>大厅</title>
+    <script type="text/javascript">
+                var _thost = 'http://' + window.location.host;
+        var pathArr = window.location.pathname.split("/");
+        if(pathArr.length==3 && pathArr[1] != ""){
+            if(pathArr[1].search(".html")!=-1){
+
+            }else{
+                _thost = 'http://' + window.location.host + "/" + pathArr[1];
+            }
+        }
+        var _tt = new Date().getTime();
+        document.write('<script type="text/javascript" src="' + _thost + '/js/config.js?v=1' + _tt + '"> <\/script>');
+    </script>    
+    <script type="text/javascript" src="/files/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/files/js/rem.js"></script>
+    <script type="text/javascript" src="/files/js/vue_z.js"></script>
+    <script type="text/javascript" src="/files/js/vue-resource.min.js"></script>
+    <script type="text/javascript" src="/js/load.js?v=11101"></script>
+    <script>
+        var t = DynLoading.getUrlParam('t');
+        var obj = null;
+        if (DynLoading.isWeiXin()) {
+            var code = DynLoading.getUrlParam("code");
+            if (code) {
+                obj = DynLoading.wxlog(BaseUrl + '/wx/login?code=' + code);
+                if (obj.result != 0) {
+                    window.localStorage.setItem('token', obj.data.tk);
+                    window.location.href = window.localStorage.getItem('return_url');
+                }
+            } else {
+                obj = DynLoading.hall(BaseUrl + '/wx/info');
+                console.log(obj);
+                if (obj.result != 0) {
+                    var rurl = DynLoading.getPath('login');
+                    var appid = obj.data.appid;
+                    var sq = obj.data.sq;
+                    var redirect_uri = 'http://' + sq + '/w.html?rurl=' + rurl;
+                    window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + encodeURI(redirect_uri) + '&response_type=code&scope=snsapi_userinfo#wechat_redirect';
+                }
+            }
+        } else {
+            let token = window.localStorage.getItem('token');
+            if (token) {
+                let return_url = DynLoading.getPath('/');
+                window.localStorage.removeItem('return_url');
+                window.location.href = return_url;
+            }
+        }
+
+        var apiUrl = BaseUrl + '/userapi/';
+        var apiUrl2 = BaseUrl + '/site1/';
+    </script>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, Arial, sans-serif;
+            cursor: default;
+            margin: 0 auto;
+            background-color: #f0f1f5;
+            height: 100%;
+            max-width: 768px;
+            color: #000;
+            font-size: 0.32rem;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        input {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #848484;
+        }
+
+        ul, li, h1, h2, dl, dt, dd, a, div, p, dd, dt, dl {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        a, a:visited {
+            text-decoration: none;
+        }
+
+        img {
+            border: 0;
+        }
+
+        li {
+            list-style-type: none;
+        }
+
+        .f-cb:after {
+            display: block;
+            visibility: hidden;
+            clear: both;
+            height: 0;
+            overflow: hidden;
+            content: '.';
+        }
+
+        #app {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        .phoneFrame, .userFrame, .setPassword {
+            position: absolute;
+            z-index: 99;
+            width: 90%;
+            min-height: 300px;
+            top: 55%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -65%);
+            transform: translate(-50%, -65%);
+            background-color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            opacity: 1;
+            padding: 0.8rem 0 0.8rem 0;
+        }
+
+        .phoneFrame {
+            opacity: 0;
+            left: 150%;
+        }
+
+        .setPassword {
+            opacity: 0;
+            left: -150%;
+        }
+
+        .closeBtn {
+            position: absolute;
+            z-index: 99;
+            width: 0.8rem;
+            top: -3%;
+            left: 92%;
+            display: none;
+        }
+
+        .title {
+            font-size: 0.4rem;
+            padding-bottom: 0.5rem;
+            word-wrap: break-word;
+            word-break: break-all;
+            color: #000;
+            background-color: white;
+        }
+
+        .input input {
+            line-height: normal;
+            padding: 10px 10px;
+            height: 1rem;
+            border-style: solid;
+            border-width: 1px;
+            border-radius: 0.1rem;
+            border-color: rgb(240, 240, 240);
+            font-size: 0.3rem;
+            -webkit-appearance: none;
+            background-color: rgb(240, 240, 240);
+            box-sizing: border-box;
+            width: 100%;
+            vertical-align: middle;
+        }
+
+        .item {
+            margin: 0 auto 0.5rem auto;
+            width: 86%;
+        }
+
+        .item .label {
+            float: left;
+            color: #000;
+            width: 30%;
+            font-size: 0.32rem;
+            line-height: 1rem;
+        }
+
+        .item .input {
+            float: right;
+            width: 68%;
+        }
+
+        .enterBtn {
+            width: 90%;
+            line-height: 1.2rem;
+            border-radius: 0.1rem;
+            font-size: 0.36rem;
+            background-color: rgb(64, 112, 251);
+            color: #fff;
+            margin: 0.8rem auto 0 auto;
+        }
+
+        .phoneShowBtn, .setPasswordShowBtn {
+            width: 48%;
+            float: right;
+            text-align: right;
+            font-size: 0.36rem;
+            color: rgb(64, 112, 251);
+            text-decoration: underline;
+        }
+
+        .setPasswordShowBtn {
+            float: left;
+            text-align: left;
+        }
+
+        .backBtn {
+            width: 50%;
+            position: absolute;
+            left: 50%;
+            bottom: 5%;
+            margin-left: -25%;
+            opacity: 0;
+            text-align: center;
+            color: #fff;
+            font-size: 0.34rem;
+            line-height: 1.2rem;
+            border-radius: 0.1rem;
+            background-color: #6d7dd4;
+        }
+
+        .codeBtn {
+            width: 30%;
+            float: right;
+            background-color: rgb(64, 112, 251);
+            font-size: 0.28rem;
+            border-radius: 0.1rem;
+            line-height: 1rem;
+            color: white;
+        }
+
+        .codeBtn.cur {
+            background: #ccc;
+        }
+    </style>
+</head>
+<body>
+<div id='app'>
+    <div class="userFrame">
+        <img src="/files/images/activity/common_close.png" class='closeBtn'>
+        <div class="title">账号登录</div>
+
+        <div class='item f-cb'>
+            <div class='label'>账号：</div>
+            <div class='input'><input placeholder="输入手机号或账号" v-model="account"></div>
+        </div>
+
+        <div class='item f-cb'>
+            <div class='label'>密码：</div>
+            <div class='input'><input placeholder="输入6-18位英文或数字密钥" v-model="passWord"></div>
+        </div>
+
+
+        <!--        <div style='width:80%;margin:0 auto;' class='f-cb'>-->
+        <!--            <div class='setPasswordShowBtn' @click='setPasswordShowBtn'>设置密码</div>-->
+        <!--            <div class='phoneShowBtn' @click='phoneShowBtn'>手机登陆</div>-->
+        <!--            <div></div>-->
+        <!--        </div>-->
+        <div v-if="isShowTip" style="color: red;">{{tipText}}</div>
+        <div class='enterBtn' @click='enterBtn'>进入游戏</div>
+    </div>
+
+    <div class='phoneFrame'>
+        <img src="/files/images/activity/common_close.png" class='closeBtn'>
+        <div class="title">手机登录</div>
+
+        <div class='item f-cb'>
+            <div class='input' style='float:left;'><input placeholder="输入11位手机号" v-model="phoneNum"></div>
+            <div class='codeBtn' v-show="show" @click='codeBtn'>发送验证码</div>
+            <div class='codeBtn cur' v-show="!show" class="count">{{count}} s</div>
+        </div>
+        <div class='item f-cb'>
+            <div class='input' style='width:100%;'><input placeholder="输入验证码" v-model="codeNum"></div>
+        </div>
+        <div v-if="isShowTip" style="color: red;">{{tipText}}</div>
+        <div class='enterBtn' @click='enterBtn_phone'>进入游戏</div>
+    </div>
+
+
+    <div class='setPassword'>
+        <img src="/files/images/activity/common_close.png" class='closeBtn'>
+        <div class="title">手机登录</div>
+
+        <div class='item f-cb'>
+            <div class='input' style='float:left;'><input placeholder="输入11位手机号" v-model="phoneNum"></div>
+            <div class='codeBtn' v-show="show" @click='codeBtn'>发送验证码</div>
+            <div class='codeBtn cur' v-show="!show" class="count">{{count}} s</div>
+        </div>
+        <div class='item f-cb'>
+            <div class='input' style='width:100%;'><input placeholder="输入验证码" v-model="codeNum"></div>
+        </div>
+        <div class='item f-cb'>
+            <div class='label'>登录密码：</div>
+            <div class='input'><input placeholder="登录密码" v-model="passWord_phone"></div>
+        </div>
+        <div class='item f-cb'>
+            <div class='label'>再次确认：</div>
+            <div class='input'><input placeholder="再次确认" v-model="passWord_phone_en"></div>
+        </div>
+        <div v-if="isShowTip" style="color: red;">{{tipText}}</div>
+        <div class='enterBtn' @click='enterBtn_phone2'>确认修改</div>
+    </div>
+
+    <div class='backBtn' @click='backBtn'>返回</div>
+</div>
+<script>
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            show: true,
+            count: '',
+            timer: null,
+            account: '',
+            passWord: '',
+            phoneNum: '',
+            codeNum: '',
+            passWord_phone: '',
+            passWord_phone_en: '',
+            isShowTip: false,
+            tipText: ''
+        },
+        created: function () {
+        },
+        methods: {
+            phoneShowBtn: function () {
+                this.isShowTip = false;
+                $(".userFrame").animate({left: "-50%", opacity: "0"});
+                $(".phoneFrame").animate({left: "50%", opacity: "1"});
+                $(".setPassword").animate({left: "-50%", opacity: "0"});
+                $('.backBtn').animate({opacity: "1"});
+            },
+            setPasswordShowBtn: function () {
+                this.isShowTip = false;
+                $(".userFrame").animate({left: "-50%", opacity: "0"});
+                $(".phoneFrame").animate({left: "-50%", opacity: "0"});
+                $(".setPassword").animate({left: "50%", opacity: "1"});
+                $('.backBtn').animate({opacity: "1"});
+            },
+            backBtn: function () {
+                this.isShowTip = false;
+                $('.backBtn').animate({opacity: "0"});
+                $(".userFrame").animate({left: "50%", opacity: "1"});
+                $(".phoneFrame").animate({left: "150%", opacity: "0"});
+                $(".setPassword").animate({left: "-50%", opacity: "0"});
+            },
+            login: function (account, passWord, callback) {
+                let that = this;
+                $.ajax({
+                    type: "POST",
+                    url: apiUrl + 'loginPwd',
+                    data: {'phone': account, 'password': passWord, 't': t},
+                    dataType: "json",
+                    xhrFields: {
+                        //withCredentials: true
+                    },
+                    crossDomain: true,
+                    async: false,
+                    success: function (data) {
+                        that.isShowTip = true;
+                        that.tipText = data.result_message;
+                        console.log(data);
+                        callback(data);
+                    },
+                    error: function (jqXHR) {
+                        that.isShowTip = true;
+                        that.tipText = jqXHR.result_message;
+                        console.log("Error: " + jqXHR.status);
+                    }
+                });
+            },
+            loginLg: function (account_id, wwid, t, callback) {
+                let that = this;
+                $.ajax({
+                    type: "GET",
+                    url: apiUrl2 + 'lg',
+                    data: {'wwid': wwid, 'account_id': account_id, 't': t},
+                    dataType: "json",
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    async: false,
+                    success: function (data) {
+                        that.isShowTip = true;
+                        that.tipText = data.result_message;
+                        console.log(data);
+                        callback(data);
+                    },
+                    error: function (jqXHR) {
+                        that.isShowTip = true;
+                        that.tipText = jqXHR.result_message;
+                        console.log("Error: " + jqXHR.status);
+                    }
+                });
+            },
+            loginWx: function (account, passWord, callback) {
+                let that = this;
+                $.ajax({
+                    type: "POST",
+                    url: apiUrl + 'loginPwd',
+                    data: {'phone': account, 'password': passWord, 't': t},
+                    dataType: "json",
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    async: false,
+                    success: function (data) {
+                        that.isShowTip = true;
+                        that.tipText = data.result_message;
+                        console.log(data);
+                        callback(data);
+                    },
+                    error: function (jqXHR) {
+                        that.isShowTip = true;
+                        that.tipText = jqXHR.result_message;
+                        console.log("Error: " + jqXHR.status);
+                    }
+                });
+            },
+            login_code: function (phone, code, password, callback) {
+                let that = this;
+                $.ajax({
+                    type: "POST",
+                    url: apiUrl + 'loginSms',
+                    data: {'phone': phone, 'code': code, 'password': password, 't': t},
+                    dataType: "json",
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    async: false,
+                    success: function (data) {
+                        that.isShowTip = true;
+                        that.tipText = data.result_message;
+                        //console.log(data);
+                        callback(data);
+                    },
+                    error: function (jqXHR) {
+                        that.isShowTip = true;
+                        that.tipText = jqXHR.result_message;
+                        console.log("Error: " + jqXHR.status);
+                    }
+                });
+            },
+            getCode: function (phone, callback) {
+                let that = this;
+                $.ajax({
+                    type: "POST",
+                    url: apiUrl + 'getLoginSms',
+                    data: {'phone': phone, 't': t},
+                    dataType: "json",
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    async: false,
+                    success: function (data) {
+                        if (data.result == 1) {
+                            console.log('验证码成功');
+                        }
+                        callback(data);
+                    },
+                    error: function (jqXHR) {
+                        console.log("Error: " + jqXHR.status);
+                    }
+                });
+            },
+            showTip: function (text) {
+                this.isShowTip = true;
+                this.tipText = text;
+            },
+            enterBtn: function () {
+                this.isShowTip = false;
+                this.tipText = '';
+                if (this.account.length == 0) {
+                    this.isShowTip = true;
+                    this.tipText = '请输入账号';
+                    return;
+                }
+                if (this.passWord == '') {
+                    this.isShowTip = true;
+                    this.tipText = '请输入密码';
+                    return;
+                }
+                let that = this;
+
+                this.login(this.account, this.passWord, function (value) {
+                    console.log(value);
+                    //return ;
+                    if (value.result == 1) {
+                        window.localStorage.removeItem('token');
+                        window.localStorage.setItem('token', value.data.tk);
+                        window.localStorage.removeItem('aid');
+                        window.localStorage.setItem('aid', value.data.aid);
+
+                        let return_url = window.localStorage.getItem('return_url');
+                        if (!return_url) {
+                            return_url = 'http://' + window.location.host;
+                        }
+                        //console.log('登录成功');
+                        that.isShowTip = true;
+                        that.tipText = value.result_message;
+                        window.localStorage.removeItem('return_url');
+                        window.location.href = return_url;
+                    } else {
+                        that.isShowTip = true;
+                        that.tipText = value.result_message;
+                    }
+                })
+            },
+            enterBtn_phone: function () {
+                this.isShowTip = false;
+                this.tipText = '';
+                if (this.phoneNum.length != 11) {
+                    this.isShowTip = true;
+                    this.tipText = '请输入正确的手机格式';
+                    return;
+                }
+                if (this.codeNum == '') {
+                    this.isShowTip = true;
+                    this.tipText = '请输入验证码';
+                    return;
+                }
+                let that = this;
+                this.login_code(this.phoneNum, this.codeNum, this.passWord_phone_en, function (value) {
+                    console.log(value);
+                    if (value.result == 1) {
+                        that.isShowTip = true;
+                        that.tipText = '登录成功';
+                        window.localStorage.removeItem('wwid');
+                        window.localStorage.setItem('wwid', value.data.wwid);
+                        // window.location.replace('/?code='+value.data.code);
+                        var _return_url = returnUrl;
+                        var _url;
+                        if (_return_url && _return_url.indexOf('?') > 0) {
+                            _url = _return_url + '&code=' + value.data.code;
+                            window.location.replace(_url);
+                        } else {
+                            window.location.replace('/?code=' + value.data.code);
+                        }
+
+                    } else {
+                        that.isShowTip = true;
+                        that.tipText = value.result_message;
+                    }
+                })
+            },
+            enterBtn_phone2: function () {
+                this.isShowTip = false;
+                this.tipText = '';
+                var that = this;
+                if (this.phoneNum.length != 11) {
+                    this.isShowTip = true;
+                    this.tipText = '请输入正确的手机格式';
+                    return;
+                }
+                if (this.codeNum == '') {
+                    this.isShowTip = true;
+                    this.tipText = '请输入验证码';
+                    return;
+                }
+                this.login_code(this.phoneNum, this.codeNum, this.passWord_phone_en, function (value) {
+                    console.log(value);
+                    if (value.result == 1) {
+                        that.isShowTip = true;
+                        that.tipText = '修改成功';
+                        //window.location.replace('/?code='+value.data.code);
+                        that.backBtn();
+                    } else {
+                        that.isShowTip = true;
+                        that.tipText = value.result_message;
+                    }
+                })
+            },
+            codeBtn: function () {
+                this.isShowTip = false;
+                this.tipText = '';
+                var that = this;
+                if (this.phoneNum.length != 11) {
+                    this.isShowTip = true;
+                    this.tipText = '请输入正确的手机格式';
+                    return;
+                }
+                this.getCode(this.phoneNum, function (value) {
+                    console.log(value);
+                    if (value.result == 1) {
+                        var time_c = 60;
+                        if (!that.timer) {
+                            that.count = time_c;
+                            that.show = false;
+                            that.timer = setInterval(function () {
+                                if (that.count > 0 && that.count <= time_c) {
+                                    that.count--;
+                                } else {
+                                    that.show = true;
+                                    clearInterval(that.timer);
+                                    that.timer = null;
+                                }
+                            }, 1000);
+                        }
+                    } else {
+                        that.isShowTip = true;
+                        that.tipText = value.result_message;
+                    }
+                })
+            }
+        }
+    })
+</script>
+<script>
+    $(document).on('click', 'img', function (e) {
+        e.preventDefault();
+    })
+</script>
+
+</body>
+</html>

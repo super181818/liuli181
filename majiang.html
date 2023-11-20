@@ -1,0 +1,1486 @@
+<html >
+<head>
+    <meta charset="utf-8" >
+	    <base href="http://xcwgf2.oss-cn-hangzhou.aliyuncs.com"/>
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <title>麻将房间</title>
+    <script type="text/javascript">
+                var _thost = 'http://' + window.location.host;
+        var pathArr = window.location.pathname.split("/");
+        if(pathArr.length==3 && pathArr[1] != ""){
+            if(pathArr[1].search(".html")!=-1){
+
+            }else{
+                _thost = 'http://' + window.location.host + "/" + pathArr[1];
+            }
+        }
+        var _tt = new Date().getTime();
+        document.write('<script type="text/javascript" src="' + _thost + '/js/config.js?v=1' + _tt + '"> <\/script>');
+    </script>    
+    <link rel="stylesheet" href="/files/css/loading.css">
+    <link rel="stylesheet" href="/files/css/gdmj.css?v=201912">
+    <link rel="stylesheet" href="/files/css/alert.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/fuzhi.css">
+    <script type="text/javascript" src="/files/js/fastclick.js"></script>
+
+
+    <script type="text/javascript" src="/js/load.js?v=11101"></script>
+    <script type="text/javascript">
+        document.documentElement.style.fontSize = document.documentElement.clientWidth / 360 * 100 + 'px';
+        window.addEventListener('load', function () {
+            FastClick.attach(document.body);
+        }, false);
+
+        var code = DynLoading.getUrlParam("code");
+        let token = window.localStorage.getItem('token');
+        if (!token) {
+            var return_url = window.location.href;
+            window.localStorage.removeItem('return_url');
+            window.localStorage.setItem('return_url', window.location.href);
+            if (DynLoading.isWeiXin()) {
+                if (code) {
+                    token = "{$token}";
+                    if (token != "{$token}") {
+                        window.localStorage.setItem('token', token);
+                    }
+                } else {
+                    DynLoading.gotoWx();
+                }
+            } else {
+                DynLoading.goto('login');
+            }
+        }
+
+        if (token) {
+            var room_number = DynLoading.getUrlParam("i");
+            room_number = parseInt(room_number);
+            var req_url = BaseUrl + '/home1/room' + "?i=" + room_number + "&tk=" + token;
+            if (token == '{$token}' && code) {
+                req_url = BaseUrl + '/home1/room' + "?i=" + room_number + "&code=" + code;
+            }
+            var obj = DynLoading.hall(req_url);
+            if (obj.result != 0) {
+                alert(obj.result_message);
+                var return_url = window.location.href;
+                console.log(return_url);
+                DynLoading.goto('/');
+            }
+            console.log(obj);
+            if (code && obj.data.tk != "") {
+                token = obj.data.tk;
+
+                window.localStorage.setItem('token', obj.data.tk);
+            }
+        }
+
+        let _socket = _isTx ? 'ws://' + _wip + ':' +_wport + '/' + obj.data.gt + '/' + obj.data.dkey : obj.data.socket;
+        var newNum = "";
+        var per = window.innerWidth / 530;
+        var globalData = {
+            "card": obj.data.card,
+            "roomNumber": room_number,
+            "socket": _socket,
+            "hallPath": DynLoading.getPath('/'),
+            "roomUrl": window.location.href,
+            "baseUrl": BaseUrl + "/",
+            "fileUrl": "/",
+            "cfileUrl": "/",
+            "isWechat": 1,
+            "isXianliao": 0,
+            "xlTitle": "(房间号:" + room_number + ")",
+            //"roomStatus": obj.data.room_status,
+            //"scoreboard": obj.data.balance_scoreboard,
+            "session": obj.data.session,
+            "shareTitle": obj.data.platfrom_name + "：(房间:" + room_number + ")",
+            "gameType": obj.data.game_type,
+            "maxCount": obj.data.max_count,
+            "tk": token,
+            "hallName": obj.data.platfrom_name,
+            "hallEname": obj.data.platform_ename,
+			"gameName": "麻将", 
+        };
+
+        globalData.wid = obj.data.wid;
+        globalData.tt = obj.data.tt;
+        var userData = {
+            "account_id": obj.data.user.account_id,
+            "accountId": obj.data.user.account_id,
+            "userCode": obj.data.user.user_code,
+            "nickname": obj.data.user.nickname,
+            "avatar": obj.data.user.headimgurl,
+            "card": obj.data.card,
+            "individuality": obj.data.user.individuality,
+        };
+        var configData = {
+            "appId": obj.data.config_ary.appId,
+            "timestamp": obj.data.config_ary.timestamp,
+            "nonceStr": obj.data.config_ary.nonceStr,
+            "signature": obj.data.config_ary.signature,
+        };
+
+        // 修改浏览器title
+        var new_userName = "";
+        var old_userNname = obj.data.user.nickname;
+        if (old_userNname.length > 8) {
+            new_userName = old_userNname.substring(0, 7);
+            new_userName += "..."
+        } else {
+            new_userName = old_userNname;
+        }
+        document.getElementsByTagName("title")[0].innerText = new_userName + "|" + globalData.hallName;
+    </script>
+</head>
+
+<style>
+    .zhuonuo {
+        position: fixed;
+        right: 15%;
+        width: 3rem;
+        z-index: 99;
+        top: 1rem;
+    }
+    body.modal-show {position: fixed;width: 100%;}
+    .rules-mask, .focus-mask, .share-mask {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 999;
+        background-color: rgba(0, 0, 0, .8);
+    }
+
+    .rules-mask .close, .focus-mask .close, .share-mask .close {
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin-right: -2rem;
+        margin-top: -1rem;
+        z-index: 1;
+        -webkit-transform: translate(-50%);
+        -moz-transform: translate(-50%);
+        -ms-transform: translate(-50%);
+        -o-transform: translate(-50%);
+        transform: translate(-50%);
+        width: 2rem;
+        height: 2rem;
+        background: url(/fiesc/images/newgame/niuniu-close.png) no-repeat;
+        background-size: 100% 100%;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+    }
+    .rules-mask .content {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        padding: 0.6rem;
+        width: 18rem;
+        height: 15rem;
+        background-color: rgba(255, 255, 255, .3);
+        -webkit-border-radius: 0.5rem;
+        -moz-border-radius: 0.5rem;
+        border-radius: 0.5rem;
+        -webkit-box-shadow: 0 0 1rem #153b72 inset;
+        -moz-box-shadow: 0 0 1rem #153b72 inset;
+        box-shadow: 0 0 1rem #153b72 inset;
+        text-align: center;
+    }
+
+    .rules-mask .content .niuniu-rules {
+        background-color: #fff2d8;
+        -webkit-box-shadow: 0 0 .0720rem #153b72 inset;
+        -moz-box-shadow: 0 0 .0720rem #153b72 inset;
+        box-shadow: 0 0 .0720rem #153b72 inset;
+        -webkit-border-radius: .0480rem;
+        -moz-border-radius: .0480rem;
+        border-radius: .0480rem;
+        margin-bottom: .0720rem;
+        height: 100%;
+        width: 100%;
+        overflow: scroll;
+    }
+
+    .rules-mask .content .text {
+        display: inline-block;
+        height: .1536rem;
+        line-height: 1;
+        color: #ffffff;
+        font-size: .1152rem;
+    }
+
+    .rules-mask .content .flex-cont {
+        align-items: center;
+        padding: .0520rem 0 .0520rem .3168rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        text-align: left;
+        background: url(/fiesc/images/newhome/niuniu-rules-line.png) no-repeat left bottom;
+        background-size: 100% auto;
+        border-bottom: solid 1px #ebc1a8;
+    }
+
+    .rules-mask .content .niuniu-rules::-webkit-scrollbar {
+        display: none;
+    }
+
+    .rules-mask .content .niuniu-rules .rules-text {
+        text-align: justify;
+        padding: 0 .0960rem 0 .310rem;
+        line-height: 2;
+        text-indent: -.2rem;
+    }
+
+    .rules-mask .content .flex-cont.rules-title {
+        -webkit-justify-content: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        color: #333;
+        padding: .0480rem 0;
+    }
+
+    .rules-mask .content .flex-cont .name {
+        color: #666;
+        letter-spacing: .0240rem;
+    }
+
+    .rules-mask .content .flex-cont .flex-item {
+        color: #333;
+    }
+
+    .rules-mask .content .rules-item span {
+        display: inline-block;
+        width: 50%;
+        float: left;
+    }
+    .window-masks.return-index .container {
+        border: .0096rem solid #afb0b2;
+    }
+
+    .window-masks.return-index .main {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-align-items: center;
+        align-items: center;
+        width: 2.3280rem;
+        min-height: 1.0560rem;
+        background-color: #69829e;
+        border: .0048rem solid #fff;
+        -webkit-border-radius: .0480rem;
+        -moz-border-radius: .0480rem;
+        border-radius: .0480rem;
+        margin: .1200rem;
+        padding: .0960rem;
+        color: #fff;
+        font-size: .1728rem;
+        text-align: justify;
+    }
+
+    .window-masks.return-index .container .button {
+        position: relative;
+        text-align: center;
+        margin-bottom: .0960rem;
+    }
+
+    .window-masks.return-index .container .sure, .window-masks.return-index .container .cancel {
+        display: inline-block;
+        width: 1.1472rem;
+        height: .3312rem;
+        font-size: .1200rem;
+        line-height: 2.5;
+        text-align: center;
+        margin: 0 .0480rem;
+        color: #fff;
+    }
+
+    .window-masks.return-index .container .sure {
+        background: url(/fiesc/images/newgame/common-button1.png) no-repeat;
+        background-size: 100% 100%;
+    }
+
+    .window-masks.return-index .container .cancel {
+        background: url(/fiesc/images/newgame/common-button2.png) no-repeat;
+        background-size: 100% 100%;
+    }
+
+    .window-masks .border-opacity-v2 {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        border: .0096rem solid rgba(234, 202, 137, .6);
+        -webkit-border-radius: .076rem;
+        -moz-border-radius: .076rem;
+        border-radius: .076rem;
+        background-color: rgba(35, 42, 68, .8);
+        padding: .0720rem;
+    }
+
+    .window-masks.return-index .border-opacity-v2 .main {
+        display: -webkit-flex;
+        display: flex;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-align-items: center;
+        align-items: center;
+        width: 2.7280rem;
+        min-height: 1.2096rem;
+        background-color: rgba(68, 68, 174, .5);
+        border: .0048rem solid #19256d;
+        -webkit-border-radius: .076rem;
+        -moz-border-radius: .076rem;
+        border-radius: .076rem;
+        margin: .1200rem;
+        padding: .0960rem;
+        color: #e8b24c;
+        font-size: .2304rem;
+        text-align: justify;
+    }
+
+    .window-masks.return-index .border-opacity-v2 .container {
+        border: none;
+    }
+
+    .window-masks.return-index .border-opacity-v2 .container .button {
+        position: relative;
+        text-align: center;
+        margin-bottom: .0960rem;
+        margin-top: .16rem;
+        overflow-y: hidden;
+    }
+
+    .window-masks.return-index .border-opacity-v2 .container .sure, .window-masks.return-index .border-opacity-v2 .container .cancel {
+        display: inline-block;
+        width: 1.0272rem;
+        height: .3696rem;
+        font-size: .15441rem;
+        line-height: .38rem;
+        text-align: center;
+        margin: 0 .086rem;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .window-masks.return-index .border-opacity-v2 .container .sure {
+        background: url(/fiesc/images/newgame/decIndex-button1.png) no-repeat;
+        background-size: 100% 100%;
+        -webkit-text-stroke-width: 0.0048rem;
+        -webkit-text-stroke-color: #14309f;
+    }
+
+    .window-masks.return-index .border-opacity-v2 .container .cancel {
+        background: url(/fiesc/images/newgame/decIndex-button2.png) no-repeat;
+        background-size: 100% 100%;
+        -webkit-text-stroke-width: 0.0048rem;
+        -webkit-text-stroke-color: #9e5f0f;
+    }
+    .alertLayer {
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 108;
+    }
+    .alert {
+        position: fixed;
+        /*width: 22rem;*/
+        /*height: 19rem;*/
+        top: 0;
+        left: 0;
+        z-index: 109;
+        color: #fff;
+        font-family: simHei;
+        border: 1px solid #000;
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        -webkit-border-radius: .480rem;
+        -moz-border-radius: .480rem;
+        border-radius: .480rem;
+        background: rgba(255, 255, 255, .3);
+    }
+    .alert .mainPart{
+        position: relative;
+        top: 50%;
+        left: 50%;
+        margin-top: -19vh;
+        margin-left: -22.5vh;
+        width: 45vh;
+        height: 38vh;
+    }
+    .alert .alertBack {
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, .3);
+        opacity: 0.8;
+        position: absolute;
+    }
+    .alert .mainPart .backImg .mask-icon.mask-top {
+        top: .480rem;
+        left: .480rem;
+        background: url(/files/images/newgame/mask-top.jpg) no-repeat;
+        background-size: 100% 100%;
+    }
+    .alert .mainPart .backImg .mask-icon.mask-right {
+        top: .480rem;
+        right: .480rem;
+        background: url(/files/images/newgame/mask-right.jpg) no-repeat;
+        background-size: 100% 100%;
+    }
+    .alert .mainPart .backImg .mask-icon.mask-bottom {
+        bottom: .480rem;
+        right: .480rem;
+        background: url(/files/images/newgame/mask-bottom.jpg) no-repeat;
+        background-size: 100% 100%;
+    }
+    .alert .mainPart .backImg .mask-icon.mask-left {
+        bottom: .480rem;
+        left: .480rem;
+        background: url(/files/images/newgame/mask-left.jpg) no-repeat;
+        background-size: 100% 100%;
+    }
+    .chat-list-mask {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 99;
+    }
+    .chat-list {
+        position: fixed;
+        right: 3.4rem;
+        bottom: 1rem;
+        z-index: 99;
+        width: 15.304rem;
+        border: 0.1rem solid #919191;
+        -webkit-border-radius: 0.6rem;
+        -moz-border-radius: 0.6rem;
+        border-radius: 0.6rem;
+        transition: display 1s;
+        padding: 0.6rem;
+        background-color: rgba(255, 255, 255, .2);
+    }
+    .chat-list-ul {
+        box-sizing: border-box;
+        width: 100%;
+        height: 17.2352rem;
+        overflow-x: hidden;
+        padding: 0.6rem 0.4rem 0.2rem 0.4rem;
+        background-color: #a7aeb2;
+        -webkit-border-radius: 0.6rem;
+        -moz-border-radius: 0.6rem;
+        border-radius: 0.6rem;
+    }
+    .chat-list li {
+        height: 2rem;
+        line-height: 2rem;
+        margin: 0 0 .40rem 0;
+        padding: 0 0.8rem;
+        color: #9a3a00;
+        font-size: 0.9rem;
+        text-align: left;
+        font-weight: bold;
+        -webkit-border-radius: .480rem;
+        -moz-border-radius: .480rem;
+        border-radius: .480rem;
+        background-color: #eff8fb;
+    }
+    .border-opacity {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        z-index: 109;
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        border: .0048rem solid #a7a7a6;
+        -webkit-border-radius: .0480rem;
+        -moz-border-radius: .0480rem;
+        border-radius: .0480rem;
+        background-color: rgba(255, 255, 255, .3);
+        padding: .0720rem;
+    }
+    .border-opacity .alert .mainPart .backImg{
+        background: #d1e2f6;
+        border: 0.1vh solid transparent;
+        border-radius: 0.5vh;
+    }
+    .border-opacity .alert .mainPart .backImg .blackImg{
+        background: #69829e;
+        border: .0048rem solid #fff;
+        border-radius: 0.5vh;
+    }
+    .border-opacity .alert .mainPart .buttonLeft {
+        background: url("/files/images/newgame/common-button1.png") no-repeat;
+        background-size: 100% 100%;
+        font-size: 2vh;
+        line-height: 5.6vh;
+        height: 5.6vh;
+    }
+    .border-opacity .alert .mainPart .buttonRight,
+    .border-opacity .alert .mainPart .buttonMiddle {
+        background: url("/files/images/newgame/common-button2.png") no-repeat;
+        background-size: 100% 100%;
+        font-size: 2vh;
+        line-height: 5.6vh;
+        height: 5.6vh;
+    }
+    .border-opacity .alert .mainPart .backImg:before {
+        content: '';
+        position: absolute;
+        top: .0480rem;
+        left: .0480rem;
+        width: calc(100% - 0.0960rem);
+        height: calc(100% - 0.0960rem);
+        border: .0144rem solid #95b8e1;
+        -webkit-border-radius: .024rem;
+        -moz-border-radius: .024rem;
+        border-radius: .024rem;
+        z-index: 0;
+    }
+</style>
+<body  id="body" >
+
+<div id="dialog" style="display:none">
+    <img src="//fiesc/images/common/cancel.png" onclick="fuzhiMain.closeDialog()">
+    <p id="main" class="main">
+    </p>
+    <p class="other">
+        请手动复制
+    </p>
+</div>
+<span class="copy-tip" id="tips" style="display:none;bottom:50%;left:0.6rem;transform:rotate(90deg);
+-ms-transform:rotate(90deg); 	/* IE 9 */
+-moz-transform:rotate(90deg); 	/* Firefox */
+-webkit-transform:rotate(90deg); /* Safari 和 Chrome */
+-o-transform:rotate(90deg); ">已复制到剪贴板</span>
+
+<div style="position: fixed;width:100%;height:100%;top:0;left:0;background: #000;z-index: 139;" id="loading">
+    <div class="load4">
+        <div class="loader">Loading...</div>
+    </div>
+</div>
+<div id="app-main">
+    <img src="/files/images/hall/home_copy2.png" class="needsclick zhuonuo copyUrl" data-clipboard-action="copy" id="copy_btn"  onclick="copyLink(globalData.maxCount)"  />
+    <textarea id="room_str" readonly="readonly"></textarea>
+
+    <div class="main" style="display: none;z-index: 1;position: fixed;">
+        <!--长按屏蔽区-->
+        <div  id="prevent"> </div>
+        <!--首页 加人 局数-->
+        <div class="rightTop">
+            {{game.round}}/{{game.total_num}}局
+        </div>
+        <div class="rules-mask" v-show="isShowRull"  v-on:click="closeRull()">
+            <div class="content">
+                <div class="close" v-on:click="closeRull"></div>
+                <div class="niuniu-rules" >
+                    <div class="createTitle">
+                        <img src="/files/images/common/txt_rule.png" style="width: 8rem;" />
+                    </div>
+                    <div class="blueBack">
+                        <div class="selectPart"style="height:32px;margin-top: 6px;padding: 0.5rem;">
+                            <div class="selectTitle" style="float: left;">鬼牌：</div>
+                            <div class="selectList"  style="float: left;">
+                                <div class="selectItem" style="margin-left:5px;" v-show="rullInfo.joker==0">
+                                    <div class="selectText">无鬼牌</div>
+                                </div>
+                                <div class="selectItem"style="margin-left:5px;" v-show="rullInfo.joker==1">
+                                    <div class="selectText">翻牌当鬼</div>
+                                </div>
+                                <div class="selectItem"style="margin-left:5px;" v-show="rullInfo.joker==2" >
+                                    <div class="selectText">红中当鬼</div>
+                                </div>
+                                <div class="selectItem"style="margin-left:5px;" v-show="rullInfo.joker==3" >
+                                    <div class="selectText">红中当鬼(去掉风字)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selectPart" style="height:32px;padding: 0.5rem;">
+                            <div class="selectTitle" style="float: left;">抓马：</div>
+                            <div class="selectList" style="float: left;">
+                                <div>
+                                    <div class="selectItem" style="margin-left:5px;"v-show="rullInfo.horse_count==0">
+                                        <div class="selectText">不跑马</div>
+                                    </div>
+                                    <div class="selectItem"style="margin-left:5px;" v-show="rullInfo.horse_count==2">
+                                        <div class="selectText">2匹</div>
+                                    </div>
+                                    <div class="selectItem"style="margin-left:5px;" v-show="rullInfo.horse_count==4">
+                                        <div class="selectText">4匹</div>
+                                    </div>
+                                    <div class="selectItem"style="margin-left:5px;" v-show="rullInfo.horse_count==6">
+                                        <div class="selectText">6匹</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="selectItem" style="margin-left:5px;" v-show="rullInfo.horse_count==8" >
+                                        <div class="selectText">8匹</div>
+                                    </div>
+                                    <div class="selectItem" style="margin-left:5px;" v-show="rullInfo.horse_count==1">
+                                        <div class="selectText">爆炸马</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selectPart"style="height:32px;padding: 0.5rem;"v-show="rullInfo.qianggang==1||rullInfo.chengbao==1">
+                            <div class="selectTitle" style="float: left;">规则：</div>
+                            <div class="selectList" style="float: left;">
+                                <div class="selectItem" style="margin-left:5px;" v-show="rullInfo.qianggang==1" >
+                                    <div class="selectText">抢杠全包</div>
+                                </div>
+                                <div class="selectItem" style="margin-left:5px;" v-show="rullInfo.chengbao==1" >
+                                    <div class="selectText">杠爆全包</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selectPart"style="height:32px;padding: 0.5rem;">
+                            <div class="selectTitle" style="float: left;">房卡：</div>
+                            <div class="selectList" style="float: left;">
+                                <div class="selectItem" style="margin-left:5px;" v-show="rullInfo.ticket_count==1">
+                                    <div class="selectText">6局X1张房卡</div>
+                                </div>
+                                <div class="selectItem"style="margin-left:5px;" v-show="rullInfo.ticket_count==2" >
+                                    <div class="selectText">12局X2张房卡</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- 新规则  -->
+        <!--        <div class="rules-mask" v-show="isShowRull" v-on:click="closeRull()">-->
+        <!--            <div class="content">-->
+        <!--                <div class="niuniu-rules">-->
+        <!--                    <div class="flex-cont rules-title">规则</div>-->
+        <!--                    <div class="flex-cont" data-pos="0">-->
+        <!--                        <div class="name">鬼牌：</div>-->
+        <!--                        <div v-if="rullInfo.joker==0" class="flex-item"><span>无鬼牌</span></div>-->
+        <!--                        <div v-if="rullInfo.joker==1" class="flex-item"><span>翻牌当鬼</span></div>-->
+        <!--                        <div v-if="rullInfo.joker==2" class="flex-item"><span>红中当鬼</span></div>-->
+        <!--                        <div v-if="rullInfo.joker==3" class="flex-item"><span>红中当鬼(去掉风字)</span></div>-->
+        <!--                    </div>-->
+        <!--                    <div class="flex-cont" data-pos="1">-->
+        <!--                        <div class="name">抓马：</div>-->
+        <!--                        <div v-if="rullInfo.horse_count==0" class="flex-item"><span>不跑马</span></div>-->
+        <!--                        <div v-if="rullInfo.horse_count==2" class="flex-item"><span>2匹</span></div>-->
+        <!--                        <div v-if="rullInfo.horse_count==4" class="flex-item"><span>4匹</span></div>-->
+        <!--                        <div v-if="rullInfo.horse_count==6" class="flex-item"><span>6匹</span></div>-->
+        <!--                        <div v-if="rullInfo.horse_count==8" class="flex-item"><span>8匹</span></div>-->
+        <!--                        <div v-if="rullInfo.horse_count==1" class="flex-item"><span>爆炸马</span></div>-->
+        <!--                    </div>-->
+        <!--                    <div class="flex-cont" data-pos="2" v-show="rullInfo.qianggang==1||rullInfo.chengbao==1">-->
+        <!--                        <div class="name">规则：</div>-->
+        <!--                        <div v-if="rullInfo.qianggang==1" class="flex-item"><span>抢杠全包</span></div>-->
+        <!--                        <div v-if="rullInfo.chengbao==1" class="flex-item"><span>杠爆全包</span></div>-->
+        <!--                    </div>-->
+        <!--                    <div class="flex-cont" data-pos="2">-->
+        <!--                        <div class="name">房卡：</div>-->
+        <!--                        <div v-if="rullInfo.ticket_count==1" class="flex-item"><span>6局X1张房卡</span></div>-->
+        <!--                        <div v-if="rullInfo.ticket_count==2" class="flex-item"><span>12局X2张房卡</span></div>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--            <div class="close" v-on:click="cancelGameRule"></div>-->
+        <!--        </div>-->
+        <!--房卡-->
+        <div class="roomCard" v-on:click="showShop()">
+            <img  src="/files/images/common/ticket.png" />
+            <div class="num">
+                <div class="back" ></div>
+                <div class="text">{{userData.card}} 张</div>
+            </div>
+        </div>
+        <!--跑马-->
+        <div class="endMa" v-show="game.isShowEnd">
+            <div class="back"></div>
+            <div v-show="game.endStep<6&&game.horse_count>1">
+                <img src="/files/images/majiang/paoma.png" class="title" />
+                <div class="card" v-for="m in game.ma" v-if="m.num<4" v-bind:style="'margin-left: '+(12*m.num)+'%;'">
+                    <div class="animate">
+                        <img src="/files/images/majiang/majiang5.png" class="outer" v-show="game.endStep==0"/>
+                        <img src="/files/images/majiang/ma2.png" class="outer" v-show="game.endStep==1"/>
+                        <img src="/files/images/majiang/ma3.png" class="outer" v-show="game.endStep==2"/>
+                        <img src="/files/images/majiang/ma4.png" class="outer" v-show="game.endStep==3"/>
+                        <img src="/files/images/majiang/majiang1.png" class="outer" v-show="game.endStep==4||game.endStep==5"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(m.card%100)+'.png'" class="inner" v-if="game.endStep==4||game.endStep==5" />
+                        <div class="backInner"  v-show="game.endStep==5&&m.isMa==0"></div>
+                        <div class="lightInner" v-show="game.endStep==5&&m.isMa==1"></div>
+                    </div>
+                </div>
+                <div class="card" v-for="m in game.ma" v-if="m.num>3" v-bind:style="'margin-left:' +(12*(m.num-4))+'%;margin-top: 17%;'">
+                    <div class="animate">
+                        <img src="/files/images/majiang/majiang5.png" class="outer" v-show="game.endStep==0"/>
+                        <img src="/files/images/majiang/ma2.png" class="outer" v-show="game.endStep==1"/>
+                        <img src="/files/images/majiang/ma3.png" class="outer" v-show="game.endStep==2"/>
+                        <img src="/files/images/majiang/ma4.png" class="outer" v-show="game.endStep==3"/>
+                        <img src="/files/images/majiang/majiang1.png" class="outer" v-show="game.endStep==4||game.endStep==5"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(m.card%100)+'.png'" class="inner" v-if="game.endStep==4||game.endStep==5" />
+                        <div class="backInner" v-show="game.endStep==5&&m.isMa==0"></div>
+                        <div class="lightInner" v-show="game.endStep==5&&m.isMa==1"></div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="game.endStep<6&&game.horse_count==1">
+                <img src="/files/images/majiang/paoma.png" class="title" />
+                <div class="card baozha" >
+                    <div class="animate">
+                        <img src="/files/images/majiang/zifront.png" class="rotatelight" v-show="game.endStep==5" />
+                        <img src="/files/images/majiang/majiang5.png" class="outer" v-show="game.endStep==0"/>
+                        <img src="/files/images/majiang/ma2.png" class="outer" v-show="game.endStep==1"/>
+                        <img src="/files/images/majiang/ma3.png" class="outer" v-show="game.endStep==2"/>
+                        <img src="/files/images/majiang/ma4.png" class="outer" v-show="game.endStep==3"/>
+                        <img src="/files/images/majiang/majiang1.png" class="outer donghua" v-show="game.endStep==4||game.endStep==5"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(game.ma[0].card%100)+'.png'" class="inner donghua" v-if="game.endStep==4||game.endStep==5" />
+                        <div class="lightOuter" v-show="game.endStep==5"></div>
+                    </div>
+                </div>
+                <div class="beishu" v-if="game.endStep==5&&game.ma.length>0">×{{game.ma[0].isMa}}</div>
+            </div>
+        </div>
+        <!--游戏规则,位置-->
+        <div class="readyBox" v-show="player[0].ticket_checked==0">
+            <div class="back"></div>
+            <div class="blueBack">
+                <div class="infoPart">
+                    <div class="rule">
+                        <div class="guize">规则:</div>
+                        <div v-show="game.joker==0">无鬼牌,</div>
+                        <div v-show="game.joker==1">翻牌当鬼,</div>
+                        <div v-show="game.joker==2">红中当鬼,</div>
+                        <div v-show="game.joker==3">红中当鬼(去掉风字),</div>
+                        <div v-show="game.horse_count==0">不跑马,</div>
+                        <div v-show="game.horse_count==4">4匹马,</div>
+                        <div v-show="game.horse_count==6">6匹马,</div>
+                        <div v-show="game.horse_count==8">8匹马,</div>
+                        <div v-show="game.horse_count==1">爆炸马,</div>
+                        <div v-show="game.qianggang==1">抢杠全包,</div>
+                        <div v-show="game.chengbao==1">杠爆全包,</div>
+                        <div v-show="game.ticket_count==1">6局×1张房卡</div>
+                        <div v-show="game.ticket_count==2">12局×2张房卡</div>
+                    </div>
+                    <div class="position">
+                        <div class="positionList" v-for="p in game.positionList2" v-if="p.position==2">
+                            <img v-bind:src="p.headimgurl" />
+                            <div class="name" >{{p.nickname}}</div>
+                            <div style="margin-left: 15px;">进入了房间</div>
+                        </div>
+                        <div class="positionList" v-for="p in game.positionList1">
+                            <img v-bind:src="p.headimgurl1" />
+                            <div class="name" >{{p.nickname1}}</div>
+                            <div style="margin-left: 7px;margin-right: 4px;">相距</div>
+                            <img v-bind:src="p.headimgurl2" />
+                            <div class="name" >{{p.nickname2}}</div>
+                            <div style="margin-left: 15px;">{{p.position}}</div>
+                        </div>
+                        <div class="positionList" v-for="p in game.positionList2" v-if="p.position==0">
+                            <img v-bind:src="p.headimgurl" />
+                            <div class="name" >{{p.nickname}}</div>
+                            <div style="margin-left: 15px;">地理位置未知</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ready01" v-on:click="click(0)" v-show="player[0].account_status==0||player[0].account_status==1" >
+                    <img src="/files/images/majiang/rank_btn1.png"  />
+                    <div style="position: relative;">准备</div>
+                </div>
+                <img src="/files/images/common/ready_text.png" class="ready02" v-show="player[0].account_status==2"/>
+            </div>
+        </div>
+        <!--功能按钮-->
+        <div class="spbutton rullButton" v-on:click="showRull()"><img src="/files/images/common/icon_rule.png"></div>
+        <div class="spbutton sphome" v-on:click="showAlert(3,'确认返回主页？')"><img src="/files/images/common/icon_home.png"></div>
+
+        <!--        <div class="spbutton recordButton" v-on:click="showAudioSetting()"><img src="--><?php //echo $file_url;?><!--files/images/common/icon_sound.png"></div>-->
+        <img class="spbutton recordButton"  src="/files/images/majiang/game-music01.png" v-if="editAudioInfo.backMusic==1" v-on:click="confirmAudioSetting">
+        <img class="spbutton recordButton"  src="/files/images/majiang/game-music02.png" v-if="editAudioInfo.backMusic==0" v-on:click="confirmAudioSetting">
+
+        <div class="spbutton spaudio"  v-on:click="showMessage()"><img src="/files/images/common/icon_message.png"></div>
+
+        <div class="shop" v-show="isShowShop">
+            <div class="shopBack" v-on:click="hideShop()"></div>
+        </div>
+
+
+        <div class="startBack"></div>
+        <!--游戏区域-->
+        <div class="playGround">
+            <!--中间指示-->
+            <div class="center" v-show="game.joker!=1||(animate.animate3==8)">
+                <div class="greenLight greenLight1" v-show="game.light==1"></div>
+                <div class="greenLight greenLight2" v-show="game.light==2"></div>
+                <div class="greenLight greenLight3" v-show="game.light==3"></div>
+                <div class="greenLight greenLight4" v-show="game.light==4"></div>
+                <div class="back">
+                    <div class="up" v-show="game.status==2">
+                        <div v-bind:class="'digital digital'+game.time.firstNum" style="margin-left: -14px;left: 50%;"></div>
+                        <div v-bind:class="'digital digital'+game.time.lastNum" style="margin-right: -14px;right: 50%;"></div>
+                    </div>
+                    <div class="down" v-show="game.status==2">
+                        <img src="/files/images/majiang/majiang2.1.png"  />X {{game.remain_count}}
+                    </div>
+                </div>
+            </div>
+            <!--玩家信息-->
+            <div class="playerPart">
+                <div v-bind:class="'player player'+p.num" v-for="p in player" v-if="p.account_id>0" >
+                    <div class="avatar">
+                        <img src="/files/images/majiang/avatarback.png" class="avatar1"/>
+                        <img v-bind:src="p.headimgurl" class="avatar2"/>
+                        <div class="zhuang" v-show="p.account_id==game.banker_id">庄</div>
+                        <div class="quitBack" v-show="p.online_status==0" ></div>
+                    </div>
+                    <div class="info">
+                        <div class="name">{{p.nickname}}</div>
+                        <div class="score">{{p.account_score}}</div>
+                    </div>
+                    <img src="/files/images/common/ready_text.png" class="ready"v-show="p.account_status==2&&p.num!=1" />
+                </div>
+            </div>
+            <div v-bind:class="'messageSay messageSay'+p.num" v-show="p.messageOn" v-for="p in player" >
+                <div class="text">{{p.messageText}}</div>
+                <div class="triangle"> </div>
+            </div>
+
+
+            <!--翻鬼牌-->
+            <div class="fanguipai" v-if="game.joker==1">
+                <div class="guipaifront">
+                    <img src="/files/images/majiang/majiang5.png" class="outer" v-show="animate.animate3==1"/>
+                    <img src="/files/images/majiang/ma2.png" class="outer" v-show="animate.animate3==2"/>
+                    <img src="/files/images/majiang/ma3.png" class="outer" v-show="animate.animate3==3"/>
+                    <img src="/files/images/majiang/ma4.png" class="outer" v-show="animate.animate3==4"/>
+                    <img src="/files/images/majiang/majiang1.png" class="outer" v-show="animate.animate3==5"/>
+                    <img v-bind:src="'/files/images/majiang/cards'+(game.flip_card%100)+'.png'" class="inner" v-if="animate.animate3==5&&game.flip_card>0" />
+                </div>
+                <div class="guipai1" v-show="animate.animate3==6">
+                    <img src="/files/images/majiang/zifront.png" class="lightRotate" />
+                    <img src="/files/images/majiang/majiang1.png" class="outer donghua" />
+                    <img v-bind:src="'/files/images/majiang/cards'+(game.joker_card%100)+'.png'" class="inner donghua" v-if="game.joker_card>0" />
+
+                </div>
+                <div class="guipai2Back"  v-show="animate.animate3>6"></div>
+                <div class="guipai2" v-show="animate.animate3==7">
+                    <img src="/files/images/majiang/majiang1.png" class="outer" />
+                    <img v-bind:src="'/files/images/majiang/cards'+(game.joker_card%100)+'.png'" class="inner" v-if="game.joker_card>0" />
+                </div>
+                <div class="guipai3" v-show="animate.animate3==8">
+                    <img v-bind:src="'/files/images/majiang/cards'+(game.joker_card%100)+'.png'" class="inner" v-if="game.joker_card>0" style="top:10%;height:85%;left:3%;width:94%;"/>
+                </div>
+                <div class="title" v-show="animate.animate3>0&&animate.animate3!=8">翻鬼牌</div>
+            </div>
+
+            <!--我的麻将-->
+            <div class="mine">
+                <div class="ready" v-show="player[0].ticket_checked==1">
+                    <img src="/files/images/common/ready_button.png" class="readyButton" v-show="player[0].account_status==0||player[0].account_status==1" v-on:click="click(0)"/>
+                    <img src="/files/images/common/ready_text.png" class="isReady" v-show="player[0].account_status==2"/>
+                </div>
+                <div class="myCard" v-show="player[0].account_status==4">
+                    <div v-for="c in player[0].card" class="card"  v-on:click="chooseCard(c.num)" v-show="!player[0].end_show" style="height: 94%;">
+                        <div v-show="c.num>=animate.animate2" style="position: absolute;top:0;left:0;width: 100%;height:100%;" v-bind:class="{true: 'isSelect', false: 'notSelect'}[c.isSelect]">
+                            <img src="/files/images/majiang/animate2.png" class="outer" v-show="animate.animate1==2||(animate.animate1==5&&(c.num<animate.animate2+4||animate.animate2==8))" style="margin-top:20%;"/>
+                            <img src="/files/images/majiang/animate1.png" class="outer" v-show="animate.animate1==3||(animate.animate1==6&&(c.num<animate.animate2+4||animate.animate2==8))"/>
+                            <img src="/files/images/majiang/majiang1.png" class="outer" v-show="animate.animate1==0||animate.animate1==1||(animate.animate1==4||(c.num>=animate.animate2+4&&animate.animate2!=8&&animate.animate1>4))" />
+
+                            <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" v-if="(animate.animate1==0||animate.animate1==1||animate.animate1==4||(c.num>=animate.animate2+4&&animate.animate2!=8&&animate.animate1>4))&&c.card>0" />
+                            <img src="/files/images/majiang/lai.png" class="lai" v-show="(animate.animate1==0||animate.animate1==1||animate.animate1==4||(c.num>=animate.animate2+4&&animate.animate2!=8&&animate.animate1>4))&&c.card<100" />
+                        </div>
+                        <div v-show="c.num<animate.animate2" style="width: 100%;height:1px;position: relative;"></div>
+                    </div>
+                    <div v-for="c in player[0].card" class="endCard" v-if="player[0].end_show">
+                        <img src="/files/images/majiang/majiang6.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                        <img src="/files/images/majiang/lai.png" class="lai" v-show="c.card<100" />
+                    </div>
+                </div>
+                <div class="pengGang" v-for="p in player[0].pengGang">
+                    <div class="card"  v-bind:style="'margin-left: '+(0+(p.num*18))+'%;'" v-show="p.type==1||p.type==2">
+                        <img src="/files/images/majiang/majiang6.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                    </div>
+                    <div class="card"  v-bind:style="'margin-left: '+(0+(p.num*18))+'%;'" v-show="p.type==3">
+                        <img src="/files/images/majiang/majiang2.1.png" class="outer" />
+                    </div>
+
+                    <div class="card"  v-bind:style="'margin-left: '+(5.5+(p.num*18))+'%;'" v-show="p.type==1||p.type==2">
+                        <img src="/files/images/majiang/majiang6.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                    </div>
+                    <div class="card"  v-bind:style="'margin-left: '+(5.5+(p.num*18))+'%;'" v-show="p.type==3">
+                        <img src="/files/images/majiang/majiang2.1.png" class="outer" />
+                    </div>
+
+                    <div class="card cardReturn"   v-bind:style="'margin-left: '+(11+(p.num*18))+'%;z-index: 31;'" v-show="p.step==1&&(p.type==1||p.type==2)">
+                        <img src="/files/images/majiang/majiang6.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                    </div>
+                    <div class="card"   v-bind:style="'margin-left: '+(11+(p.num*18))+'%;z-index: 31;'" v-show="p.type==3">
+                        <img src="/files/images/majiang/majiang2.1.png" class="outer" />
+                    </div>
+
+                    <div class="cardUp" v-show="p.type==2||p.type==3" v-bind:style="'margin-left: '+(5.5+(p.num*18))+'%;z-index: 31;'">
+                        <img src="/files/images/majiang/majiang6.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                    </div>
+                </div>
+                <div class="cardNew" v-bind:class="{true: 'isSelect', false: 'notSelect'}[player[0].cardNew.isSelect]" v-on:click="chooseCard(-1)" v-if="player[0].account_status==4&&player[0].cardNew.isShow&&!player[0].end_show&&animate.animate2==0" >
+                    <img src="/files/images/majiang/majiang1.png" class="outer" />
+                    <img v-bind:src="'/files/images/majiang/cards'+(player[0].cardNew.card%100)+'.png'" class="inner" />
+                    <img src="/files/images/majiang/lai.png" class="lai" v-show="player[0].cardNew.card<100" />
+                </div>
+                <div class="cardNew1" v-if="player[0].end_show&&player[0].cardNew.isShow&&player[0].cardNew.card!=-1" >
+                    <img src="/files/images/majiang/majiang6.png" class="outer" />
+                    <img v-bind:src="'/files/images/majiang/cards'+(player[0].cardNew.card%100)+'.png'" class="inner" />
+                    <img src="/files/images/majiang/lai.png" class="lai" v-show="player[0].cardNew.card<100" />
+                </div>
+                <div class="operation" v-show="!player[0].is_operation&&animate.animate1==1&&(player[0].playing_status>2||((player[0].hu_flag>0||player[0].gang_flag>0)&&player[0].playing_status==2))">
+                    <img src="/files/images/majiang/operation1.png" class="bian" />
+                    <div class="button" v-on:click="click(4,player[0].playing_status)" v-show="player[0].playing_status>2" >
+                        <div class="back"></div>
+                        <img src="/files/images/majiang/operation4.png" class="quanGuo" />
+                        <img src="/files/images/majiang/guo.png" class="textGuo" />
+                    </div>
+                    <div class="button" v-on:click="click(5)" v-show="player[0].playing_status==3||player[0].playing_status==4">
+                        <div class="back"></div>
+                        <img src="/files/images/majiang/operation3.png" class="quan" />
+                        <img src="/files/images/majiang/peng.png" class="text" />
+                        <img src="/files/images/majiang/zib1.png" class="text1" />
+                    </div>
+                    <div class="button" v-on:click="click(6,3)" v-show="player[0].playing_status==4">
+                        <div class="back"></div>
+                        <img src="/files/images/majiang/operation3.png" class="quan" />
+                        <img src="/files/images/majiang/gang.png" class="text" />
+                        <img src="/files/images/majiang/zib1.png" class="text1" />
+                    </div>
+
+                    <div class="button" v-on:click="click(6,player[0].gang_flag)" v-show="player[0].playing_status==2&&player[0].gang_flag>0">
+                        <div class="back"></div>
+                        <img src="/files/images/majiang/operation3.png" class="quan" />
+                        <img src="/files/images/majiang/gang.png" class="text" />
+                        <img src="/files/images/majiang/zib1.png" class="text1" />
+
+                    </div>
+
+                    <div class="button" v-on:click="click(7)" v-show="player[0].playing_status==2&&player[0].hu_flag>0">
+                        <div class="back"></div>
+                        <img src="/files/images/majiang/hu.png" class="text"/>
+                        <img src="/files/images/majiang/operation3.png" class="quan" />
+                        <img src="/files/images/majiang/zib1.png" class="text1" />
+                    </div>
+                    <div class="button" v-on:click="click(8)" v-show="player[0].playing_status==5">
+                        <div class="back"></div>
+                        <img src="/files/images/majiang/hu.png" class="text"/>
+                        <img src="/files/images/majiang/operation3.png" class="quan" />
+                        <img src="/files/images/majiang/zib1.png" class="text1" />
+                    </div>
+
+                    <img src="/files/images/majiang/operation2.png" class="bian" />
+                    <div class="card" v-show="player[0].playing_status==5">
+                        <img src="/files/images/majiang/majiang1.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(game.qianggang_card%100)+'.png'" class="inner" v-if="game.qianggang_card>0" />
+                    </div>
+                </div><!---->
+            </div>
+            <!--别人的麻将-->
+            <div class="others" >
+                <div class="player2"  v-if="player[1].account_status==4">
+                    <div class="cardNew" v-show="player[1].cardNew.isShow&&!player[1].end_show" v-bind:style="'top:'+(-player[1].pengGang.length*4.5+27)+'%;'">
+                        <img src="/files/images/majiang/majiang3.png" class="outer" />
+                    </div>
+                    <div class="cardNew1" v-if="player[1].end_show&&player[1].cardNew.isShow&&player[1].cardNew.card!=-1"  v-bind:style="'top:'+(-player[1].pengGang.length*1.3+20)+'%;'">
+                        <img src="/files/images/majiang/majiang8.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(player[1].cardNew.card%100)+'.png'" class="inner" />
+                        <img src="/files/images/majiang/lai.png" class="lai" v-show="player[1].cardNew.card<100" />
+                    </div>
+                    <div v-for="c in player[1].card" class="card"  v-bind:style="'margin-top:'+(1.8*(c.num+1))+'%;top:'+(-player[1].pengGang.length*4.5+27)+'%;'" v-show="!player[1].end_show">
+                        <img src="/files/images/majiang/majiang3.png" class="outer"/>
+                    </div>
+                    <div v-for="c in player[1].card" class="endCard"  v-bind:style="'margin-top:'+(2.5*(c.num+1))+'%;top:'+(-(player[1].card.length*0.7*1.6267)-(player[1].pengGang.length*4.5)+32)+'%;'" v-if="player[1].end_show">
+                        <img src="/files/images/majiang/majiang8.png" class="outer"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                        <img src="/files/images/majiang/lai.png" class="lai" v-show="c.card<100" />
+                    </div>
+
+                    <div class="pengGang" v-for="p in player[1].pengGang">
+                        <div class="card0" v-bind:style="'margin-top: '+(5-(p.num*8.4))+'%;z-index: 33;'"  v-show="p.type==1||p.type==2">
+                            <img src="/files/images/majiang/majiang8.png" class="outer" />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                        <div class="card0" v-bind:style="'margin-top: '+(5-(p.num*8.4))+'%;z-index: 33;'"  v-show="p.type==3">
+                            <img src="/files/images/majiang/majiang10.png" class="outer" />
+                        </div>
+                        <div class="card0" v-bind:style="'margin-top: '+(2.5-(p.num*8.4))+'%;z-index: 32;'"  v-show="p.type==1||p.type==2">
+                            <img src="/files/images/majiang/majiang8.png" class="outer" />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                        <div class="card0" v-bind:style="'margin-top: '+(2.5-(p.num*8.4))+'%;z-index: 32;'"  v-show="p.type==3">
+                            <img src="/files/images/majiang/majiang10.png" class="outer" />
+                        </div>
+                        <div class="card0 cardReturn" v-bind:style="'margin-top: '+(0-(p.num*8.4))+'%;z-index: 31;'" v-show="p.step==1&&(p.type==1||p.type==2)">
+                            <img src="/files/images/majiang/majiang8.png" class="outer" />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                        <div class="card0" v-bind:style="'margin-top: '+(0-(p.num*8.4))+'%;z-index: 31;'"  v-show="p.type==3">
+                            <img src="/files/images/majiang/majiang10.png" class="outer" />
+                        </div>
+                        <div class="cardUp" v-show="p.type==2||p.type==3"v-bind:style="'margin-top: '+(1.9-(p.num*8.4))+'%;z-index: 34;'">
+                            <img src="/files/images/majiang/majiang8.png" class="outer" />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                    </div>
+                </div>
+                <div class="player3"  v-if="player[2].account_status==4">
+                    <div class="cardNew" v-if="player[2].cardNew.isShow&&!player[2].end_show" style="margin-left:-4.5%;">
+                        <img src="/files/images/majiang/majiang5.png" class="outer" />
+                    </div>
+                    <div class="cardNew1" v-if="player[2].end_show&&player[2].cardNew.isShow&&player[2].cardNew.card!=-1" style="margin-left:-4.5%;">
+                        <img src="/files/images/majiang/majiang6.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(player[2].cardNew.card%100)+'.png'" class="inner" />
+                        <img src="/files/images/majiang/lai.png" class="lai" v-show="player[2].cardNew.card<100" />
+                    </div>
+
+                    <div v-for="c in player[2].card" class="card" v-bind:style="'margin-left:'+(3.55*(c.num))+'%;'"  v-show="!player[2].end_show">
+                        <img src="/files/images/majiang/majiang5.png" class="outer"/>
+                    </div>
+                    <div v-for="c in player[2].card" class="endCard"  v-bind:style="'margin-left:'+(3.55*(c.num))+'%;'" v-if="player[2].end_show">
+                        <img src="/files/images/majiang/majiang6.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                        <img src="/files/images/majiang/lai.png" class="lai" v-show="c.card<100" />
+                    </div>
+
+                    <div class="pengGang" v-for="p in player[2].pengGang">
+                        <div class="card" v-bind:style="'margin-left:'+(0-(p.num*11))+'%;'">
+                            <img src="/files/images/majiang/majiang6.png" class="outer" v-show="p.type==1||p.type==2"/>
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                        <div class="card" v-bind:style="'margin-left:'+(0-(p.num*11))+'%;'" v-show="p.type==3">
+                            <img src="/files/images/majiang/majiang2.1.png" class="outer" />
+                        </div>
+                        <div class="card" v-bind:style="'margin-left:'+(3.3-(p.num*11))+'%;'" v-show="p.type==1||p.type==2">
+                            <img src="/files/images/majiang/majiang6.png" class="outer" />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                        <div class="card" v-bind:style="'margin-left:'+(3.3-(p.num*11))+'%;'" v-show="p.type==3">
+                            <img src="/files/images/majiang/majiang2.1.png" class="outer" />
+                        </div>
+                        <div class="card cardReturn" v-bind:style="'margin-left:'+(6.6-(p.num*11))+'%;z-index: 31;'" v-show="p.step==1&&(p.type==1||p.type==2)">
+                            <img src="/files/images/majiang/majiang6.png" class="outer" />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                        <div class="card " v-bind:style="'margin-left:'+(6.6-(p.num*11))+'%;z-index: 31;'" v-show="p.type==3">
+                            <img src="/files/images/majiang/majiang2.1.png" class="outer" />
+                        </div>
+                        <div class="cardUp" v-show="p.type==2||p.type==3" v-bind:style="'margin-left:'+(3.3-(p.num*11))+'%;'">
+                            <img src="/files/images/majiang/majiang6.png" class="outer" />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                    </div>
+                </div>
+                <div class="player4"  v-if="player[3].account_status==4">
+                    <div v-for="c in player[3].card" class="card"  v-bind:style="'margin-top:-'+(1.8*(c.num))+'%;z-index:'+(20-c.num)+';top:'+(51+player[3].pengGang.length*4.5)+'%;'" v-show="!player[3].end_show">
+                        <img src="/files/images/majiang/majiang4.1.png" class="outer"/>
+                    </div>
+                    <div v-for="c in player[3].card" class="endCard"  v-bind:style="'margin-top:-'+(2.4*(c.num))+'%;z-index:'+(20-c.num)+';top:'+((player[3].card.length*0.7*1.6267)+45+(player[3].pengGang.length*4.5))+'%;'" v-if="player[3].end_show">
+                        <img src="/files/images/majiang/majiang8.png" class="outer"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                        <img src="/files/images/majiang/lai.png" class="lai" v-show="c.card<100" />
+                    </div>
+                    <div class="cardNew" v-if="player[3].cardNew.isShow&&!player[3].end_show" v-bind:style="'top:'+(51+player[3].pengGang.length*4.5)+'%;'">
+                        <img src="/files/images/majiang/majiang4.1.png" class="outer" />
+                    </div>
+                    <div class="cardNew1" v-if="player[3].end_show&&player[3].cardNew.isShow&&player[3].cardNew.card!=-1" v-bind:style="'top:'+(61+player[3].pengGang.length*1.3)+'%;'">
+                        <img src="/files/images/majiang/majiang8.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(player[3].cardNew.card%100)+'.png'" class="inner" />
+                        <img src="/files/images/majiang/lai.png" class="lai" v-show="player[3].cardNew.card<100" />
+                    </div>
+
+                    <div class="pengGang" v-for="p in player[3].pengGang">
+                        <div class="card0" v-bind:style="'margin-top: '+(p.num*8.4)+'%;'"v-show="p.type==1||p.type==2">
+                            <img src="/files/images/majiang/majiang8.png" class="outer"  />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                        <div class="card0" v-bind:style="'margin-top: '+(p.num*8.4)+'%;'" v-show="p.type==3">
+                            <img src="/files/images/majiang/majiang10.png" class="outer"  />
+                        </div>
+                        <div class="card0" v-bind:style="'margin-top: '+(2.5+(p.num*8.4))+'%;'" v-show="p.type==1||p.type==2">
+                            <img src="/files/images/majiang/majiang8.png" class="outer"  />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                        <div class="card0" v-bind:style="'margin-top: '+(2.5+(p.num*8.4))+'%;'" v-show="p.type==3">
+                            <img src="/files/images/majiang/majiang10.png" class="outer"  />
+                        </div>
+                        <div class="card0 cardReturn" v-bind:style="'margin-top: '+(5+(p.num*8.4))+'%;z-index: 31;'" v-show="p.step==1&&(p.type==1||p.type==2)">
+                            <img src="/files/images/majiang/majiang8.png" class="outer" />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                        <div class="card0" v-bind:style="'margin-top: '+(5+(p.num*8.4))+'%;z-index: 31;'" v-show="p.type==3">
+                            <img src="/files/images/majiang/majiang10.png" class="outer" />
+                        </div>
+                        <div class="cardUp" v-show="p.type==2||p.type==3" v-bind:style="'margin-top: '+(1.9+(p.num*8.4))+'%;'">
+                            <img src="/files/images/majiang/majiang8.png" class="outer" />
+                            <img v-bind:src="'/files/images/majiang/cards'+(p.card%100)+'.png'" class="inner" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--打出去的麻将-->
+            <div class="cardList" v-show="game.status==2">
+                <div class="player1">
+                    <div v-for="c in player[0].discard" class="card" v-bind:style="'margin-left:'+((c.num)*3.1)+'%'"  v-if="c.num<=11&&c.show">
+                        <img src="/files/images/majiang/majiang6.png" class="outer"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                    </div>
+                    <div v-for="c in player[0].discard" class="card" v-bind:style="'margin-left:'+((c.num-12)*3.1)+'%;margin-top: 3.8%;'" v-if="c.num>11&&c.show">
+                        <img src="/files/images/majiang/majiang6.png" class="outer"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                    </div>
+                    <div class="discard" v-if="player[0].cardSet>0">
+                        <img src="/files/images/majiang/majiang6.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(player[0].cardSet%100)+'.png'" class="inner" />
+                    </div>
+                </div>
+                <div class="player2">
+                    <div v-for="c in player[1].discard" class="card" v-bind:style="'z-index: '+(30-c.num)+';margin-top:-'+((c.num)*2.5)+'%;'"  v-if="c.num<=11&&c.show">
+                        <img src="/files/images/majiang/majiang8.png" class="outer"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                    </div>
+
+                    <div v-for="c in player[1].discard" class="card" v-bind:style="'z-index: '+(30-c.num)+';margin-top:-'+((c.num-12)*2.5)+'%;margin-left:4%;'" v-if="c.num>11&&c.show">
+                        <img src="/files/images/majiang/majiang8.png" class="outer"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                    </div>
+
+                    <div class="discard" v-if="player[1].cardSet>0">
+                        <img src="/files/images/majiang/majiang8.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(player[1].cardSet%100)+'.png'" class="inner" />
+                    </div>
+                </div>
+                <div class="player3">
+                    <div v-for="c in player[2].discard" class="card" v-if="c.num<=11&&c.show" v-bind:style="'margin-right:'+((c.num)*3.1)+'%;z-index: 4;'">
+                        <img src="/files/images/majiang/majiang6.png" class="outer"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                    </div>
+                    <div v-for="c in player[2].discard" class="card" v-if="c.num>11&&c.show" v-bind:style="'margin-right:'+((c.num-12)*3.1)+'%;margin-bottom: 3.8%;z-index:3;'">
+                        <img src="/files/images/majiang/majiang6.png" class="outer"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                    </div>
+                    <div class="discard" v-if="player[2].cardSet>0">
+                        <img src="/files/images/majiang/majiang6.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(player[2].cardSet%100)+'.png'" class="inner" />
+                    </div>
+                </div>
+                <div class="player4">
+                    <div v-for="c in player[3].discard" class="card"v-if="c.num<=11&&c.show" v-bind:style="'margin-top:'+((c.num)*2.5)+'%;margin-left:-4%;'">
+                        <img src="/files/images/majiang/majiang8.png" class="outer"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                    </div>
+                    <div v-for="c in player[3].discard" class="card" v-if="c.num>11&&c.show" v-bind:style="'margin-top:'+((c.num-12)*2.5)+'%;margin-left:-8%;'">
+                        <img src="/files/images/majiang/majiang8.png" class="outer"/>
+                        <img v-bind:src="'/files/images/majiang/cards'+(c.card%100)+'.png'" class="inner" />
+                    </div>
+                    <div class="discard" v-if="player[3].cardSet>0">
+                        <img src="/files/images/majiang/majiang8.png" class="outer" />
+                        <img v-bind:src="'/files/images/majiang/cards'+(player[3].cardSet%100)+'.png'" class="inner" />
+                    </div>
+                </div>
+            </div>
+            <!--最后一张牌标记-->
+            <div class="currentCard"  >
+                <div  class="player0" v-bind:style="'margin-left:'+((player[0].discard.length-1)%12*3.1)+'%;z-index: 31;margin-top: '+(player[0].discard.length>12?3.8:0)+'%;'" v-if="game.last_user==player[0].account_id&&player[0].discard.length>0">
+                    <img src="/files/images/majiang/currentCard.gif" class="currentSign" v-if="player[0].discard[player[0].discard.length-1].show" />
+                </div>
+                <div  class="player1" v-bind:style="'margin-top:-'+((player[1].discard.length-1)%12*2.5)+'%;z-index: 31;margin-left: '+(player[1].discard.length>12?4:0)+'%;'" v-if="game.last_user==player[1].account_id&&player[1].discard.length>0">
+                    <img src="/files/images/majiang/currentCard.gif" class="currentSign" v-if="player[1].discard[player[1].discard.length-1].show"/>
+                </div>
+                <div  class="player2" v-bind:style="'margin-right:'+((player[2].discard.length-1)%12*3.1)+'%;z-index: 31;margin-bottom: '+(player[2].discard.length>12?7.6:3.8)+'%;'" v-if="game.last_user==player[2].account_id&&player[2].discard.length>0">
+                    <img src="/files/images/majiang/currentCard.gif" class="currentSign" v-if="player[2].discard[player[2].discard.length-1].show"/>
+                </div>
+                <div  class="player3" v-bind:style="'margin-top:'+((player[3].discard.length-1)%12*2.5)+'%;z-index: 31;margin-left: '+(player[3].discard.length>12?-8:-4)+'%;'" v-if="game.last_user==player[3].account_id&&player[3].discard.length>0">
+                    <img src="/files/images/majiang/currentCard.gif" class="currentSign" v-if="player[3].discard[player[3].discard.length-1].show"/>
+                </div>
+            </div>
+            <!--碰杠胡-->
+            <div class="wordShow">
+                <div v-for="p in player">
+                    <img src="/files/images/majiang/zifront.png" v-bind:class="'zi'+p.num+' animate1'" v-if="p.zi==1" />
+                    <img src="/files/images/majiang/peng2.png" v-bind:class="'zi'+p.num+' animate'" v-if="p.zi==1" />
+                    <img src="/files/images/majiang/zifront.png" v-bind:class="'zi'+p.num+' animate1'" v-if="p.zi==2" />
+                    <img src="/files/images/majiang/gang2.png" v-bind:class="'zi'+p.num+' animate'" v-if="p.zi==2" />
+                    <img src="/files/images/majiang/zifront.png" v-bind:class="'zi'+p.num+' animate1'" v-if="p.zi==3" />
+                    <img src="/files/images/majiang/hu2.png" v-bind:class="'zi'+p.num+' animate'" v-if="p.zi==3" />
+                    <div v-bind:class="'gangScore gangScore'+p.num" v-if="game.showGangScore&&p.gangScore!=0">
+                        <a v-if="p.gangScore>0" style="color: #fedb4d;text-shadow: 2px 2px 2px #9c3600;">+{{p.gangScore}}</a>
+                        <a v-if="p.gangScore<0" style="color:#b3dbfe;text-shadow: 2px 2px 2px #103a5f;">{{p.gangScore}}</a>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 消息  -->
+            <div class="chat-list-mask" v-on:click="hideMessage" v-show="isShowMessage"></div>
+            <div class="chat-list"  v-show="isShowMessage" >
+                <ul  class="chat-list-ul" id="message">
+                    <li class="textItem" v-for="m in message" v-on:click="messageOn(m.num)">{{m.text}}</li>
+                    <!--                    <div class="textItem" style="height: 5px;background: #434547;"></div>-->
+                </ul>
+            </div>
+        </div>
+
+        <!-- 临时积分榜  -->
+        <div class="roundPause1" id="roundPause1" style="z-index: 70;display: none;">
+            <img  crossOrigin="Anonymous"  src="" style="width: 100%;position: absolute;top:0;left: 0;height: 100%;" id="roundPause2"  />
+            <div v-for="p in player"  v-bind:class="'playerStatus playerStatus' + p.num">
+                <img  crossOrigin="Anonymous"  src="/files/images/common/ready_text.png" v-show="p.account_status==2"/>
+                <img  crossOrigin="Anonymous"  src="/files/images/common/offline_text.png" v-show="p.online_status==0"/>
+            </div>
+            <div class="release">三分钟未开局，房间自动解散<a>{{game.countdown}}s</a></div>
+            <div class="button buttonRight" >
+                <img  crossOrigin="Anonymous"  src="/files/images/majiang/rank_btn2.png"/>
+                <div class="text" v-show="player[0].account_status!=2&&game.round!=game.total_num" v-on:click="nextRound(0)">下一局</div>
+            </div>
+        </div>
+
+
+        <!-- 设置音频 -->
+        <div class="audioRoom" id="vaudioRoom" v-show="editAudioInfo.isShow">
+            <div class="audioRoomBack" v-on:click="cancelAudioSetting"></div>
+            <div class="mainPart" >
+                <div  class="createB"></div>
+                <div class="createTitle" style="height:4vh;">
+                </div>
+
+                <img src="/files/images/common/cancel.png" class="cancelCreate" v-on:click="cancelAudioSetting"/>
+
+                <div class="blueBack">
+                    <!--<div class="selectPart" style="top: 0px;height:4vh;line-height:4.1vh;">
+            <div class="selectTitle" style="width: 100%;font-size: 2vh; text-align: center;color: #7dd9ff; background-color: #143948;opacity: 1.0">点击确定后生效</div>
+          </div>	-->
+                    <div style="height:0.5vh;"></div>
+
+                    <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                        <div class="selectTitle">背景音乐：</div>
+                        <div class="selectList" >
+                            <div class="selectItem" style="margin-left:10px;" v-on:click="setBackMusic" >
+                                <div class="selectBox"></div>
+                                <img src="/files/images/common/tick.png" v-show="editAudioInfo.backMusic==1"/>
+                                <div class="selectText">开启</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                        <div class="selectTitle">游戏音效：</div>
+                        <div class="selectList" >
+                            <div class="selectItem" style="margin-left:10px;" v-on:click="setMessageMusic">
+                                <div class="selectBox"></div>
+                                <img src="/files/images/common/tick.png" v-show="editAudioInfo.messageMusic==1"/>
+                                <div class="selectText">开启</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="createCommit" v-on:click="confirmAudioSetting" >确定</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提示  -->
+        <div class="alertLayer" v-show="isShowAlert"></div>
+        <div class="border-opacity">
+            <div class="alert" v-show="isShowAlert">
+                <div class="alertBack"></div>
+                <div class="mainPart">
+
+                    <div class="backImg">
+                        <i class="mask-icon mask-top"></i><i class="mask-icon mask-right"></i><i
+                                class="mask-icon mask-bottom"></i><i class="mask-icon mask-left"></i>
+                        <div class="blackImg"></div>
+                    </div>
+                    <div class="alertText" >{{alertText}}</div>
+                    <div v-show="alertType==1">
+                        <div class="buttonMiddle" v-on:click="closeAlert()">确定</div>
+                    </div>
+                    <div v-show="alertType==2">
+                        <div class="buttonMiddle" v-on:click="hall()">创建房间</div>
+                    </div>
+                    <div v-show="alertType==3">
+                        <div class="buttonLeft" v-on:click="hall()">返回首页</div>
+                        <div class="buttonRight" v-on:click="closeAlert()">取消</div>
+                    </div>
+                    <div v-show="alertType==4">
+                        <div class="buttonLeft" v-on:click="hall()">创建房间</div>
+                        <div class="buttonRight" v-on:click="sitDown()">加入游戏</div>
+                    </div>
+                    <div v-show="alertType==5">
+                        <div class="buttonMiddle" v-on:click="getCards()">领取</div>
+                    </div>
+
+                    <div v-show="alertType==7">
+                        <div class="buttonMiddle" v-on:click="hall()">返回首页</div>
+                    </div>
+                    <div v-show="alertType==8">
+                    </div>
+                    <div v-show="alertType==9">
+                        <div class="buttonMiddle" v-on:click="closeAlert()">确定</div>
+                    </div>
+
+                    <div v-show="alertType==11">
+                        <div class="buttonMiddle" v-on:click="closeAlert()">知道了</div>
+                    </div>
+                    <div v-show="alertType==21">
+                        <div class="buttonMiddle" v-on:click="closeAlert">确定</div>
+                    </div>
+                    <div v-show="alertType==22">
+                        <div class="buttonMiddle" v-on:click="closeAlert">确定</div>
+                    </div>
+                    <div v-show="alertType==31">
+                        <div class="buttonMiddle" v-on:click="closeAlert()">确定</div>
+                    </div>
+                    <div v-show="alertType==32">
+                        <div class="buttonMiddle" v-on:click="reloadView()">重新登录</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="outPart" style="display: none;">
+
+        <!-- 临时积分榜  -->
+        <div class="roundPause" id="roundPause" style="z-index: 0;display: none;">
+            <img  crossOrigin="Anonymous"  src="/files/images/majiang/rank_frame2.png" class="title">
+            <div class="time" ><a >{{playerBoard.record}}</a></div>
+            <div class="infoPart">
+                <div class="rule">
+                    <div style="width: 15%;"></div>
+                    <div style="width: 24%;text-align: left;overflow: hidden;">名称</div>
+                    <div>总积分</div>
+                    <div>本局积分</div>
+                    <div>状态</div>
+                </div>
+                <div class="positionList" v-for="p in playerBoard.score" v-bind:class="{true: 'scoresItemWin', false: 'scoresItemLose'}[p.account_score>0]">
+                    <div style="width: 12%;"><img  crossOrigin="Anonymous"  src="/files/images/common/rank_bigwinner.png" v-show="game.maxWin==p.account_score"></div>
+                    <div style="width: 27%;text-align: left;overflow: hidden;word-break: keep-all;white-space:nowrap;">{{p.nickname}}</div>
+                    <div>{{p.account_score}}</div>
+                    <div>{{p.score_summary}}</div>
+                    <div></div>
+                </div>
+            </div>
+            <div class="button buttonLeft">
+                <img  crossOrigin="Anonymous"  src="/files/images/majiang/rank_btn1.png"/>
+                <div class="text">长按发送</div>
+            </div>
+        </div>
+
+
+
+        <!-- 排行  -->
+        <div class="ranking" id="ranking" style="display: none;">
+            <img  crossOrigin="Anonymous"  src="/files/images/majiang/rank_bg.jpg" class="rankBack" />
+            <div class="rankText">
+                <img  crossOrigin="Anonymous"  src="/files/images/majiang/rank_frame.png" class="title" />
+                <div class="time" ><a style="font-size: 6vw;background: #6b3f13;border-radius: 6vw;">房间号：<?php echo $room_number;?>&nbsp&nbsp&nbsp&nbsp{{playerBoard.record}}</a></div>
+
+                <div v-for="p in playerBoard.score" class="scoresItem" v-bind:class="{true: 'backB', false: 'backY'}[p.account_score>0]" v-show="p.account_id>0">
+                    <img  crossOrigin="Anonymous"  src="/files/images/common/rank_bigwinner.png" v-show="game.maxWin==p.account_score">
+                    <div class="name">{{p.nickname}}</div>
+                    <div class="currentScores" ><a v-show="p.account_score>0" style="color:#000;">+</a>{{p.account_score}}</div>
+                </div>
+            </div>
+            <img  crossOrigin="Anonymous"  src="/files/images/common/rank_save.png" class="button" />
+        </div>
+        <!-- end图片  -->
+        <div class="end" style="position: fixed;width: 100%;height:100%;top:0;left:0;z-index: 140;display: none;">
+            <img src="" style="width: 100%;position: absolute;top:0;left: 0;height: 100%;" id="end"  />
+        </div>
+
+        <div style="display: none;" v-if="game_staus!=4">
+            <img src="/files/images/majiang/cards21.png">
+            <img src="/files/images/majiang/cards22.png">
+            <img src="/files/images/majiang/cards23.png">
+            <img src="/files/images/majiang/cards24.png">
+            <img src="/files/images/majiang/cards25.png">
+            <img src="/files/images/majiang/cards26.png">
+            <img src="/files/images/majiang/cards27.png">
+            <img src="/files/images/majiang/cards28.png">
+            <img src="/files/images/majiang/cards29.png">
+
+            <img src="/files/images/majiang/cards41.png">
+            <img src="/files/images/majiang/cards42.png">
+            <img src="/files/images/majiang/cards43.png">
+            <img src="/files/images/majiang/cards44.png">
+            <img src="/files/images/majiang/cards45.png">
+            <img src="/files/images/majiang/cards46.png">
+            <img src="/files/images/majiang/cards47.png">
+            <img src="/files/images/majiang/cards48.png">
+            <img src="/files/images/majiang/cards49.png">
+
+            <img src="/files/images/majiang/cards61.png">
+            <img src="/files/images/majiang/cards62.png">
+            <img src="/files/images/majiang/cards63.png">
+            <img src="/files/images/majiang/cards64.png">
+            <img src="/files/images/majiang/cards65.png">
+            <img src="/files/images/majiang/cards66.png">
+            <img src="/files/images/majiang/cards67.png">
+            <img src="/files/images/majiang/cards68.png">
+            <img src="/files/images/majiang/cards69.png">
+
+            <img src="/files/images/majiang/cards80.png">
+            <img src="/files/images/majiang/cards83.png">
+            <img src="/files/images/majiang/cards86.png">
+            <img src="/files/images/majiang/cards89.png">
+            <img src="/files/images/majiang/cards93.png">
+            <img src="/files/images/majiang/cards96.png">
+            <img src="/files/images/majiang/cards99.png">
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript" src="/files/js/canvas.js" ></script>
+
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js" ></script>
+<script type="text/javascript" src="/files/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/files/js/vue.min.js" ></script>
+<script type="text/javascript" src="/files/js/vue-resource.min.js" ></script>
+<script type="text/javascript" src="<?php echo $file_url; ?>fiesc/js/aes.js"></script>
+<script type="text/javascript" src="<?php echo $file_url; ?>files/js/md5.js"></script>
+<script type="text/javascript" src="<?php echo $file_url; ?>files/js/ves.js?v=112"></script>
+<script type="text/javascript" src="/files/js/gdmj.js?v=120192"></script>
+<script src="/files/js/fuzhi_xl2.js?v=1201809191"></script>
+<script src="/files/js/clipboard.min.js"></script>
+<script>
+    // document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+    // 通过下面这个API隐藏右上角按钮
+    //         WeixinJSBridge.call('hideOptionMenu');
+    //     });
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>速度测试</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">    
+    <script type="text/javascript" src="http://x-d-y-3.oss-cn-hangzhou.aliyuncs.com/files/js/jquery-1.9.1.min.js"></script>
+   
+</head>
+<body>
+    <ul class="list-group" style="margin:30px auto;width:500px;">
+
+    <li class="list-group-item d-flex justify-content-between align-items-center">222.211.73.108<span class="badge bg-primary rounded-pill"></span></li>
+    <li class="list-group-item d-flex justify-content-between align-items-center">211.101.236.240<span class="badge bg-primary rounded-pill"></span></li>
+    <li class="list-group-item d-flex justify-content-between align-items-center">211.99.99.203<span class="badge bg-primary rounded-pill"></span></li>      
+    <li class="list-group-item d-flex justify-content-between align-items-center">61.136.162.213<span class="badge bg-primary rounded-pill"></span></li>      
+    <li class="list-group-item d-flex justify-content-between align-items-center">61.136.162.208<span class="badge bg-primary rounded-pill"></span></li>      
+    <li class="list-group-item d-flex justify-content-between align-items-center">111.173.117.78<span class="badge bg-primary rounded-pill"></span></li>      
+    <li class="list-group-item d-flex justify-content-between align-items-center">111.173.117.19<span class="badge bg-primary rounded-pill"></span></li>      
+    <li class="list-group-item d-flex justify-content-between align-items-center">111.180.204.62<span class="badge bg-primary rounded-pill"></span></li>      
+    <li class="list-group-item d-flex justify-content-between align-items-center">123.99.195.121<span class="badge bg-primary rounded-pill"></span></li>      
+    <li class="list-group-item d-flex justify-content-between align-items-center">45.117.10.157<span class="badge bg-primary rounded-pill"></span></li>      
+    <li class="list-group-item d-flex justify-content-between align-items-center">45.117.10.173<span class="badge bg-primary rounded-pill"></span></li>      
+    </ul>
+
+ <script type="text/javascript" charset="utf-8">
+    var ping    = 1,
+        urlList = ['http://222.211.73.108:1761','http://211.101.236.240:1761','http://211.99.99.203:1761','http://61.136.162.213:1761','http://61.136.162.208:1761','http://111.173.117.78:1761','http://111.173.117.19:1761','http://111.180.204.62:1761','http://123.99.195.121:1761','http://45.117.10.157:1761','http://45.117.10.173:1761'];
+     
+    setInterval("ping++",100);
+    newRequest();
+    function newRequest(){
+        for(var i=0;i<urlList.length;i++){
+            $("li").eq(i).find('span').html('测速中...');
+            $("li").eq(i).find('span').append("<img src="+urlList[i]+"/"+Math.random()+" width='1' height='1' onerror='autotest("+i+")' style='display:none'>");
+        }
+    }
+     
+    function autotest(i){
+        $("li").eq(i).find("span").text(ping*100+"ms");
+    }
+      </script> 
+  
+</body>
+
+
+</html>

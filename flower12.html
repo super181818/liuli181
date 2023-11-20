@@ -1,0 +1,1052 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <base href="http://xcwgf2.oss-cn-hangzhou.aliyuncs.com"/>
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <meta http-equiv="Pragma" content="public"/>
+    <meta http-equiv="Cache-Control" content="public"/>
+    <title>12人金花</title>
+   <script type="text/javascript">
+                var _thost = 'http://' + window.location.host;
+        var pathArr = window.location.pathname.split("/");
+        if(pathArr.length==3 && pathArr[1] != ""){
+            if(pathArr[1].search(".html")!=-1){
+
+            }else{
+                _thost = 'http://' + window.location.host + "/" + pathArr[1];
+            }
+        }
+        var _tt = new Date().getTime();
+        document.write('<script type="text/javascript" src="' + _thost + '/js/config.js?v=1' + _tt + '"> <\/script>');
+    </script>    
+    <link rel="stylesheet" type="text/css" href="/files/css/flower_common.css?v=2019">
+    <link rel="stylesheet" type="text/css" href="/files/css/flower12.css?v=2019">
+    <link rel="stylesheet" type="text/css" href="/files/css/alertbox.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/ncomm.css">
+
+    <script type="text/javascript" src="/files/js/fastclick.js"></script>
+ 
+    <script type="text/javascript" src="/js/load.js?v=11101"></script>
+    <script type="text/javascript">
+        document.documentElement.style.fontSize = document.documentElement.clientWidth / 360 * 100 + 'px';
+        window.addEventListener('load', function () {
+            FastClick.attach(document.body);
+        }, false);
+
+        var code = DynLoading.getUrlParam("code");
+        let token = window.localStorage.getItem('token');
+        if (!token) {
+            var return_url = window.location.href;
+            window.localStorage.removeItem('return_url');
+            window.localStorage.setItem('return_url', window.location.href);
+            if (DynLoading.isWeiXin()) {
+                if (code) {
+                    token = "{$token}";
+                    if (token != "{$token}") {
+                        window.localStorage.setItem('token', token);
+                    }
+                } else {
+                    DynLoading.gotoWx();
+                }
+            } else {
+                DynLoading.goto('login');
+            }
+        }
+
+        if (token) {
+            var room_number = DynLoading.getUrlParam("i");
+            room_number = parseInt(room_number);
+            var req_url = BaseUrl + '/home1/room' + "?i=" + room_number + "&tk=" + token;
+            if (token == '{$token}' && code) {
+                req_url = BaseUrl + '/home1/room' + "?i=" + room_number + "&code=" + code;
+            }
+            var obj = DynLoading.hall(req_url);
+            if (obj.result != 0) {
+                alert(obj.result_message);
+                var return_url = window.location.href;
+                console.log(return_url);
+                DynLoading.goto('/');
+            }
+            console.log(obj);
+            if (code && obj.data.tk != "") {
+                token = obj.data.tk;
+
+                window.localStorage.setItem('token', obj.data.tk);
+            }
+        }
+
+        let _socket = _isTx ? 'ws://' + _wip + ':' +_wport + '/' + obj.data.gt + '/' + obj.data.dkey : obj.data.socket;
+        var newNum = "";
+        var per = window.innerWidth / 530;
+        var globalData = {
+            "card": obj.data.card,
+            "roomNumber": room_number,
+            "socket": _socket,
+            "hallPath": DynLoading.getPath('/'),
+            "roomUrl": window.location.href,
+            "baseUrl": BaseUrl + "/",
+            "fileUrl": "/",
+            "cfileUrl": "/",
+            "isWechat": 1,
+            "isXianliao": 0,
+            "xlTitle": "(房间号:" + room_number + ")",
+            "roomStatus": obj.data.room_status,
+            "scoreboard": obj.data.balance_scoreboard,
+            "session": obj.data.session,
+            "shareTitle": obj.data.platfrom_name + "：(房间:" + room_number + ")",
+            "gameType": obj.data.game_type,
+            "maxCount": obj.data.max_count,
+            "tk": token,
+            "hallName": obj.data.platfrom_name,
+            "hallEname": obj.data.platform_ename,
+        };
+
+        globalData.wid = obj.data.wid;
+        globalData.tt = obj.data.tt;
+        var userData = {
+            "account_id": obj.data.user.account_id,
+            "accountId": obj.data.user.account_id,
+            "userCode": obj.data.user.user_code,
+            "nickname": obj.data.user.nickname,
+            "avatar": obj.data.user.headimgurl,
+            "card": obj.data.card,
+            "individuality": obj.data.user.individuality,
+        };
+        var configData = {
+            "appId": obj.data.config_ary.appId,
+            "timestamp": obj.data.config_ary.timestamp,
+            "nonceStr": obj.data.config_ary.nonceStr,
+            "signature": obj.data.config_ary.signature,
+        };
+
+        // 修改浏览器title
+        var new_userName = "";
+        var old_userNname = obj.data.user.nickname;
+        if (old_userNname.length > 8) {
+            new_userName = old_userNname.substring(0, 7);
+            new_userName += "..."
+        } else {
+            new_userName = old_userNname;
+        }
+        document.getElementsByTagName("title")[0].innerText = new_userName + "|" + globalData.hallName;
+
+    </script>
+</head>
+
+<body>
+
+<div id="dialog" style="display:none">
+    <img src="/files/images/common/cancel.png" onclick="fuzhiMain.closeDialog()">
+    <p id="main" class="main">
+    </p>
+    <p class="other">
+        请手动复制
+    </p>
+</div>
+
+
+<div style="position: fixed;width:100%;height:100%;top:0;left:0;background: #000;z-index:115;" id="loading">
+    <div class="load4">
+        <div class="loader">Loading...</div>
+        <div style="position: fixed;top: 60%;left: 50%;transform: translate(-50%,-50%);padding: 8px 10px;background: #46b8da;color:#fff;border-radius: 5px;font-size: 18px;"
+             onclick="window.location.reload();">卡顿点我
+        </div>
+    </div>
+</div>
+
+<div class="main" id="app-main" style="display: none;'">
+    <span class="copy-tip" id="tips" style="display:none">已复制到剪贴板</span>
+    <img src="/files/images/common/33fz.png" v-if="globalData.maxCount==6" class="needsclick zhuonuo copyUrl"
+         data-clipboard-action="copy" id="copy_btn" onclick="copyLink(globalData.maxCount)"/>
+    <img src="/files/images/common/home_copy.png" v-if="globalData.maxCount>6" class="needsclick zhuonuo copyUrl"
+         data-clipboard-action="copy" id="copy_btn" onclick="copyLink(globalData.maxCount)"/>
+    <textarea id="room_str" readonly="readonly"></textarea>
+
+    <span class="copy-tip" v-if="isShowTipsText" style="z-index: 200;">{{tipsText}}</span>
+
+    <div class="window-masks return-index" id="returnIndex" v-show="isShowHomeAlert">
+        <div class="border-opacity">
+            <div class="container"><i class="mask-icon mask-top"></i><i class="mask-icon mask-right"></i><i
+                    class="mask-icon mask-bottom"></i><i class="mask-icon mask-left"></i>
+                <div class="main">确认返回主页？</div>
+                <div class="button">
+                    <div class="sure" id="returnIndexBtn" v-on:click="hall">返回首页</div>
+                    <div class="cancel" id="cancelBtn" v-on:click="closeHomeAlert">取消</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="window-masks return-index" id="returnIndex" v-show="isShowAlert && !add_user">
+        <div class="border-opacity">
+            <div class="container f-cb"><i class="mask-icon mask-top"></i><i class="mask-icon mask-right"></i><i
+                    class="mask-icon mask-bottom"></i><i class="mask-icon mask-left"></i>
+                <div class="main">{{alertText}}</div>
+                <div class="button" v-show="alertType!=24">
+                    <div class="sure" id="returnIndexBtn" v-on:click="hall">返回首页</div>
+                    <div class="cancel" id="cancelBtn" v-show="joinType==1||joinType==3" v-on:click="guestRoom">观战</div>
+                </div>
+                <div class="button" v-show="alertType==24">
+                    <div class="sure" id="returnIndexBtn" v-on:click="hall">返回首页</div>
+                    <div class="cancel" id="cancelBtn" v-on:click="reloadView">返回游戏</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="top flex-cont">
+        <div class="left" v-on:click="showIndividuality">
+            <img src="/files/images/common/myText.png">
+            <span v-if='userData.individuality!==""'>{{userData.individuality}}</span>
+        </div>
+        <div class="flex-item"><span>{{game.round}}</span>/<span>{{game.total_num}}</span>局</div>
+        <div class="right">
+            <div class="rules-focus"><span class="watchs" v-on:click="showGuests"></span><span v-on:click="showGameRule"
+                                                                                               class="rules"></span><span
+                    v-on:click="showHomeAlert" class="return-index"></span></div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="points"><span>底分：</span><span
+                class="bottom-dizhu">{{ruleInfo.default_score}}</span>&nbsp;&nbsp;<span>上限：</span><span>{{ruleInfo.upper_limit}}</span><br><span
+                class="bottom-jushu">{{game.total_num}}</span>局
+        </div>
+        <div class="music" v-on:click="confirmAudioSetting" style="width: 0.32rem;height: 0.32rem;right: 0.5rem;">
+            <img v-if="editAudioInfo.backMusic==1" src="/files/images/flower/game-music1.png"
+                 style="width: 100%;height: 100%;">
+            <img v-if="editAudioInfo.backMusic==0" src="/files/images/flower/game-music2.png"
+                 style="width: 100%;height: 100%;">
+        </div>
+        <div class="chat" v-on:click="showMessage" style="width: 0.32rem;height: 0.32rem;right: 0.05rem;"></div>
+    </div>
+
+    <img :src="globalData.fileUrl+'files/images/common/btn_qrcode.png'" onclick="makeQrCode()"
+         style=" position: absolute;right: 0.95rem;width: 0.32rem;height: 0.32rem;text-align: center;line-height: 0.3744rem;z-index: 100;bottom: 0.0288rem;"/>
+
+    <!-- 观战功能 -->
+    <img src="/files/images/guest/is_watching.png" style="position: fixed;z-index: 90;width: 40%;left: 30%;top: 55.5%;"
+         v-show="isWatching==1">
+    <div class="watch" id="vwatch" v-show="showGuest==1">
+        <div class="watchBack" v-on:click="hideGuests"></div>
+        <div class="mainPart">
+            <img v-on:click="hideGuests" src="/files/images/guest/cancel.png" class="watchCancel"/>
+            <img src="/files/images/guest/title.png" class="watchTitle"/>
+            <div class="playerList">
+                <div class="playerItem" v-for="guest in guests">
+                    <img v-bind:src="guest.avatar" class="playerAvatar">
+                    <div class="playerName">
+                        {{guest.nickname.length > 6 ? guest.nickname.slice(0, 5) + '...' : guest.nickname}}
+                    </div>
+                    <img src="/files/images/guest/icon.png" class="playerIcon">
+                </div>
+            </div>
+            <div class="buttonMiddle">
+                <img v-show="showWatchButton" v-on:click="guestRoom" src="/files/images/guest/watch_true.png"/>
+                <img v-show="showSitdownButton" v-on:click="sitDown" src="/files/images/guest/sitdown_true.png"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="disconnect" v-show="!connectOrNot"
+         style="position: fixed;top:45%;left: 0;width: 100%;text-align: center;z-index: 101">
+        <div style="width: 250px;height:27px;position: absolute;top:-2;left: 50%;margin-left: -125px;background: #000;opacity: .5;border-radius:15px;">
+        </div>
+        <a style="font-size: 16px;color: #fff;padding: 5px 14px;position:relative;">已断开连接，正在重新连接...</a>
+    </div>
+
+    <!--自动准备-->
+    <div class="auto-ready" v-if="isWatching!=1" v-on:click="autoReady()">
+        <img v-show="appData.isAutoReady==1" src="/files/images/common/ready_true2.png">
+        <img v-show="appData.isAutoReady==0" src="/files/images/common/ready_false2.png">
+    </div>
+    <div class="myCardType" style="bottom: 46%;">
+        <div v-show="player[0].card_type==1">高牌</div>
+        <div v-show="player[0].card_type==2">对子</div>
+        <div v-show="player[0].card_type==3">顺子</div>
+        <div v-show="player[0].card_type==4">同花</div>
+        <div v-show="player[0].card_type==5">同花顺</div>
+        <div v-show="player[0].card_type==6">三条</div>
+        <div v-show="player[0].card_type==9">魔王</div>
+    </div>
+
+    <div v-show="isShowApply" style="color: #000;">
+        <div class="applyMask" style="width: 100%;height: 100%;position: fixed;background: #000;z-index: 111;"></div>
+        <div style="position: fixed;background: #fff;border-radius: 6px; top: 50%;left: 50%;z-index: 111;transform: translate(-50%,-50%); width: 76vw;font-size: 16px;height: 20vh">
+            <img src="/files/images/common/close.png" style="position: absolute;right: -3vw;top: -2vh;width: 10vw;"
+                 @click="hall">
+            <div style="margin-top: 5vh;text-align: center;">你不是该俱乐部成员</div>
+            <!--            <div style="margin-top: 5vh;text-align: center;">{{applyInfo.text}}</div>-->
+            <div style="text-align: center">是否申请加入俱乐部？</div>
+            <div style="background: url(/files/images/common/button_yellow.png);background-size: 100% 100%;width: 24vw;height: 4vh;position: relative;top: 2.5vh;left: 50%;transform: translateX(-50%);color: #fff;text-align: center;line-height: 4vh;font-size: 16px;"
+                 @click="applyClub()">
+                {{applyInfo.status}}
+            </div>
+        </div>
+    </div>
+
+    <div class="table" id="table" v-on:click="confirmAudioSetting('1')">
+        <img class="tableBack" src="/files/images/flower/table.jpg"/>
+        <img :src="'/platform/'+globalData.hallEname+'/hall-name.png'"
+             style="position: absolute;bottom: 22%;left: 50%;transform: translateX(-50%);width: 2rem;"/>
+
+        <!-- 筹码  -->
+        <div class="place" v-show="game.status==2">
+            <div class="betRound" v-if="bet_round>0">第{{curr_circle}}/{{bet_round}}轮</div>
+            <div class="totalScore">
+                <div class="scores">{{game.score}}</div>
+                <img src="/files/images/flower/totalScore.png"/>
+            </div>
+            <div class="scoresArea"></div>
+        </div>
+
+        <!-- 发牌  -->
+        <div class="cardDeal">
+            <div v-for="p in player"
+                 v-show="(p.account_id>0&&p.account_status>2&&(p.num!=1||(p.account_status!=4&&p.account_status!=6&&p.account_status!=7&&!player[0].is_showCard))&&(game.cardDeal>0||p.account_status==6||p.account_status==7))&&appData.ruleInfo.play_mode!=2">
+
+                <div class="card" v-bind:class="'card' + p.num + '1'"
+                     v-show="game.cardDeal>0||p.account_status==6||p.account_status==7"></div>
+                <div class="card" v-bind:class="'card' + p.num + '2'"
+                     v-show="game.cardDeal>1||p.account_status==6||p.account_status==7"></div>
+                <div class="card" v-bind:class="'card' + p.num + '3'"
+                     v-show="game.cardDeal>2||p.account_status==6||p.account_status==7"></div>
+                <div class="card" v-bind:class="'card' + p.num + '4'"
+                     v-show="(game.cardDeal>2||p.account_status==6||p.account_status==7)&&appData.is_super==true"></div>
+                <div class="isSeen" v-bind:class="'isSeen' + p.num" v-show="p.num>1&&p.account_status==4"></div>
+                <div class="isQuit" v-bind:class="'isQuit' + p.num" v-show="p.account_status==6"></div>
+                <div class="isLose" v-bind:class="'isLose' + p.num" v-show="p.account_status==7&&!p.is_pk"></div>
+                <div class="isSwop" v-bind:class="'isSwop' + p.num" v-show="p.account_huan_status==1"></div>
+            </div>
+
+            <div v-for="p in player"
+                 v-show="(p.account_id>0&&p.account_status>2&&(p.num!=1||(p.account_status!=4&&p.account_status!=6&&p.account_status!=7&&!player[0].is_showCard))&&(game.cardDeal>0||p.account_status==6||p.account_status==7))&&appData.ruleInfo.play_mode==2">
+
+                <div class="card mcard0" v-bind:class="'card' + p.num + '1'"
+                     v-show="game.cardDeal>0||p.account_status==6||p.account_status==7" style="z-index: 94;">
+                    <div class="mface mback" v-bind:class="'card' + player[p.num-1].card[2]"></div>
+                </div>
+                <div class="card mcard1" v-bind:class="'card' + p.num + '2'"
+                     v-show="game.cardDeal>1||p.account_status==6||p.account_status==7" style="z-index: 93;">
+                    <div class="mface mback" v-bind:class="'card' + player[p.num-1].card[1]"></div>
+                </div>
+                <div class="card mcard2" v-bind:class="'card' + p.num + '3'"
+                     v-show="game.cardDeal>2||p.account_status==6||p.account_status==7">
+                    <div class="mface mback" v-bind:class="'card' + player[p.num-1].card[0]"></div>
+                </div>
+                <div class="card" v-bind:class="'card' + p.num + '4'"
+                     v-show="(game.cardDeal>2||p.account_status==6||p.account_status==7)&&appData.is_super==true"></div>
+                <div class="isSeen" v-bind:class="'isSeen' + p.num" v-show="p.num>1&&p.account_status==4"></div>
+                <div class="isQuit" v-bind:class="'isQuit' + p.num" v-show="p.account_status==6"></div>
+                <div class="isLose" v-bind:class="'isLose' + p.num" v-show="p.account_status==7&&!p.is_pk"></div>
+                <div class="isSwop" v-bind:class="'isSwop' + p.num" v-show="p.account_huan_status==1"></div>
+            </div>
+
+            <!-- 自己的牌 -->
+            <div class="myCards" v-show="player[0].is_showCard&&player[0].account_status>2">
+                <div v-show="player[0].is_win" class="winText">
+                    <img src="/files/images/flower/text_win.png"
+                         v-show="!player[0].win_show && player[0].account_id==userData.account_id&&player[0].is_guest!=1"/>
+                    <div class="winScore" v-show="player[0].win_show"
+                         style="width: 100%;left: 0;text-align: center;font-size: 16px;">
+                        +{{player[0].current_win}}
+                    </div>
+                    <div v-show="player[0].win_show"
+                         style=" width: 300%; left: 50%; margin-left: -150%;text-align: center; font-size: 20px; position: absolute;  color: #f1c953;">
+                        {{player[0].win_type == 5 ? "喜牌+" : player[0].win_type == 6 && player[0].WinJoy != 0 ? "豹子+" : ""}}{{player[0].WinJoy}}
+                    </div>
+                </div>
+                <div v-show="player[0].LoseJoy && player[0].lose_show" class="winText">
+                    <div v-show="player[0].LoseJoy && player[0].lose_show"
+                         style=" width: 300%; left: 50%; margin-left: -150%;text-align: center; font-size: 20px; position: absolute;  color: #f1c953;">
+                        {{player[0].win_type == 5 ? "喜牌" : player[0].win_type == 6 && player[0].LoseJoy != 0 ? "豹子" : ""}}{{player[0].LoseJoy}}
+                    </div>
+                </div>
+
+                <div class="cards card0" v-on:click="chooseCard(0,player[0].card[0])">
+                    <div class="face front"></div>
+                    <div class="face back" v-bind:class="'card' + player[0].card[0]"></div>
+                    <div class="myQuitBack" v-show="player[0].account_status==6||player[0].account_status==7"></div>
+                    <div class="cardLayer"></div>
+                </div>
+
+                <div class="cards card1" v-on:click="chooseCard(1,player[0].card[1])">
+                    <div class="face front"></div>
+                    <div class="face back" v-bind:class="'card' + player[0].card[1]"></div>
+                    <div class="myQuitBack" v-show="player[0].account_status==6||player[0].account_status==7"></div>
+                    <div class="cardLayer"></div>
+                </div>
+
+                <div class="cards card2" v-on:click="chooseCard(2,player[0].card[2])">
+                    <div class="face front"></div>
+                    <div class="face back" v-bind:class="'card' + player[0].card[2]"></div>
+                    <div class="myQuitBack" v-show="player[0].account_status==6||player[0].account_status==7"></div>
+                    <div class="cardLayer"></div>
+                </div>
+
+                <div class="cards card3" v-show="appData.is_super==true">
+                    <div class="face front"></div>
+                    <div class="face back" v-bind:class="'card' + player[0].other"></div>
+                    <div class="myQuitBack" v-show="player[0].account_status==6||player[0].account_status==7"></div>
+                    <div class="cardLayer"></div>
+                </div>
+
+                <div class="clickToLook"
+                     style="width: 70px;height:20px;position: absolute;top:17px;left:50%;margin-left: -40px;z-index: 95;text-align: center;color: #fff;font-size: 15px;padding: 1px 5px;"
+                     v-if="player[0].account_id==userData.account_id"
+                     v-show="player[0].account_status==5&&player[0].playing_status==2 && game.can_look==1"
+                     v-on:click="choose(1)">
+                    <img src="/files/images/flower/text_click2look.png" style="width: 70px;height: 20px">
+                </div>
+
+                <div class="isSeen isSeen1" v-if="player[0].account_id!=userData.account_id&&isWatching==1"
+                     v-show="player[0].account_status==4"></div>
+                <div class="isQuit isQuit1" v-show="player[0].account_status==6"></div>
+                <div class="isLose isLose1" v-show="player[0].account_status==7"></div>
+            </div>
+
+        </div>
+        <div v-for="p in player" key="p.num" class="member" v-bind:class="'member' + p.num" v-show="p.account_id<=0">
+            <div class="quitBack"
+                 style="border: 1px solid #764c4b;font-size:12px;color:#764c4b;line-height: 7.4vh;width:7.4vh;height:7.4vh;background: rgba(0,0,0,.45);opacity: 1;">
+                空位
+            </div>
+        </div>
+        <!-- 玩家     -->
+        <div v-for="p in player" key="p.num" class="member" v-bind:class="'member' + p.num + ' pos'+ p.account_id"
+             v-show="p.account_id>0&&!p.is_pk">
+            <img src="/files/images/common/player_selected.png" class="background" v-show="p.is_win&&p.num==1">
+            <div class="title">{{p.nickname}}</div>
+
+            <div class="avatar">
+                <img v-bind:src="p.headimgurl" style="width: 100%;border-radius: 3px;">
+
+                <img src="/files/images/flower/avatar_timer.jpg"
+                     style="position: absolute;top: 0;left:50%;transform: translateX(-50%); width: 100%;border-radius: 3px;"
+                     v-show="p.playing_status>1">
+                <div style="position: absolute; top: 50%;left:50%;transform: translate(-50%,-50%);width: 100%; line-height: 42px;text-align: center;color: #602603;font-size: 20px;"
+                     v-if="p.num!=1" v-show="p.playing_status>1">{{p.limit_time}}
+                </div>
+                <div style="position: absolute; top: 50%;left:50%;transform: translate(-50%,-50%);width: 100%; line-height: 52px;text-align: center;color: #602603;font-size: 20px;"
+                     v-if="p.num==1" v-show="p.playing_status>1">{{p.limit_time}}
+                </div>
+            </div>
+
+            <div class="score">{{p.account_score}}</div>
+            <div class="quitBack"
+                 v-show="((p.account_status==6||p.account_status==7)&&p.num==1)||(p.num>1&&p.online_status==0)"></div>
+
+            <!--  头像计时动画
+            <div class="colorBorder" v-bind:class="'colorBorder' + p.num" v-show="p.playing_status>1" v-bind:style="'animation:mycolor1 ' + p.limit_time + 's linear;-webkit-animation:mycolor1 ' + p.limit_time + 's linear;'">
+                <div class="backColor"  v-bind:style="'animation:mycolor2 '+ p.limit_time + 's linear;-webkit-animation:mycolor2 ' + p.limit_time + 's linear;'">
+                </div>
+            </div>
+            -->
+            <!-- 观战功能 -->
+            <img src="/files/images/guest/guest_avatar.png" style="position: absolute;left: 0%;width: 100%;"
+                 v-show="p.is_guest==1">
+
+            <div class="isReady" v-show="game.round!=game.total_num">
+                <!--                <img src="--><?php //echo $file_url;?>
+                <!--files/images/flower/ready_button.png" class="unready" v-if="p.num==1&&p.account_id==userData.account_id&&p.is_guest!=1" v-show="(p.account_status==1||p.account_status==0)&&game.status==1" v-on:click="imReady" />-->
+                <img src="/files/images/common/ready_text.png" class="ready" v-if="p.num!=1"
+                     v-show="p.account_status==2"/>
+            </div>
+
+            <div class="cardOver" v-bind:class="'cardOver' + p.num" v-if="p.num!=1"
+                 v-show="game.cardDeal==-1&&p.account_status>1&&p.account_status!=6&&p.account_status!=7&&p.card.length>0">
+                <img src="/files/images/flower/cardBox.png" class="cardResult" v-show="!p.is_win"/>
+                <img src="/files/images/flower/cardBoxWin.png" class="cardResult" v-show="p.is_win"/>
+                <div class="name">{{p.nickname.length > 6 ? p.nickname.slice(0, 5) + '...' : p.nickname}}</div>
+                <div class="openCard">
+                    <div class="cards card0">
+                        <div class="face front"></div>
+                        <div class="face back" v-bind:class="'card' + p.card[0]"></div>
+                    </div>
+                    <div class="cards card1">
+                        <div class="face front"></div>
+                        <div class="face back" v-bind:class="'card' + p.card[1]"></div>
+                    </div>
+                    <div class="cards card2">
+                        <div class="face front"></div>
+                        <div class="face back" v-bind:class="'card' + p.card[2]"></div>
+                    </div>
+                    <div v-show="play_type==5" class="cards card3">
+                        <div class="face front"></div>
+                        <div class="face back" v-bind:class="'card' + p.other"></div>
+                        <div id="otherPlayer"></div>
+                    </div>
+                </div>
+                <div v-show="p.is_win&&p.win_show" class="winText">
+                    <div class="winType"
+                         style="left:0;font-size: 18px;width: auto;text-align:left;margin-top: -20px;padding-bottom: 10px;background:none;color: #f1c953;">
+                        {{p.win_type == 5 ? "喜牌+" : p.win_type == 6 && p.WinJoy != 0 ? "豹子+" : ""}}{{p.WinJoy ? p.WinJoy : ""}}
+                    </div>
+                    <div class="winType" v-bind:class="'winType' + p.win_type"></div>
+                    <div class="winScore" v-bind:class="'winType' + p.win_type">+{{p.current_win}}</div>
+                </div>
+            </div>
+            <div v-show="p.LoseJoy&&p.lose_show && p.num != 1" class="winText">
+                <div class="winType loseType" v-bind:class="'newType' + p.num"
+                     style="left:0;font-size: 18px;width: auto;margin-top: -20px;padding-bottom: 10px;background:none;color: #f1c953;">
+                    {{p.win_type == 5 ? "喜牌" : p.win_type == 6 && p.LoseJoy != 0 ? "豹子" : ""}}{{p.LoseJoy ? p.LoseJoy : ""}}
+                </div>
+            </div>
+            <div class="PKbox"
+                 v-show="pk.round==1&&pkPeople.length>0&&p.is_readyPK&&(player[0].account_status==5||player[0].account_status==4)"
+                 v-on:click="choose(5,p.account_id)">
+                <div class="PKboxBack"></div>
+            </div>
+        </div>
+
+        <!-- 玩家消息  -->
+        <div v-for="p in player">
+            <div class="messageSay" v-bind:class="'messageSay' + p.num" v-show="p.messageOn">
+                <div>{{p.messageText}}</div>
+                <div class="triangle"></div>
+            </div>
+        </div>
+
+        <div class="clock" v-show="game.time>-1">
+            {{game.time}}
+        </div>
+
+        <!-- 按钮操作区域 -->
+        <div id="operationButton" v-bind:style="viewStyle.button">
+
+            <div v-show="game.round!=game.total_num" v-bind:style="viewStyle.readyText">
+                <img src="/files/images/common/ready_text.png"
+                     style="position: absolute; width: 100%; height: 100%;" v-show="player[0].account_status==2"/>
+            </div>
+
+            <div v-if="player[0].account_id==userData.account_id&&player[0].is_guest!=1"
+                 v-show="game.round!=game.total_num" style="position: relative;" v-on:click="imReady">
+                <img src="/files/images/flower/ready_button.png" style="width: 16vh;position: absolute;"
+                     v-show="(player[0].account_status==1||player[0].account_status==0)&&player[0].num==1&&player[0].account_id>0"/>
+            </div>
+        </div>
+
+        <!-- 按键     -->
+        <div class="myButton"
+             v-if="player[0].account_id==userData.account_id&& player[0].playing_status==2&&pk.round==0">
+            <div class="scoreList">
+                <div v-show="player[0].account_status==4">
+                    <div class="scoreItem scoreItemText scoreItem11" v-show="game.currentScore<=scoreList1[0]"
+                         v-on:click="choose(2,scoreList1[0])">{{scoreList1[0]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem50" v-show="game.currentScore>scoreList1[0]">
+                        {{scoreList1[0]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem21" v-show="game.currentScore<=scoreList1[1]"
+                         v-on:click="choose(2,scoreList1[1])">{{scoreList1[1]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem50" v-show="game.currentScore>scoreList1[1]">
+                        {{scoreList1[1]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem31" v-show="game.currentScore<=scoreList1[2]"
+                         v-on:click="choose(2,scoreList1[2])">{{scoreList1[2]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem50" v-show="game.currentScore>scoreList1[2]">
+                        {{scoreList1[2]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem41" v-show="game.currentScore<=scoreList1[3]"
+                         v-on:click="choose(2,scoreList1[3])">{{scoreList1[3]}}
+                    </div>
+                </div>
+
+                <!-- 闷牌 -->
+                <div v-show="player[0].account_status==5">
+                    <div class="scoreItem scoreItemText scoreItem51" v-show="game.currentScore<=scoreList1[0]"
+                         v-on:click="choose(2,scoreList2[0])">{{scoreList2[0]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem50" v-show="game.currentScore>scoreList1[0]">
+                        {{scoreList2[0]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem11" v-show="game.currentScore<=scoreList1[1]"
+                         v-on:click="choose(2,scoreList2[1])">{{scoreList2[1]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem50" v-show="game.currentScore>scoreList1[1]">
+                        {{scoreList2[1]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem21" v-show="game.currentScore<=scoreList1[2]"
+                         v-on:click="choose(2,scoreList2[2])">{{scoreList2[2]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem50" v-show="game.currentScore>scoreList1[2]">
+                        {{scoreList2[2]}}
+                    </div>
+                    <div class="scoreItem scoreItemText scoreItem61" v-show="game.currentScore<=scoreList1[3]"
+                         v-on:click="choose(2,scoreList2[3])">{{scoreList2[3]}}
+                    </div>
+                </div>
+            </div>
+            <!--不是换牌金花显示按钮-->
+            <div class="doubleButton" v-if="play_type!=4">
+                <div class="isOver" style="margin-top: 100px;">
+                    <div class="leftButton button" v-on:click="choose(3,1)"></div>
+                    <div class="rightButton button" v-show="game.can_open==1&&pkPeople.length>0"
+                         v-on:click="choose(4,1)"></div>
+                    <div class="rightButton1 button" v-show="game.can_open==0||pkPeople.length==0"></div>
+                </div>
+            </div>
+
+            <!--换牌金花显示按钮-->
+            <div class="doubleButton" v-if="play_type==4">
+                <div class="isOver">
+                    <div class="swopBox">
+                        <div class="swopButton button"
+                             v-show="showSwopBtn&&game.can_look==1&&play_type==4&&swopBtnActive==false"
+                             v-on:click="swopCard()"></div>
+                        <div class="confiremSwop button" v-show="player[0].account_huan_status!=1&&swopBtnActive==true"
+                             v-on:click="choose(6)"></div>
+                    </div>
+                    <div class="leftButton button" v-on:click="choose(3,1)"></div>
+                    <!-- rightButton是比牌按钮可以点击-->
+                    <div class="rightButton button" v-show="game.can_open==1&&pkPeople.length>0"
+                         v-on:click="choose(4,1)"></div>
+                    <div class="rightButton1 button" v-show="game.can_open==0||pkPeople.length==0"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pkBackground"
+             v-show="pk.round==1&&pkPeople.length>0&&(player[0].account_status==5||player[0].account_status==4)"
+             v-on:click="quitPk">
+            <div class="pkBackText">选择比牌对象</div>
+        </div>
+
+        <!-- 换牌提示 -->
+        <div class="swopTips"
+             style="color:#fff;font-size: 16px;position: fixed;bottom: 10%;transform: translateX(48%);-ms-transform: translateX(48%);-moz-transform: translateX(48%);-webkit-transform: translateX(48%);-o-transform: translateX(48%);text-shadow: 5px 2px 6px #000;"
+             v-show="player[0].account_huan_status!=1&&swopBtnActive==true">
+            请选择一张牌并点击确定按钮
+        </div>
+    </div>
+
+    <!-- 进游戏提示框 -->
+    <div class="window-masks user-join" id="joinUser" v-show="isShowGameAlert">
+        <div class="border-opacity">
+            <div class="container">
+                <i class="mask-icon mask-top"></i>
+                <i class="mask-icon mask-right"></i>
+                <i class="mask-icon mask-bottom"></i>
+                <i class="mask-icon mask-left"></i>
+                <div class="user-id">ID：<?php echo $room_number;?></div>
+                <div class="main">
+                    <div class="rules" v-show="alertType==4">
+                        <p>底分：{{ruleInfo.default_score}}分</p>
+                        <p>筹码：<span v-if="ruleInfo.chip_type==1">2/4,4/8,8/16,10/20</span>
+                            <span v-if="ruleInfo.chip_type==2">2/4,5/10,10/20,20/40</span>
+                            <span v-if="ruleInfo.chip_type==3">5/10,10/20,20/40,40/80</span>
+                        </p>
+                        <p v-if="ruleInfo.disable_look==1||ruleInfo.disable_pk==1">规则：<span
+                                v-if="ruleInfo.disable_look==1">首轮禁止看牌</span>
+                            <span v-if="ruleInfo.disable_pk==1">闷牌，全场禁止比牌</span>
+                        </p>
+                        <p>上限：<span v-if="ruleInfo.upper_limit>0">{{ruleInfo.upper_limit}}分</span>
+                            <span v-if="ruleInfo.upper_limit==0">无</span>
+                        </p>
+                        <p>比牌：>{{ruleInfo.pk_round}}轮</p>
+                        <p>看牌：{{ruleInfo.look_score}}分</p>
+                        <p>比牌：{{ruleInfo.pk_score}}分</p>
+                        <p>局数：
+                            <span>{{game.total_num}}局</span>
+                        </p>
+                    </div>
+
+                    <div class="user-list">
+                        <div class="join-user-info" v-for="item in alertText">
+                            <img v-bind:src="item.avatar">
+                            <span>{{item.name}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="button">
+                    <div class="return" v-on:click="guestRoom">观战</div>
+                    <div class="join-game" id="joinGame" v-on:click="sitDown">加入游戏</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 提示  -->
+    <div class="alert" id="valert" v-show="isShowAlert">
+        <div class="alertBack"></div>
+        <div class="mainPart">
+            <div class="backImg">
+                <div class="blackImg"></div>
+            </div>
+
+            <div class="alertText">
+                <div class="rull" v-show="alertType==4" style="font-size: 2.2vh;    margin-bottom: 0.2vh;">
+                    底分：<a>{{ruleInfo.default_score}}分</a><br>
+                    筹码：
+                    <a v-if="ruleInfo.chip_type==1">2/4,4/8,8/16,10/20</a>
+                    <a v-if="ruleInfo.chip_type==2">1/4,5/10,10/20,20/40</a>
+                    <a v-if="ruleInfo.chip_type==3">5/10,10/20,20/40,40/80</a>
+                    <br>
+                    <a v-if="ruleInfo.disable_look==1||ruleInfo.disable_pk==1">规则：</a>
+                    <a v-if="ruleInfo.disable_look==1">首轮禁止看牌</a>
+                    <a v-if="ruleInfo.disable_pk==1">闷牌，全场禁止比牌</a>
+                    <a v-if="ruleInfo.disable_look==1||ruleInfo.disable_pk==1"><br></a>
+                    上限：<a v-if="ruleInfo.upper_limit>0">{{ruleInfo.upper_limit}}分</a><a
+                        v-if="ruleInfo.upper_limit==0">无</a><br>
+                    比牌：<a>>{{ruleInfo.pk_round}}轮</a><br>
+                    看牌：<a>{{ruleInfo.look_score}}分</a><br>
+                    比牌：<a>{{ruleInfo.pk_score}}分</a><br>
+                    局数：
+                    <a>{{game.total_num}}局</a><br>
+                </div>
+
+                <div class="user-list" v-show="room_users != ''">
+                    房间里有
+                    <div class="join-user-info" v-for="item in room_users">
+                        <span>{{item.name}}、</span>
+                    </div>
+                    是否加入？
+                </div>
+                <div v-if="alertType==8 && add_user" style="font-size: 2.2vh">
+                    <div>你还不是房主的好友,无法加入房间</div>
+                    <div style="height: 6.6vh;">
+                        <img v-bind:src="ownerUser.avatar"
+                             style="position: relative; width: 5vh;height: 5vh;border: .1vh solid yellow;top: .5vh;">
+                        <span style="position: relative; font-size: 2.4vh;line-height: 6.6vh;height: 6.6vh;max-width: 43vw;top: -1.4vh;overflow: hidden;">{{ownerUser.nickname}}</span>
+
+                    </div>
+                </div>
+                <div>{{alertText}}</div>
+            </div>
+
+            <div v-show="alertType==2">
+                <div class="buttonLeft" v-on:click="hall">返回大厅</div>
+                <div class="buttonRight" v-on:click="hall">创建房间</div>
+            </div>
+            <div v-show="alertType==3">
+                <div class="buttonLeft" v-on:click="hall">返回大厅</div>
+                <div class="buttonRight" v-on:click="closeAlert">取消</div>
+            </div>
+
+            <!-- 观战功能 -->
+            <div v-show="alertType==4" class="button">
+                <div class="buttonLeft" v-show="joinType==1||joinType==3" v-on:click="guestRoom"><img
+                        src="/files/images/guest/watch_true.png"></div>
+                <div class="buttonRight " v-show="joinType==1||joinType==2" v-on:click="sitDown"><img
+                        src="/files/images/guest/sitdown_true.png"></div>
+
+                <div class="buttonLeft " v-show="joinType==2"><img src="/files/images/guest/watch_false.png"></div>
+                <div class="buttonRight " v-show="joinType==3"><img src="/files/images/guest/sitdown_false.png"></div>
+            </div>
+
+
+            <div v-show="alertType==11">
+                <div class="buttonMiddle" v-on:click="closeAlert">知道了</div>
+            </div>
+            <div v-show="alertType==21">
+                <div class="buttonMiddle" v-on:click="closeAlert">确定</div>
+            </div>
+            <div v-show="alertType==22">
+                <div class="buttonMiddle" v-on:click="closeAlert">确定</div>
+            </div>
+            <div v-show="alertType==23">
+                <div class="buttonMiddle" v-on:click="finishBindPhone()">确定</div>
+            </div>
+            <div v-show="alertType==31">
+                <div class="buttonMiddle" v-on:click="reloadView()">确定</div>
+            </div>
+            <div v-show="alertType==32">
+                <div class="buttonMiddle" v-on:click="reloadView()">重新登录</div>
+            </div>
+            <div v-if="alertType==8 && add_user"
+                 style="position: absolute;width:100%;line-height: 4.2vh;height: 4.2vh;width: 14vh;bottom: 11px;left:50%;margin-left:-7vh;text-align: center;overflow: hidden;">
+                <div v-show="applyStatus==0" style="border-radius: 2vh;background-color: #EE7942;color: #fff"
+                     v-on:click="applyToJoin">确定
+                </div>
+                <div v-show="applyStatus==1" style="border-radius: 2vh;background-color: #6f6363;color: #fff">申请中</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alertTip" v-show="isShowAlertTip">
+        <div class="alertTipBG"></div>
+        <img src="/files/images/common/alertTipOk.png" v-show="alertTipType==1">
+        <img src="/files/images/common/alertTipWarn.png" v-show="alertTipType==2">
+        <div class="alertTipText">{{alertTipText}}</div>
+    </div>
+
+    <!--  PK  -->
+    <div class="playerPK" v-show="pk.round>1">
+        <div class="pkBack"></div>
+        <div class="pk1">
+            <img src="/files/images/flower/comLeft.png" style="position: absolute;top:0;left:0;width:95%;height:140px;">
+            <div class="pkPlayer">
+                <img src="/files/images/flower/comB.png" class="background" v-show="pk.round>1">
+                <div class="title">{{pk1.nickname}}</div>
+                <img v-bind:src="pk1.headimgurl" class="avatar">
+                <div class="score">{{pk1.account_score}}</div>
+                <div class="quitBack"></div>
+            </div>
+            <img src="/files/images/flower/comLoser.png" v-show="pk.round==4&&pk1.account_status==7" class="pkLoser"/>
+        </div>
+        <div class="pk2">
+            <img src="/files/images/flower/comRight.png"
+                 style="position: absolute;top:0;right:0;width:95%;height:140px;">
+            <div class="pkPlayer">
+                <img src="/files/images/flower/comB.png" class="background" v-show="pk.round>1">
+                <div class="title">{{pk2.nickname}}</div>
+                <img v-bind:src="pk2.headimgurl" class="avatar">
+                <div class="score">{{pk2.account_score}}</div>
+                <div class="quitBack"></div>
+            </div>
+            <img src="/files/images/flower/comLoser.png" v-show="pk.round==4&&pk2.account_status==7" class="pkLoser"/>
+        </div>
+        <img src="/files/images/flower/comE.gif" v-show="pk.round==3" class="pkE"/>
+        <img src="/files/images/flower/comV.png" v-show="pk.round>2" class="pkV"/>
+        <img src="/files/images/flower/comS.png" v-show="pk.round>2" class="pkS"/>
+    </div>
+
+    <!-- 排行 -->
+    <div class="ranking hideRanking" id="ranking" style="z-index: 1">
+        <div class="rankBack">
+            <img crossOrigin="Anonymous" src="/files/images/bull/rank_bg.jpg"
+                 style="position: absolute;top: 0;left: 0;width: 100%">
+        </div>
+
+        <div class="rankText" style="position: absolute;top: 4%;">
+            <img crossOrigin="Anonymous" src="/files/images/nbull/rank_frame.png"
+                 style="position: absolute;top: 0%;left: 30vw;width: 140vw;">
+            <div class="time" v-show="playerBoard.round>0" style="position: absolute;top: 52vw;width: 100%;">
+                <a style="border-color: #247ed8;background-color: #fff;font-size: 6vw;color:#000">房间号:{{game.room_number}}&nbsp{{playerBoard.record}}&nbsp{{game.total_num}}局</a>
+            </div>
+            <div style="height: 68vw;"></div>
+            <div v-for="p in playerBoard.score" class="scoresItem"
+                 v-bind:class="{true: 'scoresItemYellow', false: 'scoresItemWhite'}[p.account_score>0]"
+                 v-show="p.account_id>0"
+                 style="background-color:rgba(0,0,0,0.5);width:60%;border-radius:10px;border:2px solid #fff5c8">
+                <img crossOrigin="Anonymous" src="/files/images/common/rank_bigwinner.png"
+                     style="top: 0; margin-top: -2.5vw; left: 4px;height: 120%" v-show="p.isBigWinner==1">
+                <div class="name">{{p.nickname}}</div>
+                <div class="currentScores"><a v-show="p.account_score>0">+</a>{{p.account_score}}</div>
+            </div>
+        </div>
+        <div class="button roundEndShow">
+            <img crossOrigin="Anonymous" src="/files/images/common/rank_save.png"
+                 style="float: left;margin-left: 13%;width: 30%"/>
+            <img crossOrigin="Anonymous" src="/files/images/common/datinganj.png"
+                 style="float: left;margin-left: 1%;width: 12%;margin-top: 2%;z-index:99"/>
+            <img crossOrigin="Anonymous" src="/files/images/common/rank_review.png"
+                 style="float: right;margin-right: 13%;width: 30%"/>
+        </div>
+    </div>
+
+    <!-- end图片  -->
+    <div id="endCreateRoom" class="end"
+         style="position: fixed;width: 100%;height:100%;top:0;left:0;z-index: 120;display: none;">
+        <img src="" style="width: 100vw;position: absolute;top:0;left: 0;height: 100vh;" id="end" usemap="#planetmap1"/>
+        <div id="endCreateRoomBtn"
+             style="position:absolute;right:13vw; width: 30vw; height: 10vw;bottom: 8%;z-index:121;overflow: hidden;"
+             v-on:click="reviewCard()"></div>
+        <div id="endCreateRoomBtn"
+             style="position:absolute;right:46vw; width: 10vw; height: 10vw;bottom: 8%;z-index:121;overflow: hidden;"
+             v-on:click="hall()"></div>
+    </div>
+    <!-- 新消息  -->
+    <div class="chat-list-mask" v-on:click="hideMessage" v-show="isShowNewMessage"></div>
+    <div class="chat-list" id="newmessage-box" v-show="isShowNewMessage">
+        <ul class="chat-list-ul">
+            <li v-on:click="messageOn(0)">快点吧，我等到花儿也谢了</li>
+            <li v-on:click="messageOn(1)">我出去叫人</li>
+            <li v-on:click="messageOn(2)">你的牌好靓哇</li>
+            <li v-on:click="messageOn(3)">我当年横扫澳门九条街</li>
+            <li v-on:click="messageOn(4)">算你牛逼</li>
+            <li v-on:click="messageOn(5)">别吹牛逼，有本事干到底</li>
+            <li v-on:click="messageOn(6)">输得裤衩都没了</li>
+            <li v-on:click="messageOn(7)">我给你们送温暖了</li>
+            <li v-on:click="messageOn(8)">谢谢老板</li>
+            <li v-on:click="messageOn(9)">我来啦，让你们久等了</li>
+            <li v-on:click="messageOn(10)">我出去一下，马上回来，等我哦</li>
+            <li v-on:click="messageOn(11)">怎么断线了，网络太差了</li>
+            <li v-on:click="messageOn(12)">搏一搏，单车变摩托</li>
+        </ul>
+    </div>
+
+    <!-- 新规则  -->
+    <div class="rules-mask" v-show="ruleInfo.isShowRule">
+        <div class="content">
+            <div class="niuniu-rules">
+                <div class="flex-cont rules-title">规则</div>
+                <div class="flex-cont" data-pos="0">
+                    <div class="name">类型：</div>
+                    <div v-if="play_type==4" class="flex-item">
+                        <span>换牌金花 </span><span> (换牌筹码：{{appData.swop_score}}分)</span></div>
+                    <div v-if="play_type==5" class="flex-item"><span>超级金花</span></div>
+                    <div v-if="play_type==2" class="flex-item"><span>大牌金花</span></div>
+                    <div v-if="play_type==1&&ruleInfo.play_mode==1" class="flex-item">
+                        <span>{{ruleInfo.laizi_num > 0 ? '癞子金花' : '经典金花'}}</span></div>
+                    <div v-if="play_type==1&&ruleInfo.play_mode==2" class="flex-item"><span>明牌金花</span></div>
+                </div>
+                <div class="flex-cont" data-pos="8" v-if="ruleInfo.laizi_num!=0">
+                    <div class="name">癞子：</div>
+                    <div class="flex-item"><span>(万能牌) {{ruleInfo.laizi_num}}张</span></div>
+                </div>
+                <div class="flex-cont" data-pos="0">
+                    <div class="name">底分：</div>
+                    <div class="flex-item"><span class="zhuangType">{{ruleInfo.default_score}}分</span></div>
+                </div>
+                <div class="flex-cont" data-pos="1">
+                    <div class="name">筹码：</div>
+                    <div v-if="ruleInfo.chip_type==1" class="flex-item"><span>2/4,4/8,8/16,10/20</span></div>
+                    <div v-if="ruleInfo.chip_type==2" class="flex-item"><span>2/4,5/10,10/20,20/40</span></div>
+                    <div v-if="ruleInfo.chip_type==3" class="flex-item"><span>5/10,10/20,20/40,40/80</span></div>
+                </div>
+                <div class="flex-cont" data-pos="2">
+                    <div class="name">规则：</div>
+                    <div v-if="ruleInfo.disable_look==1" class="flex-item"><span>首轮禁止看牌</span></div>
+                    <div v-if="ruleInfo.disable_pk==1" class="flex-item"><span>闷牌，全场禁止比牌</span></div>
+                    <div v-if="ruleInfo.is_qp_tp==1" class="flex-item"><span>大赢家摊牌</span></div>
+                </div>
+                <div class="flex-cont" data-pos="2">
+                    <div class="name">上限：</div>
+                    <div v-if="ruleInfo.upper_limit" class="flex-item">
+                        <span>{{ruleInfo.upper_limit == 0 ? '无' : ruleInfo.upper_limit}}</span></div>
+                </div>
+                <div class="flex-cont" data-pos="0">
+                    <div class="name">看牌：</div>
+                    <div class="flex-item"><span class="zhuangType">{{ruleInfo.look_score}}分</span></div>
+                </div>
+                <div class="flex-cont" data-pos="4">
+                    <div class="name">比牌：</div>
+                    <div class="flex-item">>{{ruleInfo.pk_round}}轮</div>
+                </div>
+                <div class="flex-cont" data-pos="7">
+                    <div class="name">比牌：</div>
+                    <div class="flex-item">{{ruleInfo.pk_score}}分</div>
+                </div>
+                <!--<div class="flex-cont" data-pos="5">
+                    <div class="name">局数：</div>
+                    <div class="flex-item" v-if="ruleInfo.ticket_count==1">10局X1张房卡</div>
+                    <div class="flex-item" v-if="ruleInfo.ticket_count==2">20局X2张房卡</div>
+                </div>-->
+                <div class="flex-cont rules-title">玩法</div>
+                <div class="rules-text">
+                    <p>牌型的比较</p>
+                    <p>1.豹子 > 顺金 > 金花 > 顺子 > 对子 > 单张 豹子、金花、对子、单张的比较，按照顺序比点的规则比较大小。</p>
+                    <p>2.牌点从大到小为：A、K、Q、J、10、9、8、7、6、5、4、3、2，不分花色只比点数大小。</p>
+                    <p>3.顺金、顺子按照顺序比点。AKQ>KQJ>…>432>32A</p>
+                    <p>4.同种牌型，对子时比对子的大小，其它牌型比最大的牌张，如最大牌张相同则先开牌一方输，如奖池达到上限系统默认开牌，则平分奖池。</p>
+                    <p>5.豹子（炸弹）：三张点相同的牌。例：AAA、222。</p>
+                    <p>6.顺金（同花顺、色托）：花色相同的顺子。例：黑桃456、红桃789。最大的顺金为花色相同的QKA，最小的顺金为花色相同的A23。</p>
+                    <p>7.金花（色皮）：花色相同，非顺子。例：黑桃368，方块A45。</p>
+                    <p>8.顺子（拖拉机）：花色不同的顺子。例：黑桃5红桃6方块7。最大的顺子为花色不同的QKA，最小的顺子为花色不同的A23。</p>
+                    <p>9.对子：两张点数相同的牌。例：223，334。</p>
+                    <p>10.单张：三张牌不组成任何类型的牌。</p>
+                    <p>
+                        11.喜牌：如果赢家是喜牌（豹子或者同花顺）则额外获取其他外加的洗牌分(豹子:{{ruleInfo.joy_card_bz}})，（同花顺:{{ruleInfo.joy_card_ths}}）。如果同时2个或者2个以上的玩家获取同花顺并且为分数池已满的情况下系统自动开牌，则同花顺赢家获取平分喜牌的分数。</p>
+                    <p v-if="play_type==4">
+                        12.换牌金花：系统随机发3张牌，在个人本轮已看牌状态可以选择换一张牌，换牌机会一次。换牌确认后，自动丢出换牌筹码{{appData.swop_score}}分，系统随机发一张新牌并组合成新牌组</p>
+                    <p v-if="play_type==5">12.超级金花：系统随机发4张牌，自动组成3张最优牌组合并放弃一张牌，放弃牌显示为灰色</p>
+                    <p v-if="play_type==1&&ruleInfo.play_mode==2">12.明牌金花：开局系统随机发三张牌，其中2张牌显示，另外1张牌不显示</p>
+                </div>
+            </div>
+        </div>
+        <div class="close" v-on:click="cancelGameRule"></div>
+    </div>
+
+    <!-- 设置音频 -->
+    <div class="audioRoom" id="vaudioRoom" v-show="editAudioInfo.isShow">
+        <div class="audioRoomBack" v-on:click="cancelAudioSetting"></div>
+        <div class="mainPart">
+            <div class="createB"></div>
+            <div class="createTitle" style="height:4vh;">
+            </div>
+
+            <img src="/files/images/common/cancel.png" class="cancelCreate" v-on:click="cancelAudioSetting"/>
+
+            <div class="blueBack">
+
+                <div style="height:0.5vh;"></div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                    <div class="selectTitle">背景音乐：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-on:click="setBackMusic">
+                            <div class="selectBox"></div>
+                            <img src="/files/images/common/tick.png" v-show="editAudioInfo.backMusic==1"/>
+                            <div class="selectText">开启</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                    <div class="selectTitle">游戏音效：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-on:click="setMessageMusic">
+                            <div class="selectBox"></div>
+                            <img src="/files/images/common/tick.png" v-show="editAudioInfo.messageMusic==1"/>
+                            <div class="selectText">开启</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="createCommit" v-on:click="confirmAudioSetting">确定</div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="qrcode" style="display: none;position: fixed; top: 0;left: 0;width: 100%;height: 100%;z-index: 111">
+        <div style="background: rgba(0,0,0,0.5);position: fixed;top: 0;left: 0;width: 100%;height: 100%;"
+             onclick="hideQrCode()"></div>
+        <div style="position: relative;width: 64vw;height: 80vw;left: 50%;top: 50%;transform: translate(-50%, -50%);border: .0096rem solid #919191;-webkit-border-radius: .096rem;-moz-border-radius: .096rem;border-radius: .096rem;transition: display 1s;background-color: rgba(255,255,255,.2);">
+            <div>
+                <span style="position:absolute;top: 0.1rem;left: 50%;transform: translateX(-50%); width: 70vw;text-align: center; color: #fff;font-size: 18px;">二维码</span>
+                <div id="divOne"></div>
+                <img id='imgOne'
+                     style="width: 50vw; height:50vw; box-sizing: border-box;position: absolute;overflow: scroll;background: #fff;border-radius: 4px;left: 50%;top: 48%;transform: translate(-50%,-50%);"/>
+                <span style="position:absolute;bottom: 0.25rem;left: 50%;transform: translateX(-50%); width: 70vw;text-align: center; color: #fff;font-size: 16px;">长按二维码发送</span>
+            </div>
+        </div>
+    </div>
+
+    <!--防伪码-->
+    <div style="display: none;" v-show="isShowIndiv">
+        <div class="individuaMask" style="" v-on:click="hideIndividuality"></div>
+        <div class="individuaFrame" style="">
+            <div class="title">防伪码设置</div>
+            <div class="text">
+                <input v-model="inputIndiv" v-on:input="individualityChange()" type="text" placeholder="设置1-6位英文或数字防伪码">
+            </div>
+            <div class="error">{{individualityError}}</div>
+            <div class="buttonContainer" v-on:click="setIndividuality">
+                <div class="button">确认</div>
+            </div>
+            <div class="buttonClose" v-on:click="hideIndividuality">
+                <img src="/fiesc/images/common/close.png">
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="/files/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/files/js/jquery.qrcode.min.js"></script>
+<script type="text/javascript" src="/files/js/bscroll.js"></script>
+<script type="text/javascript" src="/files/js/velocity.js"></script>
+<script type="text/javascript" src="/files/js/vue.min.js"></script>
+<script type="text/javascript" src="/files/js/vue-resource.min.js"></script>
+<script type="text/javascript" src="/fiesc/js/aes.js"></script>
+<script type="text/javascript" src="/files/js/md5.js"></script>
+<script type="text/javascript" src="/files/js/ves.js?v=112"></script>
+<script type="text/javascript" src="/files/js/flower_all_club.js?v=111222sxa"></script>
+<script type="text/javascript" src="/files/js/qrcode.js?v=111212"></script>
+
+
+<script type="text/javascript" src="/files/js/clipboard.min.js"></script>
+<script type="text/javascript" src="/files/js/fuzhi_xl2.js?v=12021809172"></script>
+<script type="text/javascript">
+    // document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+    //     // 通过下面这个API隐藏右上角按钮
+    //     WeixinJSBridge.call('hideOptionMenu');
+    // });
+</script>
+</html>

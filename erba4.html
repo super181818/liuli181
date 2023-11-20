@@ -1,0 +1,2482 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <base href="http://xcwgf2.oss-cn-hangzhou.aliyuncs.com"/>
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <title>二八杠</title>
+    <script type="text/javascript">
+        var _thost = 'http://' + window.location.host;
+        var pathArr = window.location.pathname.split("/");
+        if (pathArr.length == 3 && pathArr[1] != "") {
+            if (pathArr[1].search(".html") != -1) {
+
+            } else {
+                _thost = 'http://' + window.location.host + "/" + pathArr[1];
+            }
+        }
+        var _tt = new Date().getTime();
+        document.write('<script type="text/javascript" src="' + _thost + '/js/config.js?v=1' + _tt + '"> <\/script>');
+    </script>   
+    <link rel="stylesheet" href="/files/css/loading_new.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/erba.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/alert.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/ncomm.css">
+    <link rel="stylesheet" type="text/css" href="/files/css/alertbox.css">
+    <script type="text/javascript" src="/files/js/fastclick.js"></script>
+
+
+    <script type="text/javascript" src="/js/load.js?v=11101"></script>
+    <script type="text/javascript">
+        document.documentElement.style.fontSize = document.documentElement.clientWidth / 360 * 100 + 'px';
+        window.addEventListener('load', function () {
+            FastClick.attach(document.body);
+        }, false);
+
+        var code = DynLoading.getUrlParam("code");
+        let token = window.localStorage.getItem('token');
+        if (!token) {
+            var return_url = window.location.href;
+            window.localStorage.removeItem('return_url');
+            window.localStorage.setItem('return_url', window.location.href);
+            if (DynLoading.isWeiXin()) {
+                if (code) {
+                    token = "{$token}";
+                    if (token != "{$token}") {
+                        window.localStorage.setItem('token', token);
+                    }
+                } else {
+                    DynLoading.gotoWx();
+                }
+            } else {
+                DynLoading.goto('login');
+            }
+        }
+
+        if (token) {
+            var room_number = DynLoading.getUrlParam("i");
+            room_number = parseInt(room_number);
+            var req_url = BaseUrl + '/home1/room' + "?i=" + room_number + "&tk=" + token;
+            if (token == '{$token}' && code) {
+                req_url = BaseUrl + '/home1/room' + "?i=" + room_number + "&code=" + code;
+            }
+            var obj = DynLoading.hall(req_url);
+            if (obj.result != 0) {
+                alert(obj.result_message);
+                var return_url = window.location.href;
+                console.log(return_url);
+                DynLoading.goto('/');
+            }
+            console.log(obj);
+            if (code && obj.data.tk != "") {
+                token = obj.data.tk;
+
+                window.localStorage.setItem('token', obj.data.tk);
+            }
+        }
+
+        let _socket = _isTx ? 'ws://' + _wip + ':' + _wport + '/' + obj.data.gt + '/' + obj.data.dkey : obj.data.socket;
+        var newNum = "";
+        var per = window.innerWidth / 530;
+        var globalData = {
+            "card": obj.data.card,
+            "roomNumber": room_number,
+            "socket": _socket,
+            "hallPath": DynLoading.getPath('/'),
+            "roomUrl": window.location.href,
+            "baseUrl": BaseUrl + "/",
+            "fileUrl": "/",
+            "cfileUrl": "/",
+            "isWechat": 1,
+            "isXianliao": 0,
+            "xlTitle": "(房间号:" + room_number + ")",
+            "roomStatus": obj.data.room_status,
+            "scoreboard": obj.data.balance_scoreboard,
+            "session": obj.data.session,
+            "shareTitle": obj.data.platfrom_name + "：(房间:" + room_number + ")",
+            "gameType": obj.data.game_type,
+            "maxCount": obj.data.max_count,
+            "tk": token,
+            "hallName": obj.data.platfrom_name,
+            "hallEname": obj.data.platform_ename,
+            "gameName": "二八杠",
+        };
+
+        globalData.wid = obj.data.wid;
+        globalData.tt = obj.data.tt;
+        var userData = {
+            "account_id": obj.data.user.account_id,
+            "accountId": obj.data.user.account_id,
+            "userCode": obj.data.user.user_code,
+            "nickname": obj.data.user.nickname,
+            "avatar": obj.data.user.headimgurl,
+            "card": obj.data.card,
+            "individuality": obj.data.user.individuality,
+        };
+        var configData = {
+            "appId": obj.data.config_ary.appId,
+            "timestamp": obj.data.config_ary.timestamp,
+            "nonceStr": obj.data.config_ary.nonceStr,
+            "signature": obj.data.config_ary.signature,
+        };
+
+        // 修改浏览器title
+        var new_userName = "";
+        var old_userNname = obj.data.user.nickname;
+        if (old_userNname.length > 8) {
+            new_userName = old_userNname.substring(0, 7);
+            new_userName += "..."
+        } else {
+            new_userName = old_userNname;
+        }
+        document.getElementsByTagName("title")[0].innerText = new_userName + "|" + globalData.hallName;
+    </script>
+    <style>
+        body {
+            font-family: "微软雅黑", Arial;
+            font-size: 0.12rem;
+            color: #555;
+            letter-spacing: 0px;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-touch-callout: none;
+            overflow-x: hidden;
+        }
+
+        .flex-cont {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+        }
+
+        .mainPart .backImg {
+            background: #999 !important;
+        }
+
+        .mainPart .backImg .blackImg {
+            background: #fff !important;
+            border: none !important;
+        }
+
+        .mainPart .alertText {
+            color: #333 !important;
+        }
+
+        .s-text {
+            color: #FFDC18 !important;
+            font-size: 3vh !important;
+        }
+
+        .room-gameover {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 999999;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+
+        .room-gameover-ten {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 999999;
+            width: 100%;
+            background-color: #000;
+        }
+
+        .sidelines-mask {
+            display: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 999;
+            background-color: rgba(0, 0, 0, .5);
+        }
+
+        .sidelines-content {
+            box-sizing: border-box;
+            position: absolute;
+            right: 0;
+            top: -3.5rem;
+            z-index: 999;
+            width: 50%;
+            min-height: 3.5rem;
+            background-color: rgba(17, 23, 35, .9);
+            padding: .4320rem .1200rem 0;
+            -webkit-border-radius: 0 0 .0480rem .0480rem;
+            -moz-border-radius: 0 0 .0480rem .0480rem;
+            border-radius: 0 0 .0480rem .0480rem;
+            font-family: '黑体';
+            -webkit-transition: top .3s;
+            -moz-transition: top .3s;
+            -ms-transition: top .3s;
+            -o-transition: top .3s;
+            transition: top .3s;
+        }
+
+        .sidelines-num {
+            height: .2112rem;
+            line-height: .2112rem;
+            font-size: .1152rem;
+            text-align: center;
+            color: #fff;
+            background-color: rgba(45, 67, 103, .8);
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+            margin-bottom: .2880rem;
+        }
+
+        .sidelines-num i {
+            color: #dbe5a1;
+        }
+
+        .sidelines-list {
+            padding: .2400rem 0 .1200rem;
+            background: rgba(45, 67, 103, .8) url(<?php echo $file_url;?>files/images/newgame/sidelines-list-bg.png) no-repeat center .0480 rem / 100 % auto;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+            margin-bottom: .2400rem;
+        }
+
+        .sidelines-box {
+            overflow-x: hidden;
+            overflow-y: auto;
+            height: 1.2000rem;
+        }
+
+        .sidelines-item {
+            position: relative;
+            height: .3072rem;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            margin-bottom: .0480rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/sidelines-item.jpg) no-repeat center center / 100 % 100 %;
+        }
+
+        .sidelines-path {
+            overflow: hidden;
+            width: .2880rem;
+            height: .2880rem;
+            margin: 0 .0480rem;
+        }
+
+        .sidelines-path img {
+            width: 100%;
+            height: 100%;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+        }
+
+        .sidelines-info {
+            overflow: hidden;
+            height: 100%;
+            line-height: 1;
+            -webkit-flex: 1;
+            flex: 1;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            margin-right: .1920rem;
+            color: #fff;
+            font-size: .1152rem;
+        }
+
+        .sidelines-name {
+            overflow: hidden;
+            width: 100%;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .sidelines-icon {
+            position: absolute;
+            right: .0120rem;
+            top: 50%;
+            -webkit-transform: translate(0, -50%);
+            -moz-transform: translate(0, -50%);
+            -ms-transform: translate(0, -50%);
+            -o-transform: translate(0, -50%);
+            transform: translate(0, -50%);
+            width: .1248rem;
+            height: .0768rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/sidelines-icon.png) no-repeat 0 0 / 100 % 100 %;
+        }
+
+        .sidelines-join-game, .sidelines-look-game {
+            margin: 0 auto;
+            width: .7200rem;
+            height: .2400rem;
+            line-height: .2400rem;
+            color: #eefaff;
+            text-align: center;
+            background-color: #46bdf4;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+        }
+
+        .sidelines-join-game {
+            background-color: #88d23a;
+        }
+
+        .sidelines-close {
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: .1104rem;
+            height: .1440rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/sidelines-closr.png) no-repeat center center / 100 % 100 %;
+        }
+
+        .window-masks.return-index .container {
+            border: .0096rem solid #afb0b2;
+        }
+
+        .window-masks.return-index .main {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-align-items: center;
+            align-items: center;
+            width: 2.3280rem;
+            min-height: 1.0560rem;
+            background-color: #69829e;
+            border: .0048rem solid #fff;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+            margin: .1200rem;
+            padding: .0960rem;
+            color: #fff;
+            font-size: .1728rem;
+            text-align: justify;
+        }
+
+        .window-masks.return-index .container .button {
+            position: relative;
+            text-align: center;
+            margin-bottom: .0960rem;
+        }
+
+        .window-masks.return-index .container .sure, .window-masks.return-index .container .cancel {
+            display: inline-block;
+            width: 1.1472rem;
+            height: .3312rem;
+            font-size: .1200rem;
+            line-height: 2.5;
+            text-align: center;
+            margin: 0 .0480rem;
+            color: #fff;
+        }
+
+        .window-masks.return-index .container .sure {
+            background: url(<?php echo $file_url;?>files/images/newgame/common-button1.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.return-index .container .cancel {
+            background: url(<?php echo $file_url;?>files/images/newgame/common-button2.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks .border-opacity-v2 {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            border: .0096rem solid rgba(234, 202, 137, .6);
+            -webkit-border-radius: .076rem;
+            -moz-border-radius: .076rem;
+            border-radius: .076rem;
+            background-color: rgba(35, 42, 68, .8);
+            padding: .0720rem;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .main {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-align-items: center;
+            align-items: center;
+            width: 2.7280rem;
+            min-height: 1.2096rem;
+            background-color: rgba(68, 68, 174, .5);
+            border: .0048rem solid #19256d;
+            -webkit-border-radius: .076rem;
+            -moz-border-radius: .076rem;
+            border-radius: .076rem;
+            margin: .1200rem;
+            padding: .0960rem;
+            color: #e8b24c;
+            font-size: .2304rem;
+            text-align: justify;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .container {
+            border: none;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .container .button {
+            position: relative;
+            text-align: center;
+            margin-bottom: .0960rem;
+            margin-top: .16rem;
+            overflow-y: hidden;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .container .sure, .window-masks.return-index .border-opacity-v2 .container .cancel {
+            display: inline-block;
+            width: 1.0272rem;
+            height: .3696rem;
+            font-size: .15441rem;
+            line-height: .38rem;
+            text-align: center;
+            margin: 0 .086rem;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .container .sure {
+            background: url(<?php echo $file_url;?>files/images/newgame/decIndex-button1.png) no-repeat;
+            background-size: 100% 100%;
+            -webkit-text-stroke-width: 0.0048rem;
+            -webkit-text-stroke-color: #14309f;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .container .cancel {
+            background: url(<?php echo $file_url;?>files/images/newgame/decIndex-button2.png) no-repeat;
+            background-size: 100% 100%;
+            -webkit-text-stroke-width: 0.0048rem;
+            -webkit-text-stroke-color: #9e5f0f;
+        }
+
+        .window-masks .border-opacity-thirteen {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            -webkit-border-radius: .076rem;
+            -moz-border-radius: .076rem;
+            border-radius: .076rem;
+            background-color: rgba(57, 81, 130, 1);
+            padding: .0720rem .108rem;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .main {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-align-items: center;
+            align-items: center;
+            width: 2.7280rem;
+            min-height: 1.2096rem;
+            background-color: rgba(0, 0, 0, 0);
+            border: none;
+            -webkit-border-radius: .076rem;
+            -moz-border-radius: .076rem;
+            border-radius: .076rem;
+            margin: 0;
+            padding: .0960rem;
+            color: rgba(18, 63, 100, 0.7);
+            font-size: .2304rem;
+            text-align: justify;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .container {
+            border: none;
+            background-color: #8ad5e4;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .container .button {
+            position: relative;
+            text-align: center;
+            margin-bottom: 0;
+            margin-top: .16rem;
+            overflow-y: hidden;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .container .sure, .window-masks.return-index .border-opacity-thirteen .container .cancel {
+            display: inline-block;
+            width: 1.0272rem;
+            height: .3696rem;
+            margin: 0 .086rem;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .container .sure {
+            background: url(<?php echo $file_url;?>files/images/newgame/return-index-btn.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .container .cancel {
+            background: url(<?php echo $file_url;?>files/images/newgame/cancel.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+
+        .window-masks {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 99999;
+            background-color: rgba(0, 0, 0, 1);
+        }
+
+        .window-masks .border-opacity {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            border: .0048rem solid #a7a7a6;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+            background-color: rgba(255, 255, 255, .3);
+            padding: .0720rem;
+        }
+
+        .window-masks .border-opacity .container {
+            position: relative;
+            background-color: #d1e2f6;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+        }
+
+        .window-masks .border-opacity .container:before {
+            content: '';
+            position: absolute;
+            top: .0480rem;
+            left: .0480rem;
+            width: calc(100% - 0.0960rem);
+            height: calc(100% - 0.0960rem);
+            border: .0144rem solid #95b8e1;
+            -webkit-border-radius: .024rem;
+            -moz-border-radius: .024rem;
+            border-radius: .024rem;
+            z-index: 0;
+        }
+
+        .window-masks .border-opacity .container .mask-icon {
+            position: absolute;
+            width: .0816rem;
+            height: .0768rem;
+        }
+
+        .window-masks .border-opacity .container .mask-icon.mask-top {
+            top: .0480rem;
+            left: .0480rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/mask-top.jpg) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks .border-opacity .container .mask-icon.mask-right {
+            top: .0480rem;
+            right: .0480rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/mask-right.jpg) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks .border-opacity .container .mask-icon.mask-bottom {
+            bottom: .0480rem;
+            right: .0480rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/mask-bottom.jpg) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks .border-opacity .container .mask-icon.mask-left {
+            bottom: .0480rem;
+            left: .0480rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/mask-left.jpg) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.agreement .border-opacity {
+            border: none;
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 3.3648rem;
+            height: 2.8992rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/agreement.png) no-repeat 0 0 / 100 % 100 %;
+        }
+
+        .window-masks.agreement .border-opacity-v2 {
+            border: none;
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 3.1776rem;
+            height: 3.3600rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/agreementV2.png) no-repeat 0 0 / 100 % 100 %;
+        }
+
+        .window-masks.agreement .border-opacity-thirteen {
+            border: none;
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 3.0144rem;
+            height: 2.7792rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/agreement2.png) no-repeat 0 0 / 100 % 100 %;
+        }
+
+        .window-masks.user-join .container {
+            position: relative;
+            padding: .3840rem .1440rem .0480rem;
+        }
+
+        .window-masks.user-join .user-id {
+            position: absolute;
+            left: -.0576rem;
+            top: 0;
+            z-index: 5;
+            padding-left: .1440rem;
+            width: 1.4016rem;
+            height: .3888rem;
+            line-height: 1.5;
+            color: #fff;
+            font-size: .1632rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/join-game-title.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.user-join .container .main {
+            overflow: hidden;
+            width: 2.6469rem;
+            margin-bottom: .0960rem;
+            border: .0048rem solid #fff;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+            background-color: #69829e;
+            color: #fff;
+        }
+
+        .window-masks.user-join .container .main .rules {
+            line-height: .15rem;
+            padding: .0864rem;
+            font-size: .1344rem;
+        }
+
+        .window-masks.user-join .container .main .rules span {
+            line-height: .1rem;
+            display: inline-block
+        }
+
+        .window-masks.user-join .container .main .user-list {
+            box-sizing: border-box;
+            width: 2.6400rem;
+            height: 1.6360rem;
+            padding: .2400rem .1200rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/join-user-bg1.jpg) no-repeat;
+            background-size: 100% 100%;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -webkit-align-items: center;
+            align-items: center;
+        }
+
+        .window-masks.user-join .join-user-info {
+            width: 15%;
+            margin: 0 .0480rem;
+            text-align: center;
+        }
+
+        .join-user .join-info .user-text2 {
+            position: relative;
+            width: 2.8368rem;
+            height: 2.0880rem;
+            -webkit-border-radius: .0768rem;
+            -moz-border-radius: .0768rem;
+            border-radius: .0768rem;
+            margin: .0768rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/user-text-bg0.jpg) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .join-user .join-info .user-text {
+            position: relative;
+            width: 2.8368rem;
+            height: 1.5840rem;
+            -webkit-border-radius: .0768rem;
+            -moz-border-radius: .0768rem;
+            border-radius: .0768rem;
+            margin: .0768rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/user-text-bg1.jpg) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .join-user .join-info .user-text2 > div, .join-user .join-info .user-text > div {
+            text-align: center;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+        }
+
+        .window-masks.user-join .join-user-info img {
+            width: .3840rem;
+            height: .3840rem;
+            -webkit-border-radius: .0240rem;
+            -moz-border-radius: .0240rem;
+            border-radius: .0240rem;
+        }
+
+        .window-masks.user-join .join-user-info span {
+            display: block;
+            width: 100%;
+            height: .1200rem;
+            overflow: hidden;
+            line-height: .1200rem;
+            font-size: .1056rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .window-masks.user-join .container .button {
+            position: relative;
+            text-align: center;
+            margin-bottom: .0480rem;
+            display: flex;
+        }
+
+        .window-masks.user-join .container .join-game, .window-masks.user-join .container .return {
+            width: 1.1472rem;
+            height: .3312rem;
+            font-size: .1200rem;
+            line-height: 2.5;
+            text-align: center;
+            margin: 0 .0480rem;
+            color: #fff;
+            flex: 1;
+        }
+
+        .window-masks.user-join .container .return {
+            background: url(<?php echo $file_url;?>files/images/newgame/common-button1.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.user-join .container .join-game {
+            background: url(<?php echo $file_url;?>files/images/newgame/common-button2.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.user-join .container .main .user-list.user-list2 {
+            font-size: 0;
+            height: auto;
+            min-height: 1.6360rem;
+        }
+
+        .window-masks.user-join .container .main .user-list.user-list2 .join-user-info {
+            width: .3360rem;
+            margin: 0 .0240rem;
+        }
+
+        .window-masks.user-join .container .main .user-list.user-list2 img {
+            width: .3360rem;
+            height: .3360rem;
+            -webkit-border-radius: .0240rem;
+            -moz-border-radius: .0240rem;
+            border-radius: .0240rem;
+        }
+
+        .window-masks.return-index .container {
+            border: .0096rem solid #afb0b2;
+        }
+
+        .window-masks.return-index .main {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-align-items: center;
+            align-items: center;
+            width: 2.3280rem;
+            min-height: 1.0560rem;
+            background-color: #69829e;
+            border: .0048rem solid #fff;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+            margin: .1200rem;
+            padding: .0960rem;
+            color: #fff;
+            font-size: .1728rem;
+            text-align: justify;
+        }
+
+        .window-masks.return-index .container .button {
+            position: relative;
+            text-align: center;
+            margin-bottom: .0960rem;
+        }
+
+        .window-masks.return-index .container .sure, .window-masks.return-index .container .cancel {
+            display: inline-block;
+            width: 1.1472rem;
+            height: .3312rem;
+            font-size: .1200rem;
+            line-height: 2.5;
+            text-align: center;
+            margin: 0 .0480rem;
+            color: #fff;
+        }
+
+        .window-masks.return-index .container .sure {
+            background: url(<?php echo $file_url;?>files/images/newgame/common-button1.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.return-index .container .cancel {
+            background: url(<?php echo $file_url;?>files/images/newgame/common-button2.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks .border-opacity-v2 {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            border: .0096rem solid rgba(234, 202, 137, .6);
+            -webkit-border-radius: .076rem;
+            -moz-border-radius: .076rem;
+            border-radius: .076rem;
+            background-color: rgba(35, 42, 68, .8);
+            padding: .0720rem;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .main {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-align-items: center;
+            align-items: center;
+            width: 2.7280rem;
+            min-height: 1.2096rem;
+            background-color: rgba(68, 68, 174, .5);
+            border: .0048rem solid #19256d;
+            -webkit-border-radius: .076rem;
+            -moz-border-radius: .076rem;
+            border-radius: .076rem;
+            margin: .1200rem;
+            padding: .0960rem;
+            color: #e8b24c;
+            font-size: .2304rem;
+            text-align: justify;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .container {
+            border: none;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .container .button {
+            position: relative;
+            text-align: center;
+            margin-bottom: .0960rem;
+            margin-top: .16rem;
+            overflow-y: hidden;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .container .sure, .window-masks.return-index .border-opacity-v2 .container .cancel {
+            display: inline-block;
+            width: 1.0272rem;
+            height: .3696rem;
+            font-size: .15441rem;
+            line-height: .38rem;
+            text-align: center;
+            margin: 0 .086rem;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .container .sure {
+            background: url(<?php echo $file_url;?>files/images/newgame/decIndex-button1.png) no-repeat;
+            background-size: 100% 100%;
+            -webkit-text-stroke-width: 0.0048rem;
+            -webkit-text-stroke-color: #14309f;
+        }
+
+        .window-masks.return-index .border-opacity-v2 .container .cancel {
+            background: url(<?php echo $file_url;?>files/images/newgame/decIndex-button2.png) no-repeat;
+            background-size: 100% 100%;
+            -webkit-text-stroke-width: 0.0048rem;
+            -webkit-text-stroke-color: #9e5f0f;
+        }
+
+        .window-masks .border-opacity-thirteen {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            -webkit-border-radius: .076rem;
+            -moz-border-radius: .076rem;
+            border-radius: .076rem;
+            background-color: rgba(57, 81, 130, 1);
+            padding: .0720rem .108rem;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .main {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-align-items: center;
+            align-items: center;
+            width: 2.7280rem;
+            min-height: 1.2096rem;
+            background-color: rgba(0, 0, 0, 0);
+            border: none;
+            -webkit-border-radius: .076rem;
+            -moz-border-radius: .076rem;
+            border-radius: .076rem;
+            margin: 0;
+            padding: .0960rem;
+            color: rgba(18, 63, 100, 0.7);
+            font-size: .2304rem;
+            text-align: justify;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .container {
+            border: none;
+            background-color: #8ad5e4;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .container .button {
+            position: relative;
+            text-align: center;
+            margin-bottom: 0;
+            margin-top: .16rem;
+            overflow-y: hidden;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .container .sure, .window-masks.return-index .border-opacity-thirteen .container .cancel {
+            display: inline-block;
+            width: 1.0272rem;
+            height: .3696rem;
+            margin: 0 .086rem;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .container .sure {
+            background: url(<?php echo $file_url;?>files/images/newgame/return-index-btn.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.return-index .border-opacity-thirteen .container .cancel {
+            background: url(<?php echo $file_url;?>files/images/newgame/cancel.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .copy-tip {
+            background: rgba(0, 0, 0, .6);
+            color: #fff;
+            position: fixed;
+            bottom: .6rem;
+            font-size: .15rem;
+            border-radius: 5px;
+            padding: 10px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            z-index: 99;
+        }
+
+        #room_str {
+            position: fixed;
+            top: -300px;
+        }
+
+        .zhuonuo {
+            position: fixed;
+            right: 0;
+            width: .8rem;
+            z-index: 99;
+            top: .5rem;
+        }
+
+        /*自动准备*/
+        .auto-ready {
+            position: fixed;
+            right: 0;
+            width: .8rem;
+            z-index: 99;
+            top: 0.9rem;
+        }
+
+        .auto-ready img {
+            width: 100%;
+        }
+
+        #dialog {
+            position: fixed;
+            width: 300px;
+            height: 150px;
+            padding: 10px;
+            box-sizing: border-box;
+            background: #fff;
+            font-size: 16px;
+            left: 50%;
+            top: 50%;
+            margin-left: -150px;
+            margin-top: -75px;
+            border-radius: 10px;
+            z-index: 99;
+        }
+
+        #dialog .main {
+            word-wrap: break-word;
+            word-break: normal;
+        }
+
+        #dialog .other {
+            text-align: center;
+            margin-top: 38px
+        }
+
+        #dialog img {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 35px;
+        }
+
+        .gameRound {
+            position: fixed;
+            bottom: 1.4vh;
+            right: 30vh;
+            line-height: 4.4vh;
+            font-size: 3vh;
+            color: #fff;
+            height: 4.4vh;
+            z-index: 91;
+        }
+
+        .roundButton {
+            position: fixed;
+            bottom: 0.8vh;
+            width: 5.6vh;
+            height: 5.6vh;
+            z-index: 110;
+        }
+
+        .bottomGameRule {
+            right: 22vh;
+            left: auto;
+        }
+
+        .bottomGameHistory {
+            right: 15vh;
+            left: auto;
+        }
+
+        .addFriend {
+            right: 8vh;
+            left: auto;
+        }
+
+        .bottomGameMessage {
+            right: 1vh;
+            left: auto;
+        }
+
+        .rules-mask, .focus-mask, .share-mask {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 999;
+            background-color: rgba(0, 0, 0, .8);
+        }
+
+        .rules-mask .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            padding: .0720rem;
+            width: 2.9856rem;
+            background-color: rgba(255, 255, 255, .2);
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+            -webkit-box-shadow: 0 0 0.072rem #153b72 inset;
+            -moz-box-shadow: 0 0 .0720rem #153b72 inset;
+            box-shadow: 0 0 0.072rem #153b72 inset;
+            text-align: center;
+        }
+
+        .rules-mask .content .niuniu-rules {
+            background-color: #bbdaff;
+            -webkit-box-shadow: 0 0 0.072rem #153b72 inset;
+            -moz-box-shadow: 0 0 .0720rem #153b72 inset;
+            box-shadow: 0 0 0.072rem #153b72 inset;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+            margin-bottom: .0720rem;
+            height: 3.3000rem;
+            overflow-x: hidden;
+        }
+
+        .rules-mask .content .flex-cont {
+            align-items: center;
+            padding: .0520rem 0 .0520rem .3168rem;
+            font-size: .1152rem;
+            line-height: 1.5;
+            text-align: left;
+            background: url(<?php echo $file_url;?>fiesc/images/newgame/niuniu-rules-line.png) no-repeat left bottom;
+            background-size: 100% auto;
+        }
+
+        .flex-cont {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+        }
+
+        .rules-mask .content .flex-cont .name {
+            color: #666;
+            letter-spacing: .0240rem;
+        }
+
+        .rules-mask .content .flex-cont .flex-item {
+            /* color: #333; */
+        }
+
+        .rules-mask .content .flex-cont.rules-title {
+            -webkit-justify-content: center;
+            justify-content: center;
+            font-size: .1920rem;
+            color: #333;
+            padding: .0480rem 0;
+        }
+
+        .rules-mask .content .niuniu-rules .rules-text {
+            text-align: justify;
+            padding: 0 .0960rem 0 .310rem;
+            line-height: 2;
+            text-indent: -.2rem;
+        }
+
+        .rules-mask .close, .focus-mask .close, .share-mask .close {
+            position: absolute;
+            left: 50%;
+            -webkit-transform: translate(-50%);
+            -moz-transform: translate(-50%);
+            -ms-transform: translate(-50%);
+            -o-transform: translate(-50%);
+            transform: translate(-50%);
+            width: .2688rem;
+            height: .2688rem;
+            background: url(<?php echo $file_url;?>fiesc/images/newgame/niuniu-close.png) no-repeat;
+            background-size: 100% 100%;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+        }
+
+        .window-masks {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 99999;
+            background-color: rgba(0, 0, 0, 1);
+        }
+
+        .window-masks .border-opacity {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            border: .0048rem solid #a7a7a6;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+            background-color: rgba(255, 255, 255, .3);
+            padding: .0720rem;
+        }
+
+        .window-masks.user-join .container {
+            position: relative;
+            padding: .3840rem .1440rem .0480rem;
+        }
+
+        .window-masks .border-opacity .container {
+            position: relative;
+            background-color: #d1e2f6;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+        }
+
+        .window-masks .border-opacity .container:before {
+            content: '';
+            position: absolute;
+            top: .0480rem;
+            left: .0480rem;
+            width: calc(100% - 0.0960rem);
+            height: calc(100% - 0.0960rem);
+            border: .0144rem solid #95b8e1;
+            -webkit-border-radius: .024rem;
+            -moz-border-radius: .024rem;
+            border-radius: .024rem;
+            z-index: 0;
+        }
+
+        .window-masks .border-opacity .container .mask-icon.mask-top {
+            top: .0480rem;
+            left: .0480rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/mask-top.jpg) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks .border-opacity .container .mask-icon.mask-right {
+            top: .0480rem;
+            right: .0480rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/mask-right.jpg) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks .border-opacity .container .mask-icon.mask-bottom {
+            bottom: .0480rem;
+            right: .0480rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/mask-bottom.jpg) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks .border-opacity .container .mask-icon.mask-left {
+            bottom: .0480rem;
+            left: .0480rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/mask-left.jpg) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks .border-opacity .container .mask-icon {
+            position: absolute;
+            width: .0816rem;
+            height: .0768rem;
+        }
+
+        .window-masks.user-join .user-id {
+            position: absolute;
+            left: -.0576rem;
+            top: 0;
+            z-index: 5;
+            padding-left: .1440rem;
+            width: 1.4016rem;
+            height: .3888rem;
+            line-height: 1.5;
+            color: #fff;
+            font-size: .1632rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/join-game-title.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.user-join .container .main {
+            overflow: hidden;
+            width: 2.6469rem;
+            margin-bottom: .0960rem;
+            border: .0048rem solid #fff;
+            -webkit-border-radius: .0480rem;
+            -moz-border-radius: .0480rem;
+            border-radius: .0480rem;
+            background-color: #69829e;
+            color: #fff;
+        }
+
+        .window-masks.user-join .container .main .rules {
+            line-height: .15rem;
+            padding: .0864rem;
+            font-size: .1344rem;
+        }
+
+        .window-masks.user-join .container .main .user-list {
+            box-sizing: border-box;
+            width: 2.6400rem;
+            height: 1.6360rem;
+            padding: .2400rem .1200rem;
+            background: url(<?php echo $file_url;?>files/images/newgame/join-user-bg1.jpg) no-repeat;
+            background-size: 100% 100%;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -webkit-align-items: center;
+            align-items: center;
+        }
+
+        .window-masks.user-join .container .button {
+            position: relative;
+            text-align: center;
+            margin-bottom: .0480rem;
+            display: flex;
+        }
+
+        .window-masks.user-join .container .return {
+            background: url(<?php echo $file_url;?>files/images/newgame/common-button1.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.user-join .container .join-game {
+            background: url(<?php echo $file_url;?>files/images/newgame/common-button2.png) no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .window-masks.user-join .container .join-game, .window-masks.user-join .container .return {
+            width: 1.1472rem;
+            height: .3312rem;
+            font-size: .1200rem;
+            line-height: 2.5;
+            text-align: center;
+            margin: 0 .0480rem;
+            color: #fff;
+            flex: 1;
+        }
+
+        .alert .mainPart .backImg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.5vh;
+            top: 0;
+            left: 0;
+            background-size: 100% 300%;
+            border: 0.1vh solid #3e3e3e;
+            background: #fff !important;
+        }
+
+        .alert .mainPart .backImg .blackImg {
+            position: absolute;
+            width: 40.6vh;
+            height: 25vh;
+            border-radius: 1.5vh;
+            top: 2.2vh;
+            left: 2.2vh;
+            background: #2f2f2f;
+        }
+
+        .alert .mainPart .alertText {
+            position: absolute;
+            width: 100%;
+            line-height: 3.5vh;
+            font-size: 2.5vh;
+            width: 36vh;
+            left: 50%;
+            margin-left: -18vh;
+            top: 5.6vh;
+            text-align: center;
+        }
+
+        .alert .mainPart .buttonMiddle {
+            position: absolute;
+            line-height: 5.6vh;
+            height: 5.6vh;
+            font-size: 2.5vh;
+            width: 100%;
+            color: #b39851;
+            bottom: 0vh;
+            text-align: center;
+            border-top: 0.01rem solid #f5f5f5;
+            left: 0;
+            background: none;
+            margin: 0;
+        }
+
+        .mainPart .backImg .blackImg {
+            background: #fff !important;
+            border: none !important;
+        }
+
+        .alert .mainPart .alertText {
+            color: #333;
+            font-size: 2.2vh;
+        }
+    </style>
+</head>
+
+<body>
+<div id="dialog" style="display:none">
+    <img src="/files/images/common/cancel.png" onclick="fuzhiMain.closeDialog()">
+    <p id="main" class="main">
+    </p>
+    <p class="other">
+        请手动复制
+    </p>
+</div>
+
+
+<div style="position: fixed;width:100%;height:100%;top:0;left:0;background: #000" id="loading">
+    <div class="load4">
+        <div class="loader">Loading...</div>
+    </div>
+</div>
+
+<div class="main" id="app-main" style="display: none;'">
+
+    <span class="copy-tip" id="tips" style="display:none">已复制到剪贴板</span>
+    <img src="/files/images/common/33fz.png" class="needsclick zhuonuo copyUrl"
+         data-clipboard-action="copy" id="copy_btn" onclick="copyLink(globalData.maxCount)"/>
+    <textarea id="room_str" readonly="readonly"></textarea>
+
+    <div class="window-masks return-index" id="returnIndex" v-show="isShowHomeAlert">
+        <div class="border-opacity">
+            <div class="container f-cb"><i class="mask-icon mask-top"></i><i class="mask-icon mask-right"></i><i
+                    class="mask-icon mask-bottom"></i><i class="mask-icon mask-left"></i>
+                <div class="main">确认返回主页？</div>
+                <div class="button">
+                    <div class="sure" id="returnIndexBtn" v-on:click="hall">返回首页</div>
+                    <div class="cancel" id="cancelBtn" v-on:click="closeHomeAlert">取消</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="window-masks return-index" id="returnIndex" v-show="isShowAlert && !add_user">
+        <div class="border-opacity">
+            <div class="container f-cb"><i class="mask-icon mask-top"></i><i class="mask-icon mask-right"></i><i
+                    class="mask-icon mask-bottom"></i><i class="mask-icon mask-left"></i>
+                <div class="main">{{alertText}}</div>
+                <div class="button">
+                    <div class="sure" id="returnIndexBtn" v-on:click="hall">返回首页</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--自动准备-->
+    <div class="auto-ready" v-on:click="autoReady()">
+        <img v-show="appData.isAutoReady==1" src="/files/images/common/ready_true2.png">
+        <img v-show="appData.isAutoReady==0" src="/files/images/common/ready_false2.png">
+    </div>
+
+    <div class="disconnect" v-show="!connectOrNot"
+         style="position: fixed;top:45%;left: 0;width: 100%;text-align: center;z-index: 101">
+        <div style="width: 250px;height:27px;position: absolute;top:-2;left: 50%;margin-left: -125px;background: #000;opacity: .5;border-radius:15px;">
+        </div>
+        <a style="font-size: 16px;color: #fff;padding: 5px 14px;position:relative;">已断开连接，正在重新连接...</a>
+    </div>
+
+    <img class="bottom" src="/files/images/nbull/bottom.png"/>
+
+    <div class="myText" v-on:click="showIndividuality">
+        <img src="/fiesc/images/common/myText.png"/>
+        <div class="textContainer">
+            <div class="textbg"></div>
+            <div class="text">{{userData.individuality}}<span v-if='userData.individuality==""'>点击设置</span></div>
+        </div>
+    </div>
+    <div style="display: none;" v-show="isShowIndividuality==1">
+        <div class="individuaMask" style="" v-on:click="hideIndividuality"></div>
+        <div class="individuaFrame" style="">
+            <div class="title">防伪码设置</div>
+            <div class="text">
+                <input v-model="individuality" v-on:input="individualityChange()" type="text"
+                       placeholder="设置1-6位英文或数字防伪码">
+            </div>
+            <div class="error">{{individualityError}}</div>
+            <div class="buttonContainer" v-on:click="setIndividuality">
+                <div class="button">确认</div>
+            </div>
+            <div class="buttonClose" v-on:click="hideIndividuality">
+                <img src="/files/images/common/close.png">
+            </div>
+        </div>
+    </div>
+
+
+    <div>
+        <img class="roundButton bottomGameRule" src="/files/images/erba/game-rules13.png"
+             v-on:click="showGameRule" style="z-index: 110">
+        <img class="roundButton bottomGameHistory" src="/files/images/erba/return-index13.png"
+             v-on:click="showHomeAlert()" style="z-index: 110">
+        <img class="roundButton addFriend" src="/files/images/erba/game-music1.png"
+             v-if="editAudioInfo.backMusic==1" v-on:click="confirmAudioSetting">
+        <img class="roundButton addFriend" src="/files/images/erba/game-music2.png"
+             v-if="editAudioInfo.backMusic==0" v-on:click="confirmAudioSetting">
+        <img class="roundButton bottomGameMessage" src="/files/images/erba/game-chat.png"
+             v-on:click="showMessage">
+    </div>
+    <div class="gameRound">{{game.round}}&nbsp/&nbsp{{game.total_num}}&nbsp局</div>
+
+    <div v-show="isShowApply" style="color: #000;">
+        <div class="applyMask" style="width: 100%;height: 100%;position: fixed;background: #000;z-index: 111;"></div>
+        <div style="position: fixed;background: #fff;border-radius: 6px; top: 50%;left: 50%;z-index: 111;transform: translate(-50%,-50%); width: 76vw;font-size: 16px;height: 20vh">
+            <img src="/files/images/common/close.png" style="position: absolute;right: -3vw;top: -2vh;width: 10vw;"
+                 @click="hall">
+            <div style="margin-top: 5vh;text-align: center;">你不是该俱乐部成员</div>
+            <!--            <div style="margin-top: 5vh;text-align: center;">{{applyInfo.text}}</div>-->
+            <div style="text-align: center">是否申请加入俱乐部？</div>
+            <div style="background: url(/files/images/common/button_yellow.png);background-size: 100% 100%;width: 24vw;height: 4vh;position: relative;top: 2.5vh;left: 50%;transform: translateX(-50%);color: #fff;text-align: center;line-height: 4vh;font-size: 16px;"
+                 @click="applyClub()">
+                {{applyInfo.status}}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="table" id="table" v-on:click="confirmAudioSetting('1')">
+        <img class="tableBack" src="/files/images/erba/table.jpg"/>
+        <img :src="'/platform/'+globalData.hallEname+'/hall-name.png'"
+             style="position: absolute;top: 34%;left: 50%;transform: translate(-50%,-50%);width: 2rem;z-index: 1;"/>
+
+        <!-- 钓鱼选手  	-->
+        <div class="fish" v-show="!game.fish_member">钓鱼区</div>
+        <div class="memberUp" v-for="p in player" v-bind:class="'memberUp' + p.num" v-if="p.num>4">
+            <div v-show="p.account_id>0">
+                <div>
+                    <img v-bind:src="p.headimgurl" class="avatar">
+                    <div class="info">
+                        <div class="back"></div>
+                        <div class="name">{{p.nickname}}</div>
+                        <div class="score">{{p.account_score}}</div>
+                    </div>
+                </div>
+                <div class="memberScoreText" v-bind:class="'memberScoreText' + p.num" style="display: none;">
+                    <label v-show="p.single_score<0"
+                           style="position: absolute; top:6vh; line-height: 6vh; width: 100%; height: 6vh; text-align: center;color: white; font-size: 2.4vh;font-family:'Helvetica 微软雅黑'; -webkit-text-stroke: 1.3px;text-shadow: 1px 2px 2px #022055;display:none; ">{{p.single_score}}</label>
+                    <label v-show="p.single_score>0"
+                           style="position: absolute; top:6vh; line-height: 6vh; width: 100%; height: 6vh; text-align: center;color: rgb(234,171,55); font-size: 2.4vh;font-family:'Helvetica 微软雅黑'; -webkit-text-stroke: 1.3px;text-shadow: 1px 2px 2px #782a00;display:none; ">+{{p.single_score}}</label>
+                    <label v-show="p.single_score==0"
+                           style="position: absolute; top:6vh; line-height: 6vh; width: 100%; height: 6vh; text-align: center;color: rgb(234,171,55); font-size: 2.4vh;font-family:'Helvetica 微软雅黑'; -webkit-text-stroke: 1.3px;text-shadow: 1px 2px 2px #782a00;display:none; ">0</label>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 玩家  -->
+        <div v-for="p in player" class="member" v-bind:class="'member' + p.num" v-if="p.num<5">
+            <!-- 玩家背景框 -->
+            <img src="/files/images/common/player_bg.png" class="background"
+                 v-show="p.account_id>0">
+            <img src="/files/images/common/player_selected2.png"
+                 style="position: absolute; top: 10%; left: 10%; width: 82%; height: 82%;" v-show="p.is_banker">
+
+            <!-- 玩家昵称 -->
+            <div class="title" v-show="p.account_id>0">{{p.nickname}}</div>
+            <!-- 玩家头像 -->
+            <img v-bind:src="p.headimgurl" class="avatar" v-show="p.account_id>0">
+            <!-- 玩家积分 -->
+            <div class="score" v-show="p.account_id>0">{{p.account_score}}</div>
+            <!-- 玩家身份 -->
+            <img src="/files/images/erba/icon_zhuang.png" class="status" v-show="p.is_banker">
+            <img src="/files/images/erba/icon_xian.png" class="status" v-show="!p.is_banker">
+
+
+            <img v-bind:id="'banker' + p.account_id"
+                 src="/files/images/common/player_selected2_bg.png" class="background"
+                 style="position: absolute; top: 10%;left: 10%;width: 82%; height: 82%; display: none;"/>
+            <img v-bind:id="'bankerAnimate' + p.num"
+                 src="/files/images/common/player_selected2.png"
+                 style="position: absolute; top: 10%; left: 10%; width: 82%; height: 82%;display: none; ">
+            <img v-bind:id="'bankerAnimate1' + p.num"
+                 src="/files/images/common/player_selected2.png"
+                 style="position: absolute; top: 10%; left: 10%; width: 82%; height: 82%; display: none;">
+
+            <img src="/files/images/erba/fapai.png" class="fapaikuang"
+                 style="position: absolute; top: 10%;left: 10%;width: 82%; height: 82%;z-index: 1;"
+                 v-show="game.light==p.num"/>
+            <img src="/files/images/erba/fapai1.png" class="fapaikuang1"
+                 style="position: absolute; top: 10%;left: 10%;width: 82%; height: 82%;z-index: 1;"
+                 v-show="game.light==p.num"/>
+
+
+            <!-- 玩家离开或不在线 -->
+            <div class="quitBack" v-show="(p.num>1&&p.online_status==0)||p.account_id==0"></div>
+            <!-- 玩家手牌 -->
+            <div class="majiang">
+                <!-- 发牌 -->
+                <div class="majiangTemp" style="display: none;">
+                    <img src="/files/images/erba/majiang2.png" class="outer"/>
+                    <img src="/files/images/erba/majiang2.png" class="outer moved"/>
+                </div>
+                <div class="majiangTemp1" style="display: none;">
+                    <img src="/files/images/erba/majiang2.png" class="outer"/>
+                    <img src="/files/images/erba/majiang2.png" class="outer moved"/>
+                </div>
+                <!-- 翻牌 -->
+
+                <div class="majiangSet" v-for="(i,index) in position_info"
+                     v-if="(p.account_status==9||p.account_status==10)&&p.num==1&&(index+1)==p.serial_num">
+                    <div class="outer">
+                        <img src="/files/images/erba/majiang2.png" class="ani"
+                             v-show="animate.majiang1==0&&p.animate!=4" v-on:click="seeMyCard(1)"/>
+                        <img src="/files/images/erba/majiang3.png" class="ani"
+                             v-show="animate.majiang1==1" style="margin-bottom: -.5vh;"/>
+                        <img src="/files/images/erba/majiang4.png" class="ani"
+                             v-show="animate.majiang1==2"/>
+                        <img src="/files/images/erba/majiang5.png" class="ani"
+                             v-show="animate.majiang1==3" style="margin-bottom: -.5vh;"/>
+                        <img src="/files/images/erba/majiang6.png" class="ani"
+                             v-show="animate.majiang1==4||p.animate==4"/>
+                        <img v-bind:src="'/files/images/erba/card'+i.card_info[0]+'.png'"
+                             class="inner" v-show="animate.majiang1==4||p.animate==4"/>
+                    </div>
+
+                    <div class="outer moved">
+                        <img src="/files/images/erba/majiang2.png" class="ani"
+                             v-show="animate.majiang2==0&&p.animate!=4" v-on:click="seeMyCard(2)"/>
+                        <img src="/files/images/erba/majiang3.png" class="ani"
+                             v-show="animate.majiang2==1" style="margin-bottom: -.5vh;"/>
+                        <img src="/files/images/erba/majiang4.png" class="ani"
+                             v-show="animate.majiang2==2"/>
+                        <img src="/files/images/erba/majiang5.png" class="ani"
+                             v-show="animate.majiang2==3" style="margin-bottom: -.5vh;"/>
+                        <img src="/files/images/erba/majiang6.png" class="ani"
+                             v-show="animate.majiang2==4||p.animate==4"/>
+                        <img v-bind:src="'/files/images/erba/card'+i.card_info[1]+'.png'"
+                             class="inner" v-show="animate.majiang2==4||p.animate==4"/>
+                    </div>
+                </div>
+
+                <div class="majiangSet" v-for="(i,index) in position_info"
+                     v-if="(p.account_status==9||p.account_status==10)&&p.num!=1&&(index+1)==p.serial_num">
+                    <div class="outer">
+                        <img src="/files/images/erba/majiang2.png" class="ani"
+                             v-show="p.animate==0"/>
+                        <img src="/files/images/erba/majiang3.png" class="ani"
+                             v-show="p.animate==1"/>
+                        <img src="/files/images/erba/majiang4.png" class="ani"
+                             v-show="p.animate==2"/>
+                        <img src="/files/images/erba/majiang5.png" class="ani"
+                             v-show="p.animate==3"/>
+                        <img src="/files/images/erba/majiang6.png" class="ani"
+                             v-show="p.animate==4"/>
+                        <img v-bind:src="'/files/images/erba/card'+i.card_info[0]+'.png'"
+                             class="inner" v-show="p.animate==4"/>
+                    </div>
+                    <div class="outer moved">
+                        <img src="/files/images/erba/majiang2.png" class="ani"
+                             v-show="p.animate==0"/>
+                        <img src="/files/images/erba/majiang3.png" class="ani"
+                             v-show="p.animate==1"/>
+                        <img src="/files/images/erba/majiang4.png" class="ani"
+                             v-show="p.animate==2"/>
+                        <img src="/files/images/erba/majiang5.png" class="ani"
+                             v-show="p.animate==3"/>
+                        <img src="/files/images/erba/majiang6.png" class="ani"
+                             v-show="p.animate==4"/>
+                        <img v-bind:src="'/files/images/erba/card'+i.card_info[1]+'.png'"
+                             class="inner" v-show="p.animate==4"/>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 积分池 -->
+            <div v-for="(i,index) in position_info" v-if="(index+1)==p.serial_num">
+
+                <div class="scorePlace" v-show="p.account_status>7&&!p.is_banker">
+                    <div class="back"></div>
+                    <div class="totalScore">总注：{{i.chip.total}}</div>
+                    <div class="myScore" v-if="!player[game.user_num].is_banker">下注：{{i.chip.my_bet}}</div>
+                </div>
+
+
+                <div class="scorePlace" v-show="p.account_status==7&&!p.is_banker&&!player[game.user_num].is_banker">
+                    <div class="back"></div>
+                    <div class="totalScore">总注：{{i.chip.total}}</div>
+                    <img class="myScoreImg"
+                         v-bind:src="'/files/images/erba/coin'+i.chip.my_bet+'.png'"
+                         v-if="!player[game.user_num].is_banker&&i.chip.my_bet!=0">
+                </div>
+
+                <div v-bind:class="'scorePlace scorePlaceBanker scorePlace'+p.num"
+                     v-if="p.account_status==7&&!p.is_banker&&player[game.user_num].is_banker" style="height: 12vh;">
+                    <div class="back" style="height: 3vh;"></div>
+                    <div class="totalScore">总注：{{i.chip.total}}</div>
+                </div>
+
+                <!-- 下注框 -->
+                <div class="PKbox"
+                     v-show="!p.is_banker&&player[game.user_num].account_status!=0&&player[0].account_status==7&&!player[game.user_num].is_banker&&i.chip.my_bet==0"
+                     v-on:click="showCoinArea(p.num)">
+                    <div class="PKboxBack"></div>
+                </div>
+            </div>
+
+            <!-- 准备状态 game.round!=game.total_num-->
+            <div class="gameStatus">
+                <img src="/files/images/common/ready_text.png" class="ready"
+                     v-show="game.round!=game.total_num&&p.num!=1&&p.account_status==2&&p.account_id>0"/>
+                <img src="/files/images/erba/robBanker2.png" class="banker"
+                     v-show="p.num!=1&&p.account_status==4"/>
+                <img src="/files/images/erba/robBanker.png" class="banker"
+                     v-show="p.num!=1&&p.account_status==5"/>
+                <div class="memberScoreText" v-bind:class="'memberScoreText' + p.num" v-if="p.account_id>0"
+                     style="display: none;">
+                    <label v-show="p.single_score<0"
+                           style="position: absolute; line-height: 6vh; width: 100%; height: 6vh; text-align: center;color: white; font-size: 3vh;font-family:'Helvetica 微软雅黑'; -webkit-text-stroke: 1.3px;text-shadow: 1px 2px 2px #022055;display:none; ">{{p.single_score}}</label>
+                    <label v-show="p.single_score>0"
+                           style="position: absolute; line-height: 6vh; width: 100%; height: 6vh; text-align: center;color: rgb(234,171,55); font-size: 3vh;font-family:'Helvetica 微软雅黑'; -webkit-text-stroke: 1.3px;text-shadow: 1px 2px 2px #782a00;display:none; ">+{{p.single_score}}</label>
+                    <label v-show="p.single_score==0"
+                           style="position: absolute; line-height: 6vh; width: 100%; height: 6vh; text-align: center;color: rgb(234,171,55); font-size: 3vh;font-family:'Helvetica 微软雅黑'; -webkit-text-stroke: 1.3px;text-shadow: 1px 2px 2px #782a00;display:none; ">0</label>
+                </div>
+
+
+                <div class="pointArea" v-for="(i,index) in position_info"
+                     v-if="(index+1)==p.serial_num&&p.account_status==10">
+                    <img src="/files/images/erba/point_bg.png"/>
+                    <div class="point">{{i.card_text}}</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 玩家金币 -->
+        <div id="playerCoins" style="display: none;">
+            <div v-for='(p,index) in player' v-if="index<4">
+                <div v-for='coin in p.coins' class="memberCoin" v-bind:class="coin">
+                    <img src="/files/images/erba/coin.png"
+                         style="position: absolute; width: 100%; height: 100%">
+                </div>
+            </div>
+        </div>
+        <!-- 玩家消息  -->
+        <div v-for="p in player">
+            <div class="messageSay" v-bind:class="'messageSay' + p.num" v-show="p.messageOn">
+                <div>{{p.messageText}}</div>
+                <div class="triangle"></div>
+            </div>
+        </div>
+
+        <!-- 上半场手牌  -->
+        <div class="first_half_cards" v-show="game.first_half_cards.length>0||1">
+            <div class="back"></div>
+            <div class="title">手牌区</div>
+            <div v-for="f in game.first_half_cards" class="cards">
+                <img v-bind:src="'/files/images/erba/card'+f+'.png'" class="inner"/>
+            </div>
+        </div>
+        <!-- 倒计时和等待文字  -->
+        <div class="clock" v-show="game.time>-1">
+            {{game.time}}
+        </div>
+        <div class="waitingText" v-show="game.waiting_text_show">
+            {{game.waiting_text}}
+        </div>
+        <!-- 色子  -->
+        <div class="dice" v-show="dice.status>0">
+            <div class="dice1">
+                <img src="/files/images/erba/dice.gif" v-show="dice.status==1">
+                <img v-bind:src="'/files/images/erba/'+dice.dice1+'.png'" v-show="dice.status>1">
+            </div>
+            <div class="dice2">
+                <img src="/files/images/erba/dice.gif" v-show="dice.status==2">
+                <img v-bind:src="'/files/images/erba/'+dice.dice2+'.png'"
+                     v-show="dice.status==3">
+            </div>
+        </div>
+
+        <!-- 麻将堆  -->
+        <div class="cardList" v-bind:style="'margin-left:'+(-5-majiangNum)+'vh'">
+            <div class="majiangShow">
+                <div v-for="c in majiangList" class="cardDown card" v-bind:style="'margin-left:'+((c.num-1)*4)+'vh;'"
+                     v-show="c.num<=10&&c.num<=animate.animate1">
+                    <img src="/files/images/erba/majiang1.png" class="outer"/>
+                </div>
+                <div v-for="c in majiangList" class="cardUp card" v-bind:style="'margin-left:'+((c.num-11)*4)+'vh;'"
+                     v-show="c.num>10&&(c.num-10)<=animate.animate1">
+                    <img src="/files/images/erba/majiang1.png" class="outer"/>
+                </div>
+            </div>
+
+            <div v-if="majiangMoving&&majiangReset" class="majiangMoving">
+                <div v-for="c in majiangList" v-bind:class="'cardDown card'+c.num"
+                     v-bind:style="'margin-left:'+((c.num-1)*4)+'vh;'" v-if="c.num<=(majiangNum/2)">
+                    <img src="/files/images/erba/majiang1.png" class="outer"/>
+                </div>
+                <div v-for="c in majiangList" v-bind:class="'cardUp card'+(c.num-(majiangNum/2))"
+                     v-bind:style="'margin-left:'+((c.num-1-(majiangNum/2))*4)+'vh;'"
+                     v-if="c.num>(majiangNum/2)&&c.num<=majiangNum">
+                    <img src="/files/images/erba/majiang1.png" class="outer"/>
+                </div>
+            </div>
+
+            <div v-show="!majiangMoving&&majiangReset" class="majiangList">
+                <div v-for="c in majiangList" v-bind:class="'cardDown card'+c.num"
+                     v-bind:style="'margin-left:'+((c.num-1)*4)+'vh;'" v-if="c.num<=(majiangNum/2)">
+                    <img src="/files/images/erba/majiang1.png" class="outer"/>
+                </div>
+                <div v-for="c in majiangList" v-bind:class="'cardUp card'+(c.num-(majiangNum/2))"
+                     v-bind:style="'margin-left:'+((c.num-1-(majiangNum/2))*4)+'vh;'"
+                     v-if="c.num>(majiangNum/2)&&c.num<=majiangNum">
+                    <img src="/files/images/erba/majiang1.png" class="outer"/>
+                </div>
+            </div>
+        </div>
+
+        <!-- 按钮操作区域 -->
+        <div id="operationButton">
+            <!-- 准备 -->
+            <div v-show="game.round!=game.total_num" class="buttonCenter">
+                <div class="buttonMiddle buttonCenter" class="unready"
+                     v-show="game.circle==-1&&game.user_id==player[0].account_id&&(player[0].account_status==1||player[0].account_status==0)&&(can_break==0||!player[game.user_num].is_banker)"
+                     v-on:click="imReady">准备
+                </div>
+                <img src="/files/images/common/ready_text.png" class="ready"
+                     v-show="player[0].account_status==2"/>
+            </div>
+            <!-- 抢庄状态 -->
+            <div v-show="player[0].account_status==4" class="buttonCenter">
+                <img src="/files/images/erba/robBanker2.png" class="bankerStatus"/>
+            </div>
+            <div v-show="player[0].account_status==5" class="buttonCenter">
+                <img src="/files/images/erba/robBanker.png" class="bankerStatus"/>
+            </div>
+            <div v-show="player[game.user_num].account_status!=0&&player[0].account_status==7&&!player[game.user_num].is_banker"
+                 class="buttonCenter">
+                <img src="/files/images/erba/txt_tobet.png" class="bankerStatus"
+                     style="height: 4vh;"/>
+            </div>
+            <div v-show="player[game.user_num].account_status!=0&&player[0].account_status==7&&player[game.user_num].is_banker"
+                 class="buttonCenter">
+                <img src="/files/images/erba/txt_wait.png" class="bankerStatus"
+                     style="height: 4vh;"/>
+            </div>
+
+
+            <div v-if="game.user_id==player[0].account_id">
+                <div v-show="(animate.majiang1!=4||animate.majiang2!=4)&&player[0].account_status==9"
+                     class="buttonCenter">
+                    <img src="/files/images/erba/txt_clickcard.png" class="bankerStatus"
+                         style="height: 4vh;"/>
+                </div>
+
+                <div class="alertNote"></div>
+                <!-- 抢庄 -->
+                <div v-show="player[0].account_status==3">
+                    <div class="buttonLeft buttonCenter" v-on:click="notRobBanker">不抢</div>
+                    <div class="buttonRight buttonCenter" v-on:click="robBanker(1)">抢庄</div>
+                </div>
+                <!-- 洗牌 -->
+                <div class="buttonMiddle buttonCenter"
+                     v-show="player[0].account_status==6&&player[0].is_tianmen&&animate.animate1==0&&0"
+                     v-on:click="xiPai()">洗牌
+                </div>
+
+                <!-- 发牌 -->
+                <div class="buttonCenter fapai" v-show="player[game.user_num].is_banker&&game.fapai">
+                    <img src="/files/images/erba/fa.png" class="buttonRound"
+                         v-on:click="faPai(1)">
+                </div>
+                <!-- 摊牌 -->
+                <div class="buttonMiddle buttonCenter"
+                     v-show="animate.majiang1==4&&animate.majiang2==4&&player[0].account_status==9"
+                     v-on:click="showCard">摊牌
+                </div>
+                <!-- 下庄 -->
+                <div v-show="game.round!=game.total_num&&game.circle==-1&&game.user_id==player[0].account_id&&player[0].account_status==1&&player[game.user_num].is_banker&&can_break==1">
+                    <div class="buttonLeft buttonCenter" v-on:click="quitCommit">下庄</div>
+                    <div class="buttonRight buttonCenter" v-on:click="imReady">准备</div>
+                </div>
+            </div>
+        </div>
+        <!-- 下注 -->
+        <div class="setScore" v-for="p in player" v-bind:class="'setScore' + p.num"
+             v-show="coinArea==p.num&&p.account_status==7">
+            <div class="clickBack" v-on:click="hideCoinArea"></div>
+            <div class="area">
+                <div class="back"></div>
+                <div class="triangle"></div>
+                <div v-if="ruleInfo.chip_type==0">
+                    <img src="/files/images/erba/coin5.png" class="buttonRound"
+                         v-on:click="selectCoin(5)">
+                    <img src="/files/images/erba/coin10.png" class="buttonRound"
+                         v-on:click="selectCoin(10)">
+                    <img src="/files/images/erba/coin20.png" class="buttonRound"
+                         v-on:click="selectCoin(20)">
+                    <img src="/files/images/erba/coin30.png" class="buttonRound"
+                         v-on:click="selectCoin(30)">
+                </div>
+                <div v-if="ruleInfo.chip_type==1">
+                    <img src="/files/images/erba/coin10.png" class="buttonRound"
+                         v-on:click="selectCoin(10)">
+                    <img src="/files/images/erba/coin20.png" class="buttonRound"
+                         v-on:click="selectCoin(20)">
+                    <img src="/files/images/erba/coin30.png" class="buttonRound"
+                         v-on:click="selectCoin(30)">
+                    <img src="/files/images/erba/coin50.png" class="buttonRound"
+                         v-on:click="selectCoin(50)">
+                </div>
+                <div v-if="ruleInfo.chip_type==2">
+                    <img src="/files/images/erba/coin20.png" class="buttonRound"
+                         v-on:click="selectCoin(20)">
+                    <img src="/files/images/erba/coin30.png" class="buttonRound"
+                         v-on:click="selectCoin(30)">
+                    <img src="/files/images/erba/coin50.png" class="buttonRound"
+                         v-on:click="selectCoin(50)">
+                    <img src="/files/images/erba/coin80.png" class="buttonRound"
+                         v-on:click="selectCoin(80)">
+                </div>
+                <div v-if="ruleInfo.chip_type==3||ruleInfo.chip_type==4">
+                    <img src="/files/images/erba/coin30.png" class="buttonRound"
+                         v-on:click="selectCoin(30)">
+                    <img src="/files/images/erba/coin50.png" class="buttonRound"
+                         v-on:click="selectCoin(50)">
+                    <img src="/files/images/erba/coin80.png" class="buttonRound"
+                         v-on:click="selectCoin(80)">
+                    <img src="/files/images/erba/coin100.png" class="buttonRound"
+                         v-on:click="selectCoin(100)">
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- 进游戏提示框 -->
+    <div class="window-masks user-join" id="joinUser" v-show="isShowGameAlert">
+        <div class="border-opacity">
+            <div class="container">
+                <i class="mask-icon mask-top"></i>
+                <i class="mask-icon mask-right"></i>
+                <i class="mask-icon mask-bottom"></i>
+                <i class="mask-icon mask-left"></i>
+                <div class="user-id">ID：<?php echo $room_number; ?></div>
+                <div class="main">
+                    <div class="copyBtn" style="position: fixed;top: 0.55rem;right: 0.04rem;">
+                        <div id="content"
+                             style="color:rgba(0, 0, 0, 0);position: fixed;bottom: 0;width: 0px; height: 0px;">
+                            牛魔王大厅牛牛邀请:<?php echo $base_url; ?>/home/n?i=<?php echo $i; ?>_?>
+                        </div>
+                        <span style="width: 0.55rem; border-radius: 10px;border: 1px solid;padding: 0.02rem 0.045rem;color: rgb(255,227,104);"
+                              ng-click="copyLink()">复制链接</span>
+                    </div>
+
+                    <div class="rules" v-show="alertType==4">
+                        <p v-if="ruleInfo.banker_mode==1">模式：自由抢庄</p>
+                        <p v-if="ruleInfo.banker_mode==2">模式：明牌抢庄</p>
+                        <p v-if="ruleInfo.banker_mode==3">模式：牛牛上庄</p>
+                        <p v-if="ruleInfo.banker_mode==4">模式：通比牛牛</p>
+                        <p v-if="ruleInfo.banker_mode==5">模式：固定庄家</p><br>
+                        <p v-if="ruleInfo.baseScore==1">底分：1分</p>
+                        <p v-if="ruleInfo.baseScore==2">底分：2分</p>
+                        <p v-if="ruleInfo.baseScore==3">底分：3分</p>
+                        <p v-if="ruleInfo.baseScore==4">底分：4分</p>
+                        <p v-if="ruleInfo.baseScore==5">底分：5分</p><br>
+                        <p v-if="ruleInfo.timesType==1"> 规则：牛牛x3牛九x2牛八x2</p>
+                        <p v-if="ruleInfo.timesType==2"> 规则：牛牛x4牛九x3牛八x2牛七x2</p><br>
+                        <p v-if="ruleInfo.isCardbomb==1||ruleInfo.isCardtiny==1||ruleInfo.isCardfive==1||ruleInfo.isCardfour==1||ruleInfo.isCardStraight==1||ruleInfo.isCardFlush==1||ruleInfo.isCardSequence==1||ruleInfo.isCardCalabash==1">
+                            牌型：
+                            <span v-if="ruleInfo.isCardfour==1">四花牛(4倍) </span>
+                            <span v-if="ruleInfo.isCardStraight==1">顺子牛(5倍) </span>
+                            <span v-if="ruleInfo.isCardfive==1">五花牛(5倍) </span>
+                            <span v-if="ruleInfo.isCardFlush==1">同花牛(6倍) </span>
+                            <span v-if="ruleInfo.isCardCalabash==1">葫芦牛(7倍) </span>
+                            <span v-if="ruleInfo.isCardbomb==1">炸弹牛(8倍) </span>
+                            <span v-if="ruleInfo.isCardtiny==1">五小牛(8倍) </span>
+                            <span v-if="ruleInfo.isCardSequence==1">同花顺(10倍) </span>
+                        </p>
+                        <p v-if="ruleInfo.isCardbomb==1||ruleInfo.isCardtiny==1||ruleInfo.isCardfive==1||ruleInfo.isCardfour==1||ruleInfo.isCardStraight==1||ruleInfo.isCardFlush==1||ruleInfo.isCardSequence==1||ruleInfo.isCardCalabash==1">
+                            <br></p>
+                        <p>局数：{{game.total_num}}局 </p><br>
+                        <span v-if="ruleInfo.banker_mode==5">
+                        <p v-if="ruleInfo.banker_score==1">上庄：无</p>
+                        <p v-if="ruleInfo.banker_score==2">上庄：300</p>
+                        <p v-if="ruleInfo.banker_score==3">上庄：500</p>
+                        <p v-if="ruleInfo.banker_score==4">上庄：1000</p><br></span>
+
+                        <p v-if="ruleInfo.bet_type==0">下注：1/2/3/5倍</p>
+                        <p v-if="ruleInfo.bet_type==1">下注：1/2/4/5倍</p>
+                        <p v-if="ruleInfo.bet_type==2">下注：1/3/5/8倍</p>
+                        <p v-if="ruleInfo.bet_type==3">下注：2/4/6/10倍</p>
+                    </div>
+
+                    <div class="user-list">
+                        <div class="join-user-info" v-for="item in alertText">
+                            <img v-bind:src="item.avatar">
+                            <span>{{item.name}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="button">
+                    <!--<div class="return" v-on:click="guestRoom">观战</div>-->
+                    <div class="return" v-on:click="hall">创建房间</div>
+                    <div class="join-game" id="joinGame" v-on:click="sitDown">加入游戏</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 提示  -->
+    <div class="alert" id="valert" v-show="isShowAlert">
+        <div class="alertBack"></div>
+        <div class="mainPart">
+            <div class="backImg">
+                <div class="blackImg"></div>
+            </div>
+
+            <div class="alertText">
+                <div v-if="alertType==88" style="font-size: 2.2vh">
+                    <div>你还不是房主的好友,无法加入房间</div>
+                    <div style="height: 6.6vh;">
+                        <img v-bind:src="ownerUser.avatar"
+                             style="position: relative; width: 5vh;height: 5vh;border: .1vh solid yellow;top: .5vh;">
+                        <span style="position: relative; font-size: 2.4vh;line-height: 6.6vh;height: 6.6vh;max-width: 43vw;top: -1.4vh;overflow: hidden;">{{ownerUser.nickname}}</span>
+
+                    </div>
+                </div>
+            </div>
+            <div v-if="alertType==88"
+                 style="position: absolute;width:100%;line-height: 4.2vh;height: 4.2vh;width: 14vh;bottom: 11px;left:50%;margin-left:-7vh;text-align: center;overflow: hidden;">
+                <div v-show="applyStatus==0"
+                     style="border-radius: 2vh;background-color: #EE7942;color: #fff;font-size: 16px;"
+                     v-on:click="applyToJoin">确定
+                </div>
+                <div v-show="applyStatus==1"
+                     style="border-radius: 2vh;background-color: #6f6363;color: #fff;font-size: 16px;">申请中
+                </div>
+            </div>
+            <div v-show="alertType==2">
+                <div class="buttonMiddle" v-on:click="hall">创建房间</div>
+            </div>
+
+            <div v-show="alertType==3">
+                <div class="buttonLeft" v-on:click="hall">返回大厅</div>
+                <div class="buttonRight" v-on:click="closeAlert">取消</div>
+            </div>
+
+            <div v-show="alertType==4">
+                <div class="buttonLeft" v-on:click="hall">创建房间</div>
+                <div class="buttonRight" v-on:click="sitDown">加入游戏</div>
+            </div>
+            <div v-show="alertType==7">
+                <div class="buttonMiddle" v-on:click="hall">返回大厅</div>
+            </div>
+            <div v-show="alertType==8">
+                <div class="buttonLeft" v-on:click="closeAlert">取消</div>
+                <div class="buttonRight" v-on:click="gameover">下庄</div>
+            </div>
+            <div v-show="alertType==9">
+                <div class="buttonMiddle" v-on:click="closeAlert">确定</div>
+            </div>
+            <div v-show="alertType==10">
+                <div class="buttonMiddle" v-on:click="closeAlert">确定</div>
+            </div>
+            <div v-show="alertType==11">
+                <div class="buttonMiddle" v-on:click="closeAlert">知道了</div>
+            </div>
+            <div v-show="alertType==23">
+                <div class="buttonLeft" v-on:click="hall">返回大厅</div>
+                <div class="buttonRight" v-on:click="reloadView">返回游戏</div>
+            </div>
+            <div v-show="alertType==18">
+            </div>
+
+            <div v-show="alertType==31">
+                <div class="buttonMiddle" v-on:click="reloadView()">确定</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="alertTip" v-show="isShowAlertTip">
+        <div class="alertTipBG"></div>
+        <img src="/files/images/common/alertTipOk.png" v-show="alertTipType==1">
+        <img src="/files/images/common/alertTipWarn.png" v-show="alertTipType==2">
+        <div class="alertTipText">{{alertTipText}}</div>
+    </div>
+
+    <!-- 排行 -->
+    <div class="ranking hideRanking" id="ranking" style="z-index: 1">
+        <div class="rankBack">
+            <img crossOrigin="Anonymous" src="/files/images/bull/rank_bg.jpg"
+                 style="position: absolute;top: 0;left: 0;width: 100%">
+        </div>
+
+        <div class="rankText" style="position: absolute;top: 4%;">
+            <img crossOrigin="Anonymous" src="/files/images/nbull/rank_frame.png"
+                 style="position: absolute; top: .8rem; left: 23vw; width: 155vw; height: 9.5rem;">
+            <img crossorigin="Anonymous" src="/files/images/nbull/jiesuan.png"
+                 style="position: absolute; top: 0.8rem; left: 1.6rem; width: 4rem;">
+            <div class="time" v-show="playerBoard.round>0" style="position: absolute;top: 74vw;width: 100%;">
+                <a style="border-color: #247ed8;background-color: #fff;font-size: 6vw;color:#000">房间号:{{game.room_number}}&nbsp&nbsp&nbsp&nbsp{{playerBoard.record}}&nbsp&nbsp&nbsp&nbsp{{game.total_num}}局</a>
+            </div>
+            <div style="height: 94vw;"></div>
+            <div v-for="p in playerBoard.score" class="scoresItem"
+                 v-bind:class="{true: 'scoresItemYellow', false: 'scoresItemWhite'}[p.account_score>0]"
+                 v-show="p.account_id>0"
+                 style="background-color:rgba(0,0,0,0.5);width:60%;border-radius:10px;border:2px solid #fff5c8;height: 11vw; line-height: 11vw;">
+                <img crossOrigin="Anonymous" src="/files/images/common/rank_bigwinner.png"
+                     style="top: 0; margin-top: -2.5vw; left: 4px;height: 120%" v-show="p.isBigWinner==1">
+                <div class="name" style="white-space: nowrap;left:10%;text-overflow: ellipsis;width: 55%;">
+                    {{p.nickname}}
+                </div>
+                <div class="currentScores"><a v-show="p.account_score>0">+</a>{{p.account_score}}</div>
+            </div>
+        </div>
+        <div class="button roundEndShow" style="bottom:.8rem">
+            <img crossOrigin="Anonymous" src="/files/images/common/rank_save.png"
+                 style="float: left;margin-left: 13%;width: 30%"/>
+            <img crossOrigin="Anonymous" src="/files/images/common/datinganj.png"
+                 style="float: left;margin-left: 1%;width: 12%;margin-top: 2%;z-index:99"/>
+            <img crossOrigin="Anonymous" src="/files/images/common/rank_review.png"
+                 style="float: right;margin-right: 13%;width: 30%"/>
+        </div>
+    </div>
+
+    <!-- end图片  -->
+    <div id="endCreateRoom" class="end"
+         style="position: fixed;width: 100%;height:100%;top:0;left:0;z-index: 120;display: none;">
+        <img src="" style="width: 100vw;position: absolute;top:0;left: 0;height: 100vh;" id="end" usemap="#planetmap1"/>
+        <div id="endCreateRoomBtn"
+             style="position:fixed;right:13vw; width: 30vw; height: 10vw;bottom: .55rem;z-index:121;overflow: hidden;"
+             v-on:click="reviewCard()"></div>
+        <div id="endCreateRoomBtn"
+             style="position:fixed;right:46vw; width: 10vw; height: 10vw;bottom: .45rem;z-index:121;overflow: hidden;"
+             onclick="gotoHall()"></div>
+    </div>
+    <!-- 新消息  -->
+    <div class="chat-list-mask" v-on:click="hideMessage" v-show="isShowNewMessage"></div>
+    <div class="chat-list" id="newmessage-box" v-show="isShowNewMessage">
+        <ul class="chat-list-ul">
+            <li v-on:click="messageOn(0)">快点吧，我等到花儿也谢了</li>
+            <li v-on:click="messageOn(1)">我出去叫人</li>
+            <li v-on:click="messageOn(2)">你的牌好靓哇</li>
+            <li v-on:click="messageOn(3)">我当年横扫澳门九条街</li>
+            <li v-on:click="messageOn(4)">算你牛逼</li>
+            <li v-on:click="messageOn(5)">别吹牛逼，有本事干到底</li>
+            <li v-on:click="messageOn(6)">输得裤衩都没了</li>
+            <li v-on:click="messageOn(7)">我给你们送温暖了</li>
+            <li v-on:click="messageOn(8)">谢谢老板</li>
+            <li v-on:click="messageOn(9)">我来啦，让你们久等了</li>
+            <li v-on:click="messageOn(10)">我出去一下，马上回来，等我哦</li>
+            <li v-on:click="messageOn(11)">怎么断线了，网络太差了</li>
+            <li v-on:click="messageOn(12)">搏一搏，单车变摩托</li>
+        </ul>
+    </div>
+
+    <!-- end图片  -->
+    <div class="end"
+         style="position: fixed;width: 100%;height:100%;top:0;left:0;z-index: 110;display: none;overflow: hidden;">
+        <img src="" style="width: 100vw;position: absolute;top:0;left: 0;height: 100vh;" id="end" usemap="#planetmap1"/>
+    </div>
+
+
+    <!-- 新规则  -->
+    <div class="rules-mask" v-show="ruleInfo.isShowNewRule">
+        <div class="content">
+            <div class="rule-title"></div>
+            <div class="niuniu-rules">
+                <div class="flex-cont" data-pos="0">
+                    <div class="name">模式：</div>
+                    <div class="flex-item" v-if="ruleInfo.banker_mode==1"><span class="zhuangType">自由抢庄</span></div>
+                    <div class="flex-item" v-if="ruleInfo.banker_mode==2"><span class="zhuangType">固定庄家</span>
+                    </div>
+                </div>
+                <div class="flex-cont" data-pos="1">
+                    <div class="name">上庄：</div>
+                    <div class="flex-item" v-if="ruleInfo.score_type==1"><span>500分</span></div>
+                    <div class="flex-item" v-if="ruleInfo.score_type==2"><span>1000分</span></div>
+                    <div class="flex-item" v-if="ruleInfo.score_type==3"><span>1500分</span></div>
+                    <div class="flex-item" v-if="ruleInfo.score_type==4"><span>无限制</span>
+                    </div>
+                </div>
+                <div class="flex-cont" data-pos="2">
+                    <div class="name">筹码：</div>
+                    <div v-if="ruleInfo.chip_type==0" class="flex-item"><span>5,10,20,30</span></div>
+                    <div v-if="ruleInfo.chip_type==1" class="flex-item"><span>10,20,30,50</span></div>
+                    <div v-if="ruleInfo.chip_type==2" class="flex-item"><span>20,30,50,80</span></div>
+                    <div v-if="ruleInfo.chip_type==3||ruleInfo.chip_type==4" class="flex-item"><span>30,50,80,100</span>
+                    </div>
+                </div>
+
+                <div class="flex-cont" data-pos="3">
+                    <div class="name">规则：</div>
+                    <div class="flex-item" v-if="ruleInfo.rule_type==1"><span>无二八杠</span></div>
+                    <div class="flex-item" v-if="ruleInfo.rule_type==2"><span>二八杠2倍</span></div>
+                    <div class="flex-item" v-if="ruleInfo.rule_type==3"><span>二八杠3倍</span></div>
+                </div>
+                <div class="flex-cont" data-pos="4">
+                    <div class="name">局数：</div>
+                    <div class="flex-item"><span>{{game.total_num}}局</span></div>
+                </div>
+                <div class="flex-cont rules-title">玩法</div>
+                <div class="rules-text">
+                    <p>牌型大小：对白版>对子>二八杠>九点半>九点...>零点。</p>
+                    <p>牌型算法：牌面点数相加取个位数，如：一筒+七筒为八点。九筒+白板为九点半。除二筒+八筒为二八杠，其它相加为10的都是零点。</p>
+                    <p>分数算法：对白版四倍，对子三倍，八点及以上为两倍，二八杠自定义倍数，其余为一倍。</p>
+                    <p>得分规则：牌面大的优先得分；牌面相同，押注总额大的优先得分；牌面和押注总额相同，先押注的优先得分。</p>
+                    <p>注意：庄家和闲家牌一样时，庄家赢。</p>
+                </div>
+            </div>
+            <div class="close" v-on:click="cancelGameRule"></div>
+        </div>
+    </div>
+
+
+    <!-- 游戏规则-->
+    <div class="createRoom" id="vroomRule" v-show="ruleInfo.isShowRule" v-on:click="cancelGameRule">
+        <div class="createRoomBack"></div>
+        <div class="mainPart">
+            <div class="createB"></div>
+            <div class="createTitle">
+                <img src="/files/images/common/txt_rule.png"/>
+            </div>
+
+            <img src="/files/images/common/cancel.png" class="cancelCreate"
+                 v-on:click="cancelGameRule"/>
+
+            <div class="blueBack">
+                <div class="selectPart" style="height:30px;line-height:30px;padding:6px 0;">
+                    <div class="selectTitle">模式：</div>
+                    <div class="selectList">
+                        <div class="selectItem" v-if="ruleInfo.banker_mode==1">
+                            <div class="selectText">自由抢庄</div>
+                        </div>
+                        <div class="selectItem" v-if="ruleInfo.banker_mode==2">
+                            <div class="selectText">固定庄家</div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="selectPart" style="height:30px;line-height:30px;padding:6px 0;"
+                     v-if="ruleInfo.banker_mode==2">
+                    <div class="selectTitle">上庄：</div>
+                    <div class="selectList">
+                        <div class="selectItem" v-if="ruleInfo.score_type==1">
+                            <div class="selectText">500分</div>
+                        </div>
+                        <div class="selectItem" v-if="ruleInfo.score_type==2">
+                            <div class="selectText">1000分</div>
+                        </div>
+                        <div class="selectItem" v-if="ruleInfo.score_type==3">
+                            <div class="selectText">1500分</div>
+                        </div>
+                        <div class="selectItem" v-if="ruleInfo.score_type==4">
+                            <div class="selectText">无限制</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selectPart" style="height:30px;line-height:30px;padding:6px 0;"
+                     v-if="ruleInfo.banker_mode==1">
+                    <div class="selectTitle">筹码：</div>
+                    <div class="selectList">
+                        <div class="selectItem" v-if="ruleInfo.chip_type==0">
+                            <div class="selectText">5,10,20,30</div>
+                        </div>
+                        <div class="selectItem" v-if="ruleInfo.chip_type==1">
+                            <div class="selectText">10,20,30,50</div>
+                        </div>
+                        <div class="selectItem" v-if="ruleInfo.chip_type==2">
+                            <div class="selectText">20,30,50,80</div>
+                        </div>
+                        <div class="selectItem" v-if="ruleInfo.chip_type==3||ruleInfo.chip_type==4">
+                            <div class="selectText">30,50,80,100</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selectPart" style="height:30px;line-height:30px;padding:6px 0;">
+                    <div class="selectTitle">规则：</div>
+                    <div class="selectList">
+                        <div class="selectItem" v-if="ruleInfo.rule_type==1">
+                            <div class="selectText">无二八杠</div>
+                        </div>
+                        <div class="selectItem" v-if="ruleInfo.rule_type==2">
+                            <div class="selectText">二八杠2倍</div>
+                        </div>
+                        <div class="selectItem" v-if="ruleInfo.rule_type==3">
+                            <div class="selectText">二八杠3倍</div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="selectPart" style="height:30px;line-height:30px;padding:6px 0;">
+                    <div class="selectTitle">局数：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:12px;">
+                            <div class="selectText">{{game.total_num}}局</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 游戏玩法 -->
+    <div class="ruleRoom" id="vplayRule" v-show="isShowIntro" v-on:click="closeIntro">
+        <div class="ruleRoomBack"></div>
+        <div class="ruleRoomMainPart">
+            <div class="ruleB"></div>
+            <img src="/files/images/common/cancel2.png" class="cancelRule"
+                 v-on:click="closeIntro"/>
+
+            <div class="frameBack">
+
+                <div class="ruleItem">
+                    牌型大小：对白版>对子>二八杠>九点半>九点...>零点。<br><br>
+                    牌型算法：牌面点数相加取个位数，如：一筒+七筒为八点。九筒+白板为九点半。除二筒+八筒为二八杠，其它相加为10的都是零点。<br><br>
+                    分数算法：对白版四倍，对子三倍，八点及以上为两倍，二八杠自定义倍数，其余为一倍。<br><br>
+                    得分规则：牌面大的优先得分；牌面相同，押注总额大的优先得分；牌面和押注总额相同，先押注的优先得分。<br><br>
+                    注意：庄家和闲家牌一样时，庄家赢。
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置音频 -->
+    <div class="audioRoom" id="vaudioRoom" v-show="editAudioInfo.isShow">
+        <div class="audioRoomBack" v-on:click="cancelAudioSetting"></div>
+        <div class="mainPart">
+            <div class="createB"></div>
+            <div class="createTitle" style="height:4vh;">
+            </div>
+
+            <img src="/files/images/common/cancel.png" class="cancelCreate"
+                 v-on:click="cancelAudioSetting"/>
+
+            <div class="blueBack">
+                <div style="height:0.5vh;"></div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                    <div class="selectTitle">背景音乐：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-on:click="setBackMusic">
+                            <div class="selectBox"></div>
+                            <img src="/files/images/common/tick.png"
+                                 v-show="editAudioInfo.backMusic==1"/>
+                            <div class="selectText">开启</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selectPart" style="height:4vh;line-height:4vh;padding:0.8vh 0;">
+                    <div class="selectTitle">游戏音效：</div>
+                    <div class="selectList">
+                        <div class="selectItem" style="margin-left:10px;" v-on:click="setMessageMusic">
+                            <div class="selectBox"></div>
+                            <img src="/files/images/common/tick.png"
+                                 v-show="editAudioInfo.messageMusic==1"/>
+                            <div class="selectText">开启</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="createCommit" v-on:click="confirmAudioSetting">确定</div>
+
+            </div>
+        </div>
+    </div>
+
+    <div style="display: none;">
+        <img src="/files/images/erba/card5.png">
+
+        <img src="/files/images/erba/card10.png">
+        <img src="/files/images/erba/card20.png">
+        <img src="/files/images/erba/card30.png">
+        <img src="/files/images/erba/card40.png">
+        <img src="/files/images/erba/card50.png">
+        <img src="/files/images/erba/card60.png">
+        <img src="/files/images/erba/card70.png">
+        <img src="/files/images/erba/card80.png">
+        <img src="/files/images/erba/card90.png">
+    </div>
+</div>
+<!--防伪码-->
+<div style="display: none;" v-show="isShowIndiv">
+    <div class="individuaMask" style="" v-on:click="hideIndividuality"></div>
+    <div class="individuaFrame" style="">
+        <div class="title">防伪码设置</div>
+        <div class="text">
+            <input v-model="inputIndiv" v-on:input="individualityChange()" type="text" placeholder="设置1-6位英文或数字防伪码">
+        </div>
+        <div class="error">{{individualityError}}</div>
+        <div class="buttonContainer" v-on:click="setIndividuality">
+            <div class="button">确认</div>
+        </div>
+        <div class="buttonClose" v-on:click="hideIndividuality">
+            <img src="/fiesc/images/common/close.png">
+        </div>
+    </div>
+</div>
+</body>
+
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="/files/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/files/js/bscroll.js"></script>
+<script type="text/javascript" src="/files/js/vue.min.js"></script>
+<script type="text/javascript" src="/files/js/vue-resource.min.js"></script>
+<script type="text/javascript" src="/fiesc/js/aes.js"></script>
+<script type="text/javascript" src="/files/js/md5.js"></script>
+<script type="text/javascript" src="/files/js/ves.js?v=112"></script>
+<script type="text/javascript" src="/files/js/erba_club.js?v=12"></script>
+<script src="/files/js/fuzhi_xl2.js?v=122821"></script>
+<script src="/files/js/clipboard.min.js"></script>
+<script type="text/javascript">
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        // 通过下面这个API隐藏右上角按钮
+        // WeixinJSBridge.call('hideOptionMenu');
+    });
+</script>
+</html>
